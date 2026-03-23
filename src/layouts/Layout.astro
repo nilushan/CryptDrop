@@ -20,31 +20,35 @@ const currentPath = Astro.url.pathname;
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-white border-b border-gray-200 px-6 py-4">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <a href="/" class="hover:opacity-80 transition">
-        <h1 class="text-xl font-bold text-gray-900 tracking-tight">CryptDrop</h1>
-        <p class="text-xs text-gray-500">End-to-end encrypted file sharing in your browser</p>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="header-logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
+          <path d="M16 7a5 5 0 00-5 5v3h-1a1.5 1.5 0 00-1.5 1.5v8A1.5 1.5 0 0010 26h12a1.5 1.5 0 001.5-1.5v-8A1.5 1.5 0 0022 15h-1v-3a5 5 0 00-5-5zm-3 8v-3a3 3 0 116 0v3h-6zm4 5.5v2.5a1 1 0 11-2 0v-2.5a1.5 1.5 0 111.98-1.42l.02.17v.01a1.5 1.5 0 010 1.24z" fill="white" fill-opacity="0.95"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="header-logo-text">
+          <span class="header-logo-name">CryptDrop</span>
+          <span class="header-logo-tagline">Encrypted file sharing</span>
+        </div>
       </a>
-      <nav class="flex items-center gap-4">
+      <nav class="header-nav">
         <a
           href="/how-it-works"
           class:list={[
-            "text-sm font-medium transition",
-            currentPath === "/how-it-works" || currentPath === "/how-it-works/" ? "text-indigo-600" : "text-gray-500 hover:text-gray-700"
+            "header-nav-link",
+            (currentPath === "/how-it-works" || currentPath === "/how-it-works/") && "active"
           ]}
         >
           How It Works
         </a>
-        <a
-          href="/app"
-          class:list={[
-            "text-sm font-medium px-4 py-1.5 rounded-md transition",
-            currentPath === "/app" || currentPath === "/app/"
-              ? "bg-indigo-600 text-white"
-              : "bg-indigo-600 text-white hover:bg-indigo-700"
-          ]}
-        >
+        <a href="/app" class="header-cta">
           Open App
         </a>
       </nav>
@@ -65,6 +69,88 @@ const currentPath = Astro.url.pathname;
 </html>
 
 <style is:global>
+  /* ===== HEADER ===== */
+  .site-header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%);
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1), 0 1px 2px rgb(0 0 0 / 0.06);
+  }
+  .header-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 3.5rem;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+  .header-logo:hover { opacity: 0.85; }
+  .header-logo svg { flex-shrink: 0; }
+  .header-logo-text { display: flex; flex-direction: column; line-height: 1.2; }
+  .header-logo-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .header-logo-tagline {
+    font-size: 0.625rem;
+    color: rgba(199, 210, 254, 0.8);
+    letter-spacing: 0.02em;
+  }
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .header-nav-link {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(199, 210, 254, 0.85);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    position: relative;
+    padding: 0.25rem 0;
+  }
+  .header-nav-link:hover { color: #fff; }
+  .header-nav-link.active {
+    color: #fff;
+  }
+  .header-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.75rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #818cf8;
+    border-radius: 1px;
+  }
+  .header-cta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1e1b4b;
+    background: #fff;
+    padding: 0.375rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+  .header-cta:hover {
+    background: #eef2ff;
+    box-shadow: 0 2px 8px rgb(99 102 241 / 0.15);
+  }
+
   *, ::before, ::after {
     box-sizing: border-box;
     border-width: 0;
