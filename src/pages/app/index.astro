@@ -1,0 +1,180 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="CryptDrop — Browser-Based Encrypted File Sharing">
+
+  <!-- Hero banner linking to story -->
+  <div class="bg-indigo-50 border-b border-indigo-200">
+    <div class="max-w-4xl mx-auto px-6 py-3 flex items-center justify-between">
+      <p class="text-sm text-indigo-700">New to encryption? Learn how GPG key sharing works with our illustrated guide.</p>
+      <a href="/how-it-works" class="text-sm font-medium text-white bg-indigo-600 px-4 py-1.5 rounded-md hover:bg-indigo-700 transition whitespace-nowrap">
+        See the Story &rarr;
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="bg-white border-b border-gray-200">
+    <div class="max-w-3xl mx-auto flex">
+      <button onclick="switchTab('keys')" id="tab-keys" class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-indigo-500 text-indigo-600 bg-white cursor-pointer">Your Keys</button>
+      <button onclick="switchTab('encrypt')" id="tab-encrypt" class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 bg-white cursor-pointer">Encrypt</button>
+      <button onclick="switchTab('decrypt')" id="tab-decrypt" class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 bg-white cursor-pointer">Decrypt</button>
+    </div>
+  </nav>
+
+  <div class="max-w-3xl mx-auto p-6">
+
+    <!-- ======================== KEYS TAB ======================== -->
+    <section id="panel-keys" class="fade-in space-y-6">
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Set Up Your Keys</h2>
+        <p class="text-sm text-gray-500 mb-4">Generate a new key pair or import one you already have.</p>
+
+        <div class="flex bg-gray-100 rounded-lg p-1 mb-5">
+          <button onclick="switchKeyMode('generate')" id="keymode-generate" class="flex-1 text-sm font-medium py-2 rounded-md bg-white text-gray-900 shadow-sm transition cursor-pointer">Generate New</button>
+          <button onclick="switchKeyMode('import')" id="keymode-import" class="flex-1 text-sm font-medium py-2 rounded-md text-gray-500 transition cursor-pointer">Import Existing</button>
+        </div>
+
+        <div id="keyform-generate">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <input id="genName" type="text" placeholder="Your name" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
+            <input id="genEmail" type="email" placeholder="Your email" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
+          </div>
+          <input id="genPassphrase" type="password" placeholder="Passphrase (protects your private key)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2" />
+          <button onclick="generateKeys()" id="btnGenerate" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition cursor-pointer">Generate Keys</button>
+        </div>
+
+        <div id="keyform-import" class="hidden">
+          <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:border-indigo-400 transition block mb-3" id="importDropLabel">
+            <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" id="importKeyFileInput" onchange="handleImportFileSelect(event)" />
+            <p class="text-sm text-gray-500" id="importFileLabel">Drop your private key file here or click to select (.asc)</p>
+          </label>
+          <input id="importPassphrase" type="password" placeholder="Passphrase" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2" />
+          <button onclick="applyImportKey()" id="btnImport" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled>Import Key</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Publish Your Public Key</h2>
+        <p class="text-sm text-gray-500 mb-4">Upload your public key to <strong>keys.openpgp.org</strong> so others can find you by email.</p>
+        <button onclick="publishKey()" id="btnPublish" class="bg-gray-800 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-900 transition disabled:opacity-40 cursor-pointer" disabled>Publish Public Key</button>
+        <p id="publishNote" class="text-xs text-gray-400 mt-2 hidden"></p>
+      </div>
+
+      <div id="keyInfo" class="hidden bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-indigo-900 mb-2">Your Loaded Key</h3>
+        <p id="keyInfoText" class="text-xs text-indigo-700 font-mono break-all"></p>
+        <div class="flex gap-2 mt-3">
+          <button onclick="downloadPublicKey()" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition cursor-pointer">Download Public Key</button>
+          <button onclick="downloadPrivateKey()" class="text-xs bg-gray-600 text-white px-3 py-1.5 rounded hover:bg-gray-700 transition cursor-pointer">Download Private Key</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== ENCRYPT TAB ======================== -->
+    <section id="panel-encrypt" class="fade-in space-y-6 hidden">
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Step 1: Find Recipient's Public Key</h2>
+        <p class="text-sm text-gray-500 mb-4">Search by email on keys.openpgp.org or import their key file directly.</p>
+        <div class="flex gap-2 mb-3">
+          <input id="recipientEmail" type="email" placeholder="recipient@email.com" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
+          <button onclick="lookupRecipient()" id="btnLookup" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition whitespace-nowrap cursor-pointer">Find Key</button>
+        </div>
+        <div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
+          <span class="flex-1 border-t border-gray-200"></span> or <span class="flex-1 border-t border-gray-200"></span>
+        </div>
+        <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-indigo-400 transition block">
+          <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" onchange="importRecipientKeyFile(event)" />
+          <p class="text-sm text-gray-500">Click to import recipient's public key file</p>
+        </label>
+        <div id="recipientStatus" class="mt-3 hidden"></div>
+      </div>
+
+      <div id="inviteBox" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-5">
+        <h3 class="text-sm font-semibold text-amber-900 mb-2">Recipient not found</h3>
+        <p class="text-sm text-amber-800 mb-3">They need to generate a PGP key and publish it. Share these instructions:</p>
+        <div class="bg-white border border-amber-200 rounded-md p-3 text-xs text-gray-700 font-mono mb-3" id="inviteText"></div>
+        <button onclick="copyInvite()" class="text-xs bg-amber-600 text-white px-3 py-1.5 rounded hover:bg-amber-700 transition cursor-pointer">Copy Instructions</button>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Step 2: Select File to Encrypt</h2>
+        <p class="text-sm text-gray-500 mb-4">The file stays in your browser — nothing is uploaded.</p>
+        <label id="encryptDropZone" class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-8 text-center cursor-pointer hover:border-indigo-400 transition block">
+          <input type="file" id="fileToEncrypt" class="hidden" onchange="handleFileSelect(event)" />
+          <p class="text-sm text-gray-500">Drop a file here or click to select</p>
+        </label>
+        <div id="selectedFileInfo" class="mt-3 hidden text-sm text-gray-600"></div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <input type="checkbox" id="signFile" checked class="rounded border-gray-300" />
+          Sign with your private key (proves it's from you)
+        </label>
+      </div>
+
+      <button onclick="encryptFile()" id="btnEncrypt" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled>
+        Encrypt &amp; Download
+      </button>
+    </section>
+
+    <!-- ======================== DECRYPT TAB ======================== -->
+    <section id="panel-decrypt" class="fade-in space-y-6 hidden">
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Step 1: Load Your Private Key</h2>
+        <p class="text-sm text-gray-500 mb-4" id="decryptKeyStatus">You need to load your private key to decrypt files. Go to the "Your Keys" tab first.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Step 2: Select Encrypted File</h2>
+        <label id="decryptDropZone" class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-8 text-center cursor-pointer hover:border-indigo-400 transition block">
+          <input type="file" id="fileToDecrypt" class="hidden" onchange="handleEncryptedFileSelect(event)" />
+          <p class="text-sm text-gray-500">Drop encrypted file here or click to select (.pgp / .gpg / .asc)</p>
+        </label>
+        <div id="encryptedFileInfo" class="mt-3 hidden text-sm text-gray-600"></div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Step 3: Verify Sender (Optional)</h2>
+        <p class="text-sm text-gray-500 mb-4">To verify the file was signed by a specific sender, provide their public key.</p>
+        <div class="flex gap-2 mb-3">
+          <input id="senderEmail" type="email" placeholder="sender@email.com" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
+          <button onclick="lookupSender()" class="bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-800 transition whitespace-nowrap cursor-pointer">Find Key</button>
+        </div>
+        <div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
+          <span class="flex-1 border-t border-gray-200"></span> or <span class="flex-1 border-t border-gray-200"></span>
+        </div>
+        <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-indigo-400 transition block">
+          <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" onchange="importSenderKeyFile(event)" />
+          <p class="text-sm text-gray-500">Click to import sender's public key file</p>
+        </label>
+        <div id="senderStatus" class="mt-3 hidden"></div>
+      </div>
+
+      <button onclick="decryptFile()" id="btnDecrypt" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled>
+        Decrypt &amp; Download
+      </button>
+
+      <div id="decryptResult" class="hidden bg-green-50 border border-green-200 rounded-lg p-5 fade-in">
+        <h3 class="text-sm font-semibold text-green-900 mb-1">Decryption Successful</h3>
+        <p id="decryptResultText" class="text-sm text-green-800"></p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Key status indicator -->
+  <div id="keyStatusFloat" style="position:fixed;top:1rem;right:1rem;z-index:50;">
+    <div id="keyStatus" class="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-500">No keys loaded</div>
+  </div>
+
+  <!-- Status toast -->
+  <div id="toast" class="fixed hidden z-50" style="bottom:1.5rem;left:50%;transform:translateX(-50%);">
+    <div id="toastInner" class="px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium"></div>
+  </div>
+
+  <script is:inline src="/js/openpgp.min.js"></script>
+  <script is:inline src="/js/app.js"></script>
+</Layout>

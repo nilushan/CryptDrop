@@ -1,0 +1,444 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const solutionSteps = [
+  {
+    image: '/images/story/01-public-keys.png',
+    title: 'Everyone Makes a Padlock and a Key',
+    subtitle: 'Step 1',
+    description: 'Alice creates a golden key that only she keeps, and many identical padlocks she can share with anyone. Her golden key is the only thing in the world that can open her padlocks.',
+  },
+  {
+    image: '/images/story/02-public-padlock-directory.png',
+    title: 'Padlocks Go on a Public Board',
+    subtitle: 'Step 2',
+    description: 'Alice hangs her padlocks on a public board in the town square. Bob, Carol, and others do the same. Anyone who wants to send someone a secret can grab their padlock from the board.',
+  },
+  {
+    image: '/images/story/03-bob-finds-alice-padlock.png',
+    title: 'Bob Grabs Alice\'s Padlock',
+    subtitle: 'Step 3',
+    description: 'Bob wants to send Alice a secret document. He visits the board and picks up one of Alice\'s padlocks. He checks the unique marking engraved on it to make sure it really belongs to Alice.',
+  },
+  {
+    image: '/images/story/04-bob-signs-document.png',
+    title: 'Bob Stamps His Wax Seal',
+    subtitle: 'Step 4',
+    description: 'Before sealing the document, Bob presses his own unique wax seal onto it. Nobody else has his seal — so when Alice sees it later, she\'ll know for certain the document came from Bob and hasn\'t been touched.',
+  },
+  {
+    image: '/images/story/05-bob-locks-box.png',
+    title: 'Bob Locks the Box with Alice\'s Padlock',
+    subtitle: 'Step 5',
+    description: 'Bob places the sealed document into a sturdy metal box and snaps Alice\'s padlock shut. The box is now locked. Even Bob can\'t open it anymore — only Alice\'s golden key can.',
+  },
+  {
+    image: '/images/story/06-box-in-transit.png',
+    title: 'The Locked Box Travels Across Town',
+    subtitle: 'Step 6',
+    description: 'A courier carries the locked box through busy streets, crowded markets, and past nosy neighbours. None of it matters — the box is locked tight and the contents are completely hidden from everyone who handles it.',
+  },
+  {
+    image: '/images/story/07-malicious-attempt-fails.png',
+    title: 'A Thief Tries and Fails',
+    subtitle: 'Step 7',
+    description: 'A shadowy figure intercepts the box and tries every key they own. Nothing works. Without Alice\'s specific golden key, the padlock won\'t budge. The thief is left surrounded by useless keys.',
+  },
+  {
+    image: '/images/story/08-alice-opens-box.png',
+    title: 'Alice Opens the Box',
+    subtitle: 'Step 8',
+    description: 'The box arrives at Alice\'s workshop. She takes out her golden key — the only key in the world that fits her padlocks — and opens the lock. The document inside is perfectly intact.',
+  },
+  {
+    image: '/images/story/09-alice-verifies-seal.png',
+    title: 'Alice Checks Bob\'s Seal',
+    subtitle: 'Step 9',
+    description: 'Alice examines the wax seal and compares it to Bob\'s known pattern. It matches. She now knows two things: the document definitely came from Bob, and nobody changed it along the way.',
+  },
+];
+
+const analogyMap = [
+  { analogy: 'Padlock', real: 'Public Key', desc: 'Shared openly so anyone can encrypt a file for you' },
+  { analogy: 'Golden Key', real: 'Private Key', desc: 'Kept secret — the only thing that can decrypt your files' },
+  { analogy: 'Wax Seal', real: 'Digital Signature', desc: 'Proves who sent the file and that it wasn\'t tampered with' },
+  { analogy: 'Locked Box', real: 'Encrypted File (.pgp)', desc: 'The scrambled file that\'s safe to send over any channel' },
+  { analogy: 'Public Board', real: 'Keyserver', desc: 'A directory where people publish their public keys' },
+  { analogy: 'Town Courier', real: 'The Internet', desc: 'The untrusted path between sender and recipient' },
+];
+---
+
+<Layout title="Sending Secrets Safely — CryptDrop" description="A visual guide to understanding how encrypted file sharing works, from the real-world problem to the elegant solution.">
+
+  <style>
+    /* Story steps */
+    .story-step {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    @media (min-width: 768px) {
+      .story-step { grid-template-columns: 1fr 1fr; }
+      .story-step.reverse .story-image { order: 2; }
+      .story-step.reverse .story-text { order: 1; }
+    }
+    .story-image img {
+      border-radius: 1rem;
+      box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
+      width: 100%;
+      transition: transform 0.3s ease;
+    }
+    .story-image img:hover { transform: scale(1.02); }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+    .step-number-indigo { background: #4f46e5; color: white; }
+
+    .connector-line {
+      width: 2px;
+      height: 3rem;
+      background: linear-gradient(to bottom, #c7d2fe, #e0e7ff);
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .hero-section {
+      background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 40%, #fefce8 100%);
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .hero-section h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #1c1917;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (min-width: 768px) {
+      .hero-section h1 { font-size: 2.75rem; }
+    }
+    .hero-section p {
+      font-size: 1.125rem;
+      color: #78716c;
+      max-width: 34rem;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Problem scene */
+    .problem-scene {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    @media (min-width: 768px) {
+      .problem-scene { grid-template-columns: 3fr 2fr; }
+      .problem-scene.reverse-scene > :first-child { order: 2; }
+      .problem-scene.reverse-scene > :last-child { order: 1; }
+    }
+    .problem-scene img {
+      border-radius: 1rem;
+      box-shadow: 0 4px 24px rgb(0 0 0 / 0.1);
+      width: 100%;
+      transition: transform 0.3s ease;
+    }
+    .problem-scene img:hover { transform: scale(1.02); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 0.75rem;
+    }
+    .badge-red { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .badge-amber { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
+    .badge-indigo { background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; }
+    .badge-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+
+    .threat-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+    .threat-card {
+      background: white;
+      border: 1px solid #fecaca;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .threat-card-modern {
+      background: white;
+      border: 1px solid #fed7aa;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      text-align: center;
+    }
+
+    /* Section dividers */
+    .section-divider {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .section-divider h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .section-divider p {
+      font-size: 1rem;
+      color: #6b7280;
+      max-width: 34rem;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .section-arrow {
+      width: 3rem;
+      height: 3rem;
+      margin: 0 auto 1rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    /* Analogy map table */
+    .analogy-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+    .analogy-table th {
+      background: #f9fafb;
+      padding: 0.75rem 1rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6b7280;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .analogy-table td {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: top;
+    }
+    .analogy-table tr:last-child td { border-bottom: none; }
+    .analogy-table .col-story { color: #92400e; font-weight: 600; white-space: nowrap; }
+    .analogy-table .col-tech { color: #3730a3; font-weight: 600; font-family: ui-monospace, monospace; font-size: 0.8125rem; white-space: nowrap; }
+    .analogy-table .col-desc { color: #6b7280; }
+
+    /* Section backgrounds */
+    .bg-warm { background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 50%, #fefce8 100%); border-bottom: 1px solid #e5e7eb; }
+    .bg-warm-to-cool { background: linear-gradient(to bottom, #fefce8 0%, #eef2ff 100%); border-bottom: 1px solid #e5e7eb; }
+    .bg-cool { background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #faf5ff 100%); border-bottom: 1px solid #e5e7eb; }
+    .bg-green-section { background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdfa 100%); border-bottom: 1px solid #e5e7eb; }
+  </style>
+
+  <!-- ======================== HERO ======================== -->
+  <div class="hero-section">
+    <h1>How Do You Send a Secret Nobody Else Can Read?</h1>
+    <p>Every file you send online passes through dozens of hands before it reaches the other person. Here's why that's a problem — and how to solve it.</p>
+  </div>
+
+  <!-- ======================== PART 1: THE REAL WORLD PROBLEM ======================== -->
+  <div class="bg-warm">
+    <div style="max-width: 56rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
+
+      <!-- Real world -->
+      <div class="problem-scene">
+        <div>
+          <img src="/images/story/00b-real-world.png" alt="Two people at computers with interceptors between them" loading="eager" />
+        </div>
+        <div>
+          <span class="badge badge-red">Part 1 — The Problem</span>
+          <h2 class="text-2xl font-bold text-gray-900 mb-3" style="letter-spacing: -0.02em;">Your files pass through strangers</h2>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            When you send a file to someone over the internet, it doesn't travel directly. It hops through Wi-Fi routers, internet service providers, cloud servers, and email relays. At every stop, someone — a hacker, a compromised server, a curious admin — could intercept and read it. Normal email and file sharing offer no protection.
+          </p>
+          <div class="threat-cards">
+            <div class="threat-card-modern">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x1f4e1;</div>
+              <p class="text-xs text-gray-600 font-medium">Wi-Fi sniffing</p>
+            </div>
+            <div class="threat-card-modern">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x1f5a5;&#xfe0f;</div>
+              <p class="text-xs text-gray-600 font-medium">Server breaches</p>
+            </div>
+            <div class="threat-card-modern">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x1f441;&#xfe0f;</div>
+              <p class="text-xs text-gray-600 font-medium">Surveillance</p>
+            </div>
+            <div class="threat-card-modern">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x1f9d1;&#x200d;&#x1f4bb;</div>
+              <p class="text-xs text-gray-600 font-medium">Interception</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== PART 2: THE SAME PROBLEM, AS A STORY ======================== -->
+  <div class="bg-warm-to-cool section-divider" style="padding-bottom: 0;">
+    <div class="section-arrow" style="background: #d97706;">&#x2193;</div>
+    <h2 style="color: #92400e;">Now Imagine the Same Problem, Centuries Ago</h2>
+    <p>To understand the solution, let's tell the story a different way — with padlocks, sealed letters, and a town full of curious couriers.</p>
+  </div>
+
+  <div class="bg-cool" style="border-bottom: none;">
+    <div style="max-width: 56rem; margin: 0 auto; padding: 2.5rem 1.5rem;">
+
+      <div class="problem-scene reverse-scene">
+        <div>
+          <img src="/images/story/00-the-problem.png" alt="A scroll passing through many hands across a medieval landscape" loading="eager" />
+        </div>
+        <div>
+          <span class="badge badge-amber">The Old World Version</span>
+          <h2 class="text-2xl font-bold text-gray-900 mb-3" style="letter-spacing: -0.02em;">A secret that passes through five hands</h2>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            Alice needs to send a confidential scroll to Bob. But the journey is long — it passes through a village messenger, a horseback courier, a river barge operator, a postal clerk, and a delivery boy. Every single person unfolds it and reads every word. By the time it reaches Bob, the secret is no longer a secret.
+          </p>
+          <div class="threat-cards">
+            <div class="threat-card">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x1f440;</div>
+              <p class="text-xs text-gray-600 font-medium">Peeking</p>
+            </div>
+            <div class="threat-card">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x1f4cb;</div>
+              <p class="text-xs text-gray-600 font-medium">Copying</p>
+            </div>
+            <div class="threat-card">
+              <div style="font-size: 1.25rem; margin-bottom: 0.25rem;">&#x270f;&#xfe0f;</div>
+              <p class="text-xs text-gray-600 font-medium">Tampering</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== PART 3: THE PADLOCK SOLUTION ======================== -->
+  <div class="bg-cool section-divider" style="padding-bottom: 0;">
+    <div class="section-arrow" style="background: #4f46e5;">&#x2193;</div>
+    <h2 style="color: #1e1b4b;">The Padlock Solution</h2>
+    <p>What if you could lock a box so securely that only the intended person could ever open it — even if every courier along the way tried?</p>
+  </div>
+
+  <div style="max-width: 56rem; margin: 0 auto; padding: 2rem 1.5rem;">
+
+    {solutionSteps.map((step, i) => (
+      <>
+        {i > 0 && <div class="connector-line" />}
+        <div class:list={['story-step', { reverse: i % 2 === 1 }]} style="margin-bottom: 1rem;">
+          <div class="story-image">
+            <img src={step.image} alt={step.title} loading={i < 2 ? 'eager' : 'lazy'} />
+          </div>
+          <div class="story-text">
+            <div class="flex items-center mb-2">
+              <span class="step-number step-number-indigo">{i + 1}</span>
+              <span class="text-xs font-medium text-indigo-600" style="text-transform: uppercase; letter-spacing: 0.05em;">
+                {step.subtitle}
+              </span>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900 mb-3" style="letter-spacing: -0.02em;">{step.title}</h2>
+            <p class="text-sm text-gray-600 leading-relaxed">{step.description}</p>
+          </div>
+        </div>
+      </>
+    ))}
+  </div>
+
+  <!-- ======================== PART 4: THIS IS WHAT GPG DOES ======================== -->
+  <div class="bg-green-section section-divider" style="padding-bottom: 0;">
+    <div class="section-arrow" style="background: #16a34a;">&#x2193;</div>
+    <h2 style="color: #14532d;">This Is Exactly What CryptDrop Does</h2>
+    <p>That padlock story isn't just a metaphor — it's precisely how modern encryption works. The technology behind it is called <strong style="color: #1f2937;">OpenPGP</strong> (Pretty Good Privacy), and CryptDrop puts it right in your browser.</p>
+  </div>
+
+  <div class="bg-green-section" style="border-bottom: 1px solid #e5e7eb;">
+    <div style="max-width: 56rem; margin: 0 auto; padding: 2rem 1.5rem 2.5rem;">
+
+      <!-- Solution image + analogy map -->
+      <div class="problem-scene" style="margin-bottom: 2rem;">
+        <div>
+          <img src="/images/story/10-cryptdrop-solution.png" alt="The padlock analogy mapped to CryptDrop's interface" loading="lazy" style="border-radius: 1rem; box-shadow: 0 4px 24px rgb(0 0 0 / 0.08); width: 100%;" />
+        </div>
+        <div>
+          <span class="badge badge-green">The Real Technology</span>
+          <h2 class="text-xl font-bold text-gray-900 mb-3" style="letter-spacing: -0.02em;">Same idea. Modern magic.</h2>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Every step in the padlock story maps directly to something CryptDrop does. You generate keys, find recipients on a public keyserver, encrypt files that only they can open, and verify who sent them — all without anything ever leaving your device.
+          </p>
+        </div>
+      </div>
+
+      <!-- Analogy mapping table -->
+      <table class="analogy-table">
+        <thead>
+          <tr>
+            <th>In the Story</th>
+            <th>In CryptDrop</th>
+            <th>What It Does</th>
+          </tr>
+        </thead>
+        <tbody>
+          {analogyMap.map((row) => (
+            <tr>
+              <td class="col-story">{row.analogy}</td>
+              <td class="col-tech">{row.real}</td>
+              <td class="col-desc">{row.desc}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- ======================== CTA ======================== -->
+  <div style="max-width: 56rem; margin: 0 auto; padding: 3rem 1.5rem; text-align: center;">
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Ready to Send Your First Secret?</h2>
+    <p class="text-sm text-gray-500 mb-4" style="max-width: 28rem; margin-left: auto; margin-right: auto;">
+      No installs. No sign-ups. No servers. Everything happens right here in your browser.
+    </p>
+    <a href="/app" class="bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition" style="display: inline-block; text-decoration: none;">
+      Open CryptDrop &rarr;
+    </a>
+  </div>
+
+</Layout>
