@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { setupDOM } from './setup.js';
+import { setupDOM } from './setup.ts';
 
 describe('Utility Functions', () => {
   beforeEach(() => {
@@ -43,33 +43,33 @@ describe('Utility Functions', () => {
   describe('toast()', () => {
     it('should show toast with message', () => {
       window.toast('Test message', 'info');
-      const toast = document.getElementById('toast');
-      const inner = document.getElementById('toastInner');
+      const toast = document.getElementById('toast')!;
+      const inner = document.getElementById('toastInner')!;
       expect(toast.classList.contains('hidden')).toBe(false);
       expect(inner.textContent).toBe('Test message');
     });
 
     it('should apply success styling', () => {
       window.toast('Success!', 'success');
-      const inner = document.getElementById('toastInner');
+      const inner = document.getElementById('toastInner')!;
       expect(inner.className).toContain('bg-green-600');
     });
 
     it('should apply error styling', () => {
       window.toast('Error!', 'error');
-      const inner = document.getElementById('toastInner');
+      const inner = document.getElementById('toastInner')!;
       expect(inner.className).toContain('bg-red-600');
     });
 
     it('should apply warning styling', () => {
       window.toast('Warning!', 'warning');
-      const inner = document.getElementById('toastInner');
+      const inner = document.getElementById('toastInner')!;
       expect(inner.className).toContain('bg-amber-600');
     });
 
     it('should default to info styling', () => {
       window.toast('Info');
-      const inner = document.getElementById('toastInner');
+      const inner = document.getElementById('toastInner')!;
       expect(inner.className).toContain('bg-gray-800');
     });
   });
@@ -79,7 +79,7 @@ describe('Utility Functions', () => {
       const box = window.createStatusBox('Key found', null, 'success');
       expect(box.tagName).toBe('DIV');
       expect(box.className).toContain('bg-green-50');
-      expect(box.querySelector('p').textContent).toBe('Key found');
+      expect(box.querySelector('p')!.textContent).toBe('Key found');
     });
 
     it('should create a success status box with subtext', () => {

@@ -7,13 +7,16 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --project tsconfig.checkjs.json"
   },
   "dependencies": {
     "astro": "^5.0.0"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "jsdom": "^29.0.1",
+    "openpgp": "^6.3.0",
     "vitest": "^4.1.0"
   }
 }

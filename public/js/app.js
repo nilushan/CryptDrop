@@ -1,4 +1,5 @@
 // ==================== STATE ====================
+/** @type {AppState} */
 var state = {
   privateKey: null,
   publicKey: null,
@@ -19,6 +20,7 @@ var state = {
 // ==================== CONTACTS (localStorage) ====================
 var CONTACTS_KEY = 'cryptdrop_contacts';
 
+/** @returns {Contact[]} */
 function getContacts() {
   try {
     var raw = localStorage.getItem(CONTACTS_KEY);
@@ -26,6 +28,13 @@ function getContacts() {
   } catch (e) { return []; }
 }
 
+/**
+ * @param {string} email
+ * @param {string} name
+ * @param {string} armoredPublicKey
+ * @param {string} fingerprint
+ * @returns {Contact[]}
+ */
 function saveContact(email, name, armoredPublicKey, fingerprint) {
   var contacts = getContacts();
   var existing = contacts.findIndex(function(c) { return c.email === email; });
@@ -45,6 +54,10 @@ function saveContact(email, name, armoredPublicKey, fingerprint) {
   return contacts;
 }
 
+/**
+ * @param {string} email
+ * @returns {Contact[]}
+ */
 function removeContact(email) {
   var contacts = getContacts().filter(function(c) { return c.email !== email; });
   localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
@@ -55,8 +68,9 @@ function clearContacts() {
   localStorage.removeItem(CONTACTS_KEY);
 }
 
+/** @returns {void} */
 function renderContactList() {
-  var listEl = document.getElementById('saved-contacts');
+  var listEl = /** @type {HTMLElement} */ (document.getElementById('saved-contacts'));
   if (!listEl) return;
   var contacts = getContacts();
   while (listEl.firstChild) listEl.removeChild(listEl.firstChild);
@@ -70,7 +84,7 @@ function renderContactList() {
   heading.textContent = 'Saved Recipients';
   listEl.appendChild(heading);
 
-  contacts.forEach(function(contact) {
+  contacts.forEach(function(/** @type {Contact} */ contact) {
     var row = document.createElement('div');
     row.className = 'flex items-center justify-between bg-gray-50 border border-gray-200 rounded-md px-3 py-2 mb-1';
 
@@ -110,17 +124,21 @@ function renderContactList() {
   });
 }
 
+/**
+ * @param {Contact} contact
+ * @returns {Promise<void>}
+ */
 async function selectContact(contact) {
   try {
     state.recipientKey = await openpgp.readKey({ armoredKey: contact.armoredPublicKey });
     state.recipientInfo = { email: contact.email, name: contact.name, fingerprint: contact.fingerprint };
-    var statusEl = document.getElementById('recipientStatus');
-    var fp = state.recipientKey.getFingerprint().toUpperCase().match(/.{1,4}/g).join(' ');
+    var statusEl = /** @type {HTMLElement} */ (document.getElementById('recipientStatus'));
+    var fp = state.recipientKey.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
     statusEl.classList.remove('hidden');
     setElementContent(statusEl, createStatusBox('Recipient: ' + (contact.name || contact.email), 'Fingerprint: ' + fp, 'success'));
-    document.getElementById('inviteBox').classList.add('hidden');
-    document.getElementById('recipient-continue').classList.remove('hidden');
-    document.getElementById('recipientEmail').value = contact.email;
+    /** @type {HTMLElement} */ (document.getElementById('inviteBox')).classList.add('hidden');
+    /** @type {HTMLElement} */ (document.getElementById('recipient-continue')).classList.remove('hidden');
+    /** @type {HTMLInputElement} */ (document.getElementById('recipientEmail')).value = contact.email;
     updateEncryptButton();
     updateRecipientDisplay();
     toast('Loaded saved recipient', 'success');
@@ -129,6 +147,10 @@ async function selectContact(contact) {
   }
 }
 
+/**
+ * @param {string} email
+ * @returns {Promise<void>}
+ */
 async function refreshContact(email) {
   toast('Refreshing key for ' + email + '...', 'info');
   try {
@@ -137,16 +159,17 @@ async function refreshContact(email) {
     var armored = await resp.text();
     var key = await openpgp.readKey({ armoredKey: armored });
     var uid = key.users[0] && key.users[0].userID ? key.users[0].userID.userID : email;
-    var fp = key.getFingerprint().toUpperCase().match(/.{1,4}/g).join(' ');
+    var fp = key.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
     var name = uid.indexOf('<') > 0 ? uid.substring(0, uid.indexOf('<')).trim() : '';
     saveContact(email, name, armored, fp);
     renderContactList();
     toast('Key refreshed for ' + email, 'success');
   } catch (e) {
-    toast('Refresh failed: ' + e.message, 'error');
+    toast('Refresh failed: ' + (/** @type {Error} */ (e)).message, 'error');
   }
 }
 
+/** @returns {void} */
 function updateRecipientDisplay() {
   var el = document.getElementById('encrypt-recipient-info');
   if (!el) return;
@@ -162,11 +185,13 @@ function updateRecipientDisplay() {
 }
 
 // ==================== WIZARD NAVIGATION ====================
+/** @type {Record<'encrypt' | 'decrypt', string[]>} */
 var FLOW_SCREENS = {
   encrypt: ['screen-encrypt-recipient', 'screen-encrypt-file'],
   decrypt: ['screen-decrypt-keys', 'screen-decrypt-file'],
 };
 
+/** @type {Record<'encrypt' | 'decrypt', string[]>} */
 var FLOW_LABELS = {
   encrypt: ['Find Recipient', 'Encrypt File'],
   decrypt: ['Your Keys', 'Decrypt File'],
@@ -180,6 +205,10 @@ function getAllScreenIds() {
   ];
 }
 
+/**
+ * @param {string} screenId
+ * @returns {void}
+ */
 function showScreen(screenId) {
   getAllScreenIds().forEach(function(id) {
     var el = document.getElementById(id);
@@ -193,6 +222,10 @@ function showScreen(screenId) {
   });
 }
 
+/**
+ * @param {'encrypt' | 'decrypt'} flow
+ * @returns {void}
+ */
 function startFlow(flow) {
   state.currentFlow = flow;
   state.currentStep = 1;
@@ -239,9 +272,10 @@ function startOver() {
   resetDecryptFileUI();
 }
 
+/** @returns {void} */
 function updateProgressBar() {
-  var bar = document.getElementById('progress-bar');
-  var indicators = document.getElementById('step-indicators');
+  var bar = /** @type {HTMLElement} */ (document.getElementById('progress-bar'));
+  var indicators = /** @type {HTMLElement} */ (document.getElementById('step-indicators'));
   if (!state.currentFlow || state.currentStep === 0) {
     bar.classList.add('hidden');
     return;
@@ -291,8 +325,14 @@ function updateProgressBar() {
 }
 
 // ==================== SAFE DOM HELPERS ====================
+/**
+ * @param {string} text
+ * @param {string | null} subText
+ * @param {StatusType} type
+ * @returns {HTMLElement}
+ */
 function createStatusBox(text, subText, type) {
-  // type: 'success' | 'warning'
+  /** @type {Record<StatusType, { bg: string; border: string; text: string; sub: string }>} */
   var colors = {
     success: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', sub: 'text-green-600' },
     warning: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', sub: 'text-amber-600' },
@@ -313,15 +353,21 @@ function createStatusBox(text, subText, type) {
   return box;
 }
 
+/**
+ * @param {HTMLElement} el
+ * @param {Node} node
+ * @returns {void}
+ */
 function setElementContent(el, node) {
   while (el.firstChild) el.removeChild(el.firstChild);
   el.appendChild(node);
 }
 
 // ==================== KEY STATUS ====================
+/** @returns {void} */
 function updateKeysLoadedState() {
   if (!state.privateKey) return;
-  var fp = state.publicKey.getFingerprint().toUpperCase().match(/.{1,4}/g).join(' ');
+  var fp = /** @type {import('openpgp').PublicKey} */ (state.publicKey).getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
 
   // Update decrypt flow key state
   var loadedEl = document.getElementById('decrypt-keys-loaded');
@@ -339,8 +385,9 @@ function updateKeysLoadedState() {
   updateSignSection();
 }
 
+/** @returns {void} */
 function updateKeyStatus() {
-  var el = document.getElementById('keyStatus');
+  var el = /** @type {HTMLElement} */ (document.getElementById('keyStatus'));
   if (state.privateKey) {
     var uid = state.userInfo || 'Key loaded';
     el.textContent = uid;
@@ -355,10 +402,17 @@ function updateKeyStatus() {
 }
 
 // ==================== TOAST NOTIFICATIONS ====================
+/**
+ * @param {string} msg
+ * @param {ToastType} [type]
+ * @returns {void}
+ */
 function toast(msg, type) {
   type = type || 'info';
-  var el = document.getElementById('toast');
-  var inner = document.getElementById('toastInner');
+  /** @type {HTMLElement & { _timeout?: ReturnType<typeof setTimeout> }} */
+  var el = /** @type {HTMLElement & { _timeout?: ReturnType<typeof setTimeout> }} */ (document.getElementById('toast'));
+  var inner = /** @type {HTMLElement} */ (document.getElementById('toastInner'));
+  /** @type {Record<ToastType, string>} */
   var colors = {
     info: 'bg-gray-800 text-white',
     success: 'bg-green-600 text-white',
@@ -373,31 +427,39 @@ function toast(msg, type) {
 }
 
 // ==================== KEY GENERATION (DECRYPT FLOW) ====================
+/** @returns {void} */
 function generateKeys() {
   // Only used in decrypt flow now
-  document.getElementById('generate-form-decrypt').classList.remove('hidden');
-  document.getElementById('btnGenerateDecrypt').classList.add('hidden');
+  /** @type {HTMLElement} */ (document.getElementById('generate-form-decrypt')).classList.remove('hidden');
+  /** @type {HTMLElement} */ (document.getElementById('btnGenerateDecrypt')).classList.add('hidden');
 }
 
 async function doGenerateKeysDecrypt() {
   await _generateKeys('genNameDecrypt', 'genEmailDecrypt', 'genPassphraseDecrypt', 'btnDoGenerateDecrypt');
 }
 
+/**
+ * @param {string} nameId
+ * @param {string} emailId
+ * @param {string} passphraseId
+ * @param {string} btnId
+ * @returns {Promise<void>}
+ */
 async function _generateKeys(nameId, emailId, passphraseId, btnId) {
-  var name = document.getElementById(nameId).value.trim();
-  var email = document.getElementById(emailId).value.trim();
-  var passphrase = document.getElementById(passphraseId).value;
+  var name = /** @type {HTMLInputElement} */ (document.getElementById(nameId)).value.trim();
+  var email = /** @type {HTMLInputElement} */ (document.getElementById(emailId)).value.trim();
+  var passphrase = /** @type {HTMLInputElement} */ (document.getElementById(passphraseId)).value;
   if (!name || !email) { toast('Please enter your name and email', 'warning'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address', 'warning'); return; }
   if (!passphrase) { toast('Please set a passphrase to protect your private key', 'warning'); return; }
-  var btn = document.getElementById(btnId);
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById(btnId));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Generating...';
   try {
-    var result = await openpgp.generateKey({
+    var result = await openpgp.generateKey(/** @type {any} */ ({
       type: 'ecc', curve: 'curve25519',
       userIDs: [{ name: name, email: email }], passphrase: passphrase, format: 'armored',
-    });
+    }));
     state.armoredPrivate = result.privateKey;
     state.armoredPublic = result.publicKey;
     state.privateKey = await openpgp.decryptKey({
@@ -411,7 +473,7 @@ async function _generateKeys(nameId, emailId, passphraseId, btnId) {
     toast('Keys generated! Key files downloaded.', 'success');
     advanceStep();
   } catch (e) {
-    toast('Key generation failed: ' + e.message, 'error');
+    toast('Key generation failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Generate & Continue';
@@ -419,17 +481,23 @@ async function _generateKeys(nameId, emailId, passphraseId, btnId) {
 }
 
 // ==================== KEY IMPORT ====================
+/** @type {string | null} */
 var pendingImportText = null;
 
+/**
+ * @param {Event} event
+ * @returns {void}
+ */
 function handleImportFileSelect(event) {
-  var file = event.target.files[0];
+  var file = /** @type {HTMLInputElement} */ (event.target).files?.[0];
   if (!file) return;
+  var capturedFile = file;
   file.text().then(function(text) {
     pendingImportText = text;
     var labels = document.querySelectorAll('#importFileLabelDecrypt, #importFileLabelSign');
-    labels.forEach(function(l) { l.textContent = file.name; });
+    labels.forEach(function(l) { l.textContent = capturedFile.name; });
     var btns = document.querySelectorAll('#btnImportDecrypt, #btnImportSign');
-    btns.forEach(function(b) { b.disabled = false; });
+    btns.forEach(function(b) { /** @type {HTMLButtonElement} */ (b).disabled = false; });
     toast('Key file loaded — enter your passphrase and click Import', 'info');
   });
 }
@@ -437,8 +505,8 @@ function handleImportFileSelect(event) {
 async function applyImportKey() {
   // Used in decrypt flow only
   if (!pendingImportText) { toast('Select a key file first', 'warning'); return; }
-  var passphrase = document.getElementById('importPassphraseDecrypt').value;
-  var btn = document.getElementById('btnImportDecrypt');
+  var passphrase = /** @type {HTMLInputElement} */ (document.getElementById('importPassphraseDecrypt')).value;
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById('btnImportDecrypt'));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Importing...';
   try {
@@ -454,8 +522,8 @@ async function applyImportKey() {
       state.privateKey = privKey;
     }
     state.armoredPrivate = pendingImportText;
-    state.publicKey = state.privateKey.toPublic();
-    state.armoredPublic = state.publicKey.armor();
+    state.publicKey = /** @type {import('openpgp').PrivateKey} */ (state.privateKey).toPublic();
+    state.armoredPublic = /** @type {import('openpgp').PublicKey} */ (state.publicKey).armor();
     var uid = state.privateKey.users[0] && state.privateKey.users[0].userID ? state.privateKey.users[0].userID.userID : 'Unknown';
     state.userInfo = uid;
     pendingImportText = null;
@@ -463,7 +531,7 @@ async function applyImportKey() {
     toast('Private key imported: ' + uid, 'success');
     advanceStep();
   } catch (e) {
-    toast('Import failed: ' + e.message, 'error');
+    toast('Import failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Import & Continue';
@@ -471,9 +539,10 @@ async function applyImportKey() {
 }
 
 // ==================== SIGNING (OPTIONAL FOR ENCRYPT) ====================
+/** @returns {void} */
 function toggleSignSection() {
-  var checked = document.getElementById('signFile').checked;
-  var setup = document.getElementById('sign-key-setup');
+  var checked = /** @type {HTMLInputElement} */ (document.getElementById('signFile')).checked;
+  var setup = /** @type {HTMLElement} */ (document.getElementById('sign-key-setup'));
   if (!checked) {
     setup.classList.add('hidden');
     return;
@@ -487,41 +556,49 @@ function updateSignSection() {
   var formEl = document.getElementById('sign-keys-form');
   if (!loadedEl || !formEl) return;
   if (state.privateKey) {
-    var fp = state.publicKey.getFingerprint().toUpperCase().match(/.{1,4}/g).join(' ');
+    var fp = /** @type {import('openpgp').PublicKey} */ (state.publicKey).getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
     loadedEl.classList.remove('hidden');
     formEl.classList.add('hidden');
-    document.getElementById('sign-keys-loaded-info').textContent = 'Signing as: ' + (state.userInfo || 'Unknown');
-    document.getElementById('sign-keys-loaded-fp').textContent = 'Fingerprint: ' + fp;
+    /** @type {HTMLElement} */ (document.getElementById('sign-keys-loaded-info')).textContent = 'Signing as: ' + (state.userInfo || 'Unknown');
+    /** @type {HTMLElement} */ (document.getElementById('sign-keys-loaded-fp')).textContent = 'Fingerprint: ' + fp;
   } else {
     loadedEl.classList.add('hidden');
     formEl.classList.remove('hidden');
   }
 }
 
+/** @returns {void} */
 function generateKeysForSigning() {
-  document.getElementById('generate-form-sign').classList.remove('hidden');
-  document.getElementById('btnGenerateSign').classList.add('hidden');
+  /** @type {HTMLElement} */ (document.getElementById('generate-form-sign')).classList.remove('hidden');
+  /** @type {HTMLElement} */ (document.getElementById('btnGenerateSign')).classList.add('hidden');
 }
 
 async function doGenerateKeysSign() {
   await _generateKeysForSigning('genNameSign', 'genEmailSign', 'genPassphraseSign', 'btnDoGenerateSign');
 }
 
+/**
+ * @param {string} nameId
+ * @param {string} emailId
+ * @param {string} passphraseId
+ * @param {string} btnId
+ * @returns {Promise<void>}
+ */
 async function _generateKeysForSigning(nameId, emailId, passphraseId, btnId) {
-  var name = document.getElementById(nameId).value.trim();
-  var email = document.getElementById(emailId).value.trim();
-  var passphrase = document.getElementById(passphraseId).value;
+  var name = /** @type {HTMLInputElement} */ (document.getElementById(nameId)).value.trim();
+  var email = /** @type {HTMLInputElement} */ (document.getElementById(emailId)).value.trim();
+  var passphrase = /** @type {HTMLInputElement} */ (document.getElementById(passphraseId)).value;
   if (!name || !email) { toast('Please enter your name and email', 'warning'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address', 'warning'); return; }
   if (!passphrase) { toast('Please set a passphrase to protect your private key', 'warning'); return; }
-  var btn = document.getElementById(btnId);
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById(btnId));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Generating...';
   try {
-    var result = await openpgp.generateKey({
+    var result = await openpgp.generateKey(/** @type {any} */ ({
       type: 'ecc', curve: 'curve25519',
       userIDs: [{ name: name, email: email }], passphrase: passphrase, format: 'armored',
-    });
+    }));
     state.armoredPrivate = result.privateKey;
     state.armoredPublic = result.publicKey;
     state.privateKey = await openpgp.decryptKey({
@@ -534,7 +611,7 @@ async function _generateKeysForSigning(nameId, emailId, passphraseId, btnId) {
     updateKeyStatus();
     toast('Keys generated! You can now sign files.', 'success');
   } catch (e) {
-    toast('Key generation failed: ' + e.message, 'error');
+    toast('Key generation failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Generate Keys';
@@ -543,8 +620,8 @@ async function _generateKeysForSigning(nameId, emailId, passphraseId, btnId) {
 
 async function applyImportKeyForSigning() {
   if (!pendingImportText) { toast('Select a key file first', 'warning'); return; }
-  var passphrase = document.getElementById('importPassphraseSign').value;
-  var btn = document.getElementById('btnImportSign');
+  var passphrase = /** @type {HTMLInputElement} */ (document.getElementById('importPassphraseSign')).value;
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById('btnImportSign'));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Importing...';
   try {
@@ -560,15 +637,15 @@ async function applyImportKeyForSigning() {
       state.privateKey = privKey;
     }
     state.armoredPrivate = pendingImportText;
-    state.publicKey = state.privateKey.toPublic();
-    state.armoredPublic = state.publicKey.armor();
+    state.publicKey = /** @type {import('openpgp').PrivateKey} */ (state.privateKey).toPublic();
+    state.armoredPublic = /** @type {import('openpgp').PublicKey} */ (state.publicKey).armor();
     var uid = state.privateKey.users[0] && state.privateKey.users[0].userID ? state.privateKey.users[0].userID.userID : 'Unknown';
     state.userInfo = uid;
     pendingImportText = null;
     updateKeyStatus();
     toast('Private key imported — you can now sign files.', 'success');
   } catch (e) {
-    toast('Import failed: ' + e.message, 'error');
+    toast('Import failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Import Key';
@@ -576,15 +653,18 @@ async function applyImportKeyForSigning() {
 }
 
 // ==================== RECIPIENT KEY LOOKUP ====================
+/**
+ * @returns {Promise<void>}
+ */
 async function lookupRecipient() {
-  var email = document.getElementById('recipientEmail').value.trim();
+  var email = /** @type {HTMLInputElement} */ (document.getElementById('recipientEmail')).value.trim();
   if (!email) { toast('Enter a recipient email', 'warning'); return; }
-  var btn = document.getElementById('btnLookup');
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById('btnLookup'));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Searching...';
-  var statusEl = document.getElementById('recipientStatus');
-  var inviteBox = document.getElementById('inviteBox');
-  var continueBtn = document.getElementById('recipient-continue');
+  var statusEl = /** @type {HTMLElement} */ (document.getElementById('recipientStatus'));
+  var inviteBox = /** @type {HTMLElement} */ (document.getElementById('inviteBox'));
+  var continueBtn = /** @type {HTMLElement} */ (document.getElementById('recipient-continue'));
   try {
     var resp = await fetch('https://keys.openpgp.org/vks/v1/by-email/' + encodeURIComponent(email));
     if (resp.status === 404) {
@@ -592,7 +672,7 @@ async function lookupRecipient() {
       statusEl.classList.add('hidden');
       continueBtn.classList.add('hidden');
       inviteBox.classList.remove('hidden');
-      document.getElementById('inviteText').textContent =
+      /** @type {HTMLElement} */ (document.getElementById('inviteText')).textContent =
         'Hi! I want to send you an encrypted file.\n\n1. Go to: ' + window.location.origin + '/app\n2. Choose "Encrypt a File" and create your keys\n3. Share your public key with me\n4. Let me know when done!';
       toast('Recipient not found on keyserver', 'warning');
       updateEncryptButton();
@@ -603,7 +683,7 @@ async function lookupRecipient() {
     state.recipientKey = await openpgp.readKey({ armoredKey: armored });
     inviteBox.classList.add('hidden');
     var uid = state.recipientKey.users[0] && state.recipientKey.users[0].userID ? state.recipientKey.users[0].userID.userID : email;
-    var fp = state.recipientKey.getFingerprint().toUpperCase().match(/.{1,4}/g).join(' ');
+    var fp = state.recipientKey.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
     var name = uid.indexOf('<') > 0 ? uid.substring(0, uid.indexOf('<')).trim() : '';
     state.recipientInfo = { email: email, name: name, fingerprint: fp };
     // Auto-save to contacts
@@ -615,7 +695,7 @@ async function lookupRecipient() {
     updateRecipientDisplay();
     toast('Recipient key found!', 'success');
   } catch (e) {
-    toast('Lookup failed: ' + e.message, 'error');
+    toast('Lookup failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Find Their Key';
@@ -623,14 +703,18 @@ async function lookupRecipient() {
   }
 }
 
+/**
+ * @param {Event} event
+ * @returns {Promise<void>}
+ */
 async function importRecipientKeyFile(event) {
-  var file = event.target.files[0];
+  var file = /** @type {HTMLInputElement} */ (event.target).files?.[0];
   if (!file) return;
   try {
     var text = await file.text();
     state.recipientKey = await openpgp.readKey({ armoredKey: text });
     var uid = state.recipientKey.users[0] && state.recipientKey.users[0].userID ? state.recipientKey.users[0].userID.userID : 'Unknown';
-    var fp = state.recipientKey.getFingerprint().toUpperCase().match(/.{1,4}/g).join(' ');
+    var fp = state.recipientKey.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
     var email = uid.indexOf('<') > 0 ? uid.substring(uid.indexOf('<') + 1, uid.indexOf('>')) : '';
     var name = uid.indexOf('<') > 0 ? uid.substring(0, uid.indexOf('<')).trim() : uid;
     state.recipientInfo = { email: email, name: name, fingerprint: fp };
@@ -638,57 +722,70 @@ async function importRecipientKeyFile(event) {
       saveContact(email, name, text, fp);
       renderContactList();
     }
-    var statusEl = document.getElementById('recipientStatus');
+    var statusEl = /** @type {HTMLElement} */ (document.getElementById('recipientStatus'));
     statusEl.classList.remove('hidden');
     setElementContent(statusEl, createStatusBox('Key imported: ' + uid, 'Fingerprint: ' + fp, 'success'));
-    document.getElementById('inviteBox').classList.add('hidden');
-    document.getElementById('recipient-continue').classList.remove('hidden');
+    /** @type {HTMLElement} */ (document.getElementById('inviteBox')).classList.add('hidden');
+    /** @type {HTMLElement} */ (document.getElementById('recipient-continue')).classList.remove('hidden');
     updateRecipientDisplay();
     toast('Recipient key imported', 'success');
   } catch (e) {
-    toast('Import failed: ' + e.message, 'error');
+    toast('Import failed: ' + (/** @type {Error} */ (e)).message, 'error');
   }
   updateEncryptButton();
 }
 
 // ==================== FILE SELECTION ====================
+/**
+ * @param {{ target: { files: File[] } }} event
+ * @returns {void}
+ */
 function handleFileSelect(event) {
   var file = event.target.files[0];
   if (!file) return;
   state.selectedFile = file;
-  var info = document.getElementById('selectedFileInfo');
+  var info = /** @type {HTMLElement} */ (document.getElementById('selectedFileInfo'));
   info.classList.remove('hidden');
   info.textContent = file.name + ' (' + formatSize(file.size) + ')';
   updateEncryptButton();
 }
 
+/**
+ * @param {{ target: { files: File[] } }} event
+ * @returns {void}
+ */
 function handleEncryptedFileSelect(event) {
   var file = event.target.files[0];
   if (!file) return;
   state.encryptedFile = file;
-  var info = document.getElementById('encryptedFileInfo');
+  var info = /** @type {HTMLElement} */ (document.getElementById('encryptedFileInfo'));
   info.classList.remove('hidden');
   info.textContent = file.name + ' (' + formatSize(file.size) + ')';
   updateDecryptButton();
 }
 
 // ==================== ENCRYPT ====================
+/** @returns {void} */
 function updateEncryptButton() {
   var btn = document.getElementById('btnEncrypt');
-  if (btn) btn.disabled = !(state.recipientKey && state.selectedFile);
+  if (btn) /** @type {HTMLButtonElement} */ (btn).disabled = !(state.recipientKey && state.selectedFile);
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 async function encryptFile() {
   if (!state.recipientKey || !state.selectedFile) return;
-  var btn = document.getElementById('btnEncrypt');
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById('btnEncrypt'));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Encrypting...';
   try {
     var fileData = new Uint8Array(await state.selectedFile.arrayBuffer());
     var message = await openpgp.createMessage({ binary: fileData, filename: state.selectedFile.name });
-    var encryptOpts = { message: message, encryptionKeys: state.recipientKey, format: 'binary' };
-    if (document.getElementById('signFile').checked && state.privateKey) {
-      encryptOpts.signingKeys = state.privateKey;
+    /** @type {import('openpgp').EncryptOptions & { format: 'binary' }} */
+    var encryptOpts = { message: message, encryptionKeys: state.recipientKey, format: /** @type {'binary'} */ ('binary') };
+    if (/** @type {HTMLInputElement} */ (document.getElementById('signFile')).checked && state.privateKey) {
+      /** @type {any} */ (encryptOpts).signingKeys = state.privateKey;
     }
     var encrypted = await openpgp.encrypt(encryptOpts);
     var recipientSuffix = '';
@@ -697,31 +794,35 @@ async function encryptFile() {
       if (rName) recipientSuffix = '_for_' + rName;
     }
     downloadBlob(new Blob([encrypted], { type: 'application/pgp-encrypted' }), state.selectedFile.name + recipientSuffix + '.pgp');
-    var successEl = document.getElementById('encrypt-success');
+    var successEl = /** @type {HTMLElement} */ (document.getElementById('encrypt-success'));
     successEl.classList.remove('hidden');
     var recipientLabel = state.recipientInfo ? ' for ' + (state.recipientInfo.name || state.recipientInfo.email) : '';
-    document.getElementById('encrypt-success-text').textContent =
+    /** @type {HTMLElement} */ (document.getElementById('encrypt-success-text')).textContent =
       'Encrypted "' + state.selectedFile.name + '"' + recipientLabel + ' (' + formatSize(state.selectedFile.size) + '). The .pgp file has been downloaded.';
     toast('File encrypted and downloaded!', 'success');
   } catch (e) {
-    toast('Encryption failed: ' + e.message, 'error');
+    toast('Encryption failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
-    btn.disabled = false;
+    /** @type {HTMLButtonElement} */ (btn).disabled = false;
     btn.textContent = 'Encrypt & Download File';
     updateEncryptButton();
   }
 }
 
 // ==================== DECRYPT ====================
+/** @returns {void} */
 function updateDecryptButton() {
   var btn = document.getElementById('btnDecrypt');
-  if (btn) btn.disabled = !(state.privateKey && state.encryptedFile);
+  if (btn) /** @type {HTMLButtonElement} */ (btn).disabled = !(state.privateKey && state.encryptedFile);
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 async function lookupSender() {
-  var email = document.getElementById('senderEmail').value.trim();
+  var email = /** @type {HTMLInputElement} */ (document.getElementById('senderEmail')).value.trim();
   if (!email) return;
-  var statusEl = document.getElementById('senderStatus');
+  var statusEl = /** @type {HTMLElement} */ (document.getElementById('senderStatus'));
   try {
     var resp = await fetch('https://keys.openpgp.org/vks/v1/by-email/' + encodeURIComponent(email));
     if (resp.status === 404) {
@@ -741,36 +842,44 @@ async function lookupSender() {
     setElementContent(statusEl, createStatusBox('Verification key found: ' + uid, null, 'success'));
     toast('Sender key found', 'success');
   } catch (e) {
-    toast('Lookup failed: ' + e.message, 'error');
+    toast('Lookup failed: ' + (/** @type {Error} */ (e)).message, 'error');
   }
 }
 
+/**
+ * @param {Event} event
+ * @returns {Promise<void>}
+ */
 async function importSenderKeyFile(event) {
-  var file = event.target.files[0];
+  var file = /** @type {HTMLInputElement} */ (event.target).files?.[0];
   if (!file) return;
   try {
     var text = await file.text();
     state.senderKey = await openpgp.readKey({ armoredKey: text });
     var uid = state.senderKey.users[0] && state.senderKey.users[0].userID ? state.senderKey.users[0].userID.userID : 'Unknown';
-    var statusEl = document.getElementById('senderStatus');
+    var statusEl = /** @type {HTMLElement} */ (document.getElementById('senderStatus'));
     statusEl.classList.remove('hidden');
     setElementContent(statusEl, createStatusBox('Verification key imported: ' + uid, null, 'success'));
     toast('Sender key imported', 'success');
   } catch (e) {
-    toast('Import failed: ' + e.message, 'error');
+    toast('Import failed: ' + (/** @type {Error} */ (e)).message, 'error');
   }
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 async function decryptFile() {
   if (!state.privateKey || !state.encryptedFile) return;
-  var btn = document.getElementById('btnDecrypt');
+  var btn = /** @type {HTMLButtonElement} */ (document.getElementById('btnDecrypt'));
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Decrypting...';
-  var resultEl = document.getElementById('decryptResult');
+  var resultEl = /** @type {HTMLElement} */ (document.getElementById('decryptResult'));
   resultEl.classList.add('hidden');
   try {
     var fileData = new Uint8Array(await state.encryptedFile.arrayBuffer());
     var message = await openpgp.readMessage({ binaryMessage: fileData });
+    /** @type {any} */
     var decryptOpts = { message: message, decryptionKeys: state.privateKey, format: 'binary' };
     if (state.senderKey) decryptOpts.verificationKeys = state.senderKey;
     var result = await openpgp.decrypt(decryptOpts);
@@ -781,12 +890,12 @@ async function decryptFile() {
       try { await result.signatures[0].verified; sigText = ' Signature verified!'; } catch (e) { sigText = ' Warning: signature could not be verified.'; }
     } else if (!state.senderKey) { sigText = ' Signature not checked (no sender key provided).'; }
     resultEl.classList.remove('hidden');
-    document.getElementById('decryptResultText').textContent = 'Decrypted "' + outName + '" (' + formatSize(result.data.byteLength) + ').' + sigText;
+    /** @type {HTMLElement} */ (document.getElementById('decryptResultText')).textContent = 'Decrypted "' + outName + '" (' + formatSize(result.data.byteLength) + ').' + sigText;
     toast('File decrypted!', 'success');
   } catch (e) {
-    toast('Decryption failed: ' + e.message, 'error');
+    toast('Decryption failed: ' + (/** @type {Error} */ (e)).message, 'error');
   } finally {
-    btn.disabled = false;
+    /** @type {HTMLButtonElement} */ (btn).disabled = false;
     btn.textContent = 'Decrypt & Download File';
     updateDecryptButton();
   }
@@ -801,7 +910,7 @@ function resetRecipientUI() {
   if (inviteBox) inviteBox.classList.add('hidden');
   var continueBtn = document.getElementById('recipient-continue');
   if (continueBtn) continueBtn.classList.add('hidden');
-  var emailInput = document.getElementById('recipientEmail');
+  var emailInput = /** @type {HTMLInputElement | null} */ (document.getElementById('recipientEmail'));
   if (emailInput) emailInput.value = '';
   updateRecipientDisplay();
 }
@@ -812,7 +921,7 @@ function resetEncryptFileUI() {
   if (info) { info.classList.add('hidden'); info.textContent = ''; }
   var success = document.getElementById('encrypt-success');
   if (success) success.classList.add('hidden');
-  var fileInput = document.getElementById('fileToEncrypt');
+  var fileInput = /** @type {HTMLInputElement | null} */ (document.getElementById('fileToEncrypt'));
   if (fileInput) fileInput.value = '';
   updateEncryptButton();
 }
@@ -826,9 +935,9 @@ function resetDecryptFileUI() {
   if (result) result.classList.add('hidden');
   var senderStatus = document.getElementById('senderStatus');
   if (senderStatus) { senderStatus.classList.add('hidden'); while (senderStatus.firstChild) senderStatus.removeChild(senderStatus.firstChild); }
-  var fileInput = document.getElementById('fileToDecrypt');
+  var fileInput = /** @type {HTMLInputElement | null} */ (document.getElementById('fileToDecrypt'));
   if (fileInput) fileInput.value = '';
-  var senderEmail = document.getElementById('senderEmail');
+  var senderEmail = /** @type {HTMLInputElement | null} */ (document.getElementById('senderEmail'));
   if (senderEmail) senderEmail.value = '';
   updateDecryptButton();
 }
@@ -837,7 +946,9 @@ function resetEncryptFile() { resetEncryptFileUI(); }
 function resetDecryptFile() { resetDecryptFileUI(); }
 
 // ==================== UTILITY ====================
+/** @param {string} text @param {string} filename @returns {void} */
 function downloadTextFile(text, filename) { downloadBlob(new Blob([text], { type: 'text/plain' }), filename); }
+/** @param {Blob} blob @param {string} filename @returns {void} */
 function downloadBlob(blob, filename) {
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -848,13 +959,19 @@ function downloadBlob(blob, filename) {
 }
 function downloadPublicKey() { if (state.armoredPublic) downloadTextFile(state.armoredPublic, 'public_key.asc'); }
 function downloadPrivateKey() { if (state.armoredPrivate) downloadTextFile(state.armoredPrivate, 'private_key.asc'); }
+/**
+ * @param {number} bytes
+ * @returns {string}
+ */
 function formatSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
+/** @param {string} str @returns {string} */
 function escHtml(str) { var d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-function copyInvite() { navigator.clipboard.writeText(document.getElementById('inviteText').textContent).then(function() { toast('Copied!', 'success'); }); }
+/** @returns {void} */
+function copyInvite() { navigator.clipboard.writeText(/** @type {HTMLElement} */ (document.getElementById('inviteText')).textContent || '').then(function() { toast('Copied!', 'success'); }); }
 
 // ==================== DRAG & DROP ====================
 document.querySelectorAll('.drop-zone').forEach(function(zone) {
@@ -864,8 +981,9 @@ document.querySelectorAll('.drop-zone').forEach(function(zone) {
     e.preventDefault();
     zone.classList.remove('dragover');
     var input = zone.querySelector('input[type="file"]');
-    if (input && e.dataTransfer.files.length) {
-      input.files = e.dataTransfer.files;
+    var dt = /** @type {DragEvent} */ (e);
+    if (input && dt.dataTransfer && dt.dataTransfer.files.length) {
+      /** @type {HTMLInputElement} */ (input).files = dt.dataTransfer.files;
       input.dispatchEvent(new Event('change'));
     }
   });

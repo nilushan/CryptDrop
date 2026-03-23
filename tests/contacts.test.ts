@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { setupDOM, getState } from './setup.js';
+import { setupDOM, getState } from './setup.ts';
 
 describe('Contacts (localStorage)', () => {
   beforeEach(() => {
@@ -70,14 +70,14 @@ describe('Contacts (localStorage)', () => {
     it('should hide list when no contacts', () => {
       window.startFlow('encrypt');
       window.renderContactList();
-      expect(document.getElementById('saved-contacts').classList.contains('hidden')).toBe(true);
+      expect(document.getElementById('saved-contacts')!.classList.contains('hidden')).toBe(true);
     });
 
     it('should show list when contacts exist', () => {
       window.saveContact('alice@example.com', 'Alice', 'KEY_A', 'FP_A');
       window.startFlow('encrypt');
       window.renderContactList();
-      const el = document.getElementById('saved-contacts');
+      const el = document.getElementById('saved-contacts')!;
       expect(el.classList.contains('hidden')).toBe(false);
       expect(el.textContent).toContain('Alice');
       expect(el.textContent).toContain('alice@example.com');
@@ -87,48 +87,38 @@ describe('Contacts (localStorage)', () => {
       window.saveContact('noname@example.com', '', 'KEY_N', 'FP_N');
       window.startFlow('encrypt');
       window.renderContactList();
-      expect(document.getElementById('saved-contacts').textContent).toContain('noname@example.com');
+      expect(document.getElementById('saved-contacts')!.textContent).toContain('noname@example.com');
     });
   });
 
   describe('selectContact()', () => {
     it('should load recipient key and set recipientInfo', async () => {
       window.startFlow('encrypt');
-      await window.selectContact({
-        email: 'alice@example.com',
-        name: 'Alice',
-        fingerprint: 'FP_A',
-        armoredPublicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\nmock\n-----END PGP PUBLIC KEY BLOCK-----',
-      });
+      await window.selectContact({ email: 'alice@example.com', name: 'Alice', fingerprint: 'FP_A', armoredPublicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\nmock\n-----END PGP PUBLIC KEY BLOCK-----', lastUpdated: '' });
       expect(getState().recipientKey).toBeTruthy();
-      expect(getState().recipientInfo.email).toBe('alice@example.com');
-      expect(getState().recipientInfo.name).toBe('Alice');
-      expect(document.getElementById('recipientStatus').classList.contains('hidden')).toBe(false);
-      expect(document.getElementById('recipient-continue').classList.contains('hidden')).toBe(false);
-      expect(document.getElementById('recipientEmail').value).toBe('alice@example.com');
+      expect(getState().recipientInfo!.email).toBe('alice@example.com');
+      expect(getState().recipientInfo!.name).toBe('Alice');
+      expect(document.getElementById('recipientStatus')!.classList.contains('hidden')).toBe(false);
+      expect(document.getElementById('recipient-continue')!.classList.contains('hidden')).toBe(false);
+      expect((document.getElementById('recipientEmail') as HTMLInputElement).value).toBe('alice@example.com');
     });
   });
 
   describe('Recipient display on encrypt screen', () => {
     it('should show recipient info when advancing to encrypt step', async () => {
       window.startFlow('encrypt');
-      await window.selectContact({
-        email: 'alice@example.com',
-        name: 'Alice',
-        fingerprint: 'FP_A',
-        armoredPublicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\nmock\n-----END PGP PUBLIC KEY BLOCK-----',
-      });
+      await window.selectContact({ email: 'alice@example.com', name: 'Alice', fingerprint: 'FP_A', armoredPublicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\nmock\n-----END PGP PUBLIC KEY BLOCK-----', lastUpdated: '' });
       window.advanceStep();
-      const infoEl = document.getElementById('encrypt-recipient-info');
+      const infoEl = document.getElementById('encrypt-recipient-info')!;
       expect(infoEl.classList.contains('hidden')).toBe(false);
-      expect(document.getElementById('encrypt-recipient-name').textContent).toBe('Alice');
-      expect(document.getElementById('encrypt-recipient-email').textContent).toBe('alice@example.com');
+      expect(document.getElementById('encrypt-recipient-name')!.textContent).toBe('Alice');
+      expect(document.getElementById('encrypt-recipient-email')!.textContent).toBe('alice@example.com');
     });
 
     it('should hide recipient info when no recipientInfo', () => {
       window.startFlow('encrypt');
       window.updateRecipientDisplay();
-      expect(document.getElementById('encrypt-recipient-info').classList.contains('hidden')).toBe(true);
+      expect(document.getElementById('encrypt-recipient-info')!.classList.contains('hidden')).toBe(true);
     });
   });
 
@@ -136,8 +126,8 @@ describe('Contacts (localStorage)', () => {
     it('should include recipient name in filename', async () => {
       window.startFlow('encrypt');
       const state = getState();
-      state.recipientKey = { mock: true };
-      state.recipientInfo = { email: 'alice@example.com', name: 'Alice Smith' };
+      state.recipientKey = { mock: true } as unknown as import('openpgp').PublicKey;
+      state.recipientInfo = { email: 'alice@example.com', name: 'Alice Smith', fingerprint: '' };
       state.selectedFile = new File(['test'], 'report.pdf');
       let downloadedFilename = '';
       window.downloadBlob = vi.fn((blob, name) => { downloadedFilename = name; });
@@ -148,8 +138,8 @@ describe('Contacts (localStorage)', () => {
     it('should use email if no name', async () => {
       window.startFlow('encrypt');
       const state = getState();
-      state.recipientKey = { mock: true };
-      state.recipientInfo = { email: 'alice@example.com', name: '' };
+      state.recipientKey = { mock: true } as unknown as import('openpgp').PublicKey;
+      state.recipientInfo = { email: 'alice@example.com', name: '', fingerprint: '' };
       state.selectedFile = new File(['test'], 'report.pdf');
       let downloadedFilename = '';
       window.downloadBlob = vi.fn((blob, name) => { downloadedFilename = name; });
@@ -160,7 +150,7 @@ describe('Contacts (localStorage)', () => {
     it('should not add suffix when no recipientInfo', async () => {
       window.startFlow('encrypt');
       const state = getState();
-      state.recipientKey = { mock: true };
+      state.recipientKey = { mock: true } as unknown as import('openpgp').PublicKey;
       state.recipientInfo = null;
       state.selectedFile = new File(['test'], 'report.pdf');
       let downloadedFilename = '';
@@ -173,8 +163,8 @@ describe('Contacts (localStorage)', () => {
   describe('Auto-save on lookup', () => {
     it('should save contact after successful keyserver lookup', async () => {
       window.startFlow('encrypt');
-      document.getElementById('recipientEmail').value = 'found@example.com';
-      global.fetch = vi.fn().mockResolvedValue({
+      (document.getElementById('recipientEmail') as HTMLInputElement).value = 'found@example.com';
+      globalThis.fetch = vi.fn().mockResolvedValue({
         status: 200,
         ok: true,
         text: () => Promise.resolve('-----BEGIN PGP PUBLIC KEY BLOCK-----\nmock\n-----END PGP PUBLIC KEY BLOCK-----'),
@@ -189,7 +179,7 @@ describe('Contacts (localStorage)', () => {
   describe('startOver clears recipientInfo', () => {
     it('should clear recipientInfo on startOver', async () => {
       window.startFlow('encrypt');
-      getState().recipientInfo = { email: 'test@example.com', name: 'Test' };
+      getState().recipientInfo = { email: 'test@example.com', name: 'Test', fingerprint: '' };
       window.startOver();
       expect(getState().recipientInfo).toBeNull();
     });
