@@ -8,13 +8,23 @@
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --project tsconfig.checkjs.json"
+    "typecheck": "astro check"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "@astrojs/react": "^5.0.2",
+    "@nanostores/react": "^1.1.0",
+    "astro": "^5.0.0",
+    "nanostores": "^1.2.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "jsdom": "^29.0.1",
     "openpgp": "^6.3.0",
     "vitest": "^4.1.0"

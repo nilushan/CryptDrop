@@ -9,47 +9,70 @@ npm run dev          # Astro dev server
 npm run build        # Production build → dist/
 npm test             # Run all tests (vitest, one-shot)
 npm run test:watch   # Vitest in watch mode
-npm run typecheck    # Type-check app.js + tests via tsconfig.checkjs.json
+npm run typecheck    # Type-check via astro check
 ```
 
 Run a single test file:
 ```bash
-npx vitest run tests/encrypt-flow.test.ts
+npx vitest run tests/utility-functions.test.ts
 ```
 
 Run tests matching a name pattern:
 ```bash
-npx vitest run --reporter=verbose -t "should save contact"
+npx vitest run --reporter=verbose -t "should format bytes"
 ```
 
 ## Architecture
 
-CryptDrop is a **fully client-side PGP encryption tool** deployed as a static Astro 5.x site. All encryption, decryption, key generation, and file handling happens in the browser — the server never sees private keys or unencrypted files.
+CryptDrop is a **fully client-side PGP encryption tool** deployed as a static Astro 5.x site with React islands. All encryption, decryption, key generation, and file handling happens in the browser — the server never sees private keys or unencrypted files.
 
-### Key structural constraint
+### Tech stack
 
-`public/js/app.js` is loaded via `<script is:inline src="/js/app.js">` in `src/pages/app/index.astro`. It **must stay in `public/js/`** because the test suite loads it with `vm.runInNewContext(appJs, window)` to inject the entire app into the jsdom context. Moving it to `src/` would break all tests without a major test infrastructure rewrite.
+- **Astro 5.x** — static site generator with `@astrojs/react` integration
+- **React 19** — UI components rendered as Astro islands (`client:load`)
+- **Nano Stores** (`nanostores` + `@nanostores/react`) — cross-island shared state
+- **OpenPGP.js 6.x** — imported as ES module (not vendored)
+- **TypeScript** — `.tsx` components, `.ts` stores/libs
+- **Vitest + jsdom** — unit tests
 
-### How the app works
+### Island architecture
 
-- `public/js/app.js` — the entire application (~800 lines). Exposes all functions as globals on `window`. Manages a single `state` object (`AppState`) tracking keys, files, current flow, and step.
-- `public/js/openpgp.min.js` — vendored OpenPGP.js v6 CDN bundle. Never modify.
-- `src/pages/app/index.astro` — the app shell. All screens are `<section>` elements with `id="screen-*"` toggled with `.hidden` class. Screen IDs are defined by the `FLOW_SCREENS` constant in `app.js`.
-- Wizard flow: two paths (`encrypt` / `decrypt`) driven by `startFlow()` → `advanceStep()` → `navigateBack()`. Each path has its own ordered screen list in `FLOW_SCREENS`.
+Each tab is an independent React island mounted in `src/pages/app/index.astro`:
 
-### TypeScript setup (non-standard)
+| Island | Component | Stores subscribed |
+|--------|-----------|-------------------|
+| Encrypt | `src/components/encrypt/EncryptTab.tsx` | `$contacts`, `$privateKey`, `$activeTab` |
+| Decrypt | `src/components/decrypt/DecryptTab.tsx` | `$privateKey`, `$publicKey`, `$userInfo`, `$contacts` |
+| Keys | `src/components/keys/KeysTab.tsx` | Key stores, `$contacts` |
+| Wizard | `src/components/wizard/WizardTab.tsx` | Key stores, `$contacts`, `$activeTab` |
+| Toast | `src/components/shared/Toast.tsx` | `$toast` |
+| KeyStatusPill | `src/components/shared/KeyStatusPill.tsx` | `$privateKey`, `$userInfo` |
 
-`tsconfig.json` (Astro's config, do not modify) handles `.astro` files. A separate `tsconfig.checkjs.json` type-checks `app.js` using `checkJs: true` without emitting. Types for the app are in `src/types/app.d.ts` (ambient, globally available — no import needed). The CDN `openpgp` global is declared in `src/types/openpgp-global.d.ts`.
+Tab switching is handled by a Nano Store (`$activeTab`) with an Astro inline script that toggles `.hidden` on tab panels.
 
-### Test setup pattern
+### Shared state (Nano Stores)
 
-`tests/setup.ts` exports `setupDOM()` which:
-1. Sets `document.body.innerHTML` to a static HTML mirror of the app's screen structure
-2. Mocks `localStorage`
-3. Injects a mock `openpgp` object (all key operations return predictable mock values)
-4. Runs `app.js` via `vm.runInNewContext` so all its globals are on `window`
+| Store file | Atoms | Purpose |
+|------------|-------|---------|
+| `src/stores/keys.ts` | `$privateKey`, `$publicKey`, `$armoredPublic`, `$armoredPrivate`, `$userInfo` | User's PGP key pair |
+| `src/stores/contacts.ts` | `$contacts` | localStorage-backed contact directory |
+| `src/stores/toast.ts` | `$toast` | Cross-island toast notifications |
+| `src/stores/activeTab.ts` | `$activeTab` | Current visible tab |
 
-When adding new DOM elements to `app.js`, add matching elements to `STATIC_TEST_HTML` in `tests/setup.ts` and add new globals to the `Window` interface augmentation.
+### Shared libraries
+
+| File | Purpose |
+|------|---------|
+| `src/lib/openpgp-helpers.ts` | `generateKeyPair()`, `importPrivateKey()`, `encryptFileData()`, `decryptFileData()`, `lookupKeyByEmail()`, `parseUserId()` |
+| `src/lib/file-helpers.ts` | `formatSize()`, `downloadBlob()`, `saveToFolder()`, `sanitizeFolderName()`, `shortName()` |
+
+### CSS
+
+All styles are in `<style is:global>` in `src/pages/app/index.astro`. React components use the same CSS class names. Styles use custom utility classes (not Tailwind).
+
+### Test setup
+
+Tests use vitest + jsdom with `@testing-library/jest-dom` matchers. Test files are in `tests/` and can be `.test.ts` or `.test.tsx`. The setup file is `tests/rtl-setup.ts`.
 
 ### Planned backend (not yet built)
 
