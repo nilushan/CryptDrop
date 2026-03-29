@@ -4,6 +4,7 @@ import { $privateKey, $publicKey, $userInfo, $armoredPrivate } from '../../store
 import KeyGenerateForm from './KeyGenerateForm';
 import KeyImportForm from './KeyImportForm';
 import KeyLoadedView from './KeyLoadedView';
+import YourPublicKey from './YourPublicKey';
 
 type View = 'choice' | 'generate' | 'import' | 'loaded';
 
@@ -73,13 +74,16 @@ export default function PrivateKeyPanel({ onViewPublic }: Props) {
       )}
 
       {view === 'loaded' && (
-        <KeyLoadedView
-          userInfo={userInfo || ''}
-          fingerprint={fingerprint}
-          armoredPrivate={armoredPrivate}
-          onReplace={() => setView('choice')}
-          onViewPublic={onViewPublic}
-        />
+        <>
+          <KeyLoadedView
+            userInfo={userInfo || ''}
+            fingerprint={fingerprint}
+            armoredPrivate={armoredPrivate}
+            onReplace={() => setView('choice')}
+            onViewPublic={onViewPublic}
+          />
+          <YourPublicKey />
+        </>
       )}
     </div>
   );

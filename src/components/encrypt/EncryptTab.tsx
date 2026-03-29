@@ -26,7 +26,7 @@ export default function EncryptTab() {
   }
 
   function handleNewRecipient() {
-    $activeTab.set('wizard');
+    $activeTab.set('keys');
   }
 
   return (
@@ -81,8 +81,8 @@ export default function EncryptTab() {
           <p className="empty-msg">
             {searchQuery ? `No recipients match "${searchQuery}".` : 'No saved recipients yet.'}
           </p>
-          <p className="empty-hint">Use the Wizard tab to look up a recipient by email — they'll be saved here automatically.</p>
-          <button onClick={handleNewRecipient} className="btn-primary mt-3">Go to Wizard &rarr;</button>
+          <p className="empty-hint">Add recipients in the Address Book — search by email or import a key file.</p>
+          <button onClick={handleNewRecipient} className="btn-primary mt-3">Open Address Book &rarr;</button>
         </div>
       )}
 
