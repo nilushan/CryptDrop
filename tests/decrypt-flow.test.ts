@@ -10,19 +10,16 @@ describe('Decrypt Flow', () => {
 
   describe('Full decrypt wizard flow', () => {
     it('should progress through all decrypt steps', () => {
-      // Step 0: Path selection visible
-      expect(document.getElementById('screen-path-select')!.classList.contains('hidden')).toBe(false);
-
-      // Step 1: Start decrypt flow
+      // Step 1: Start decrypt flow via wizard tab
       window.startFlow('decrypt');
-      expect(getState().currentFlow).toBe('decrypt');
-      expect(getState().currentStep).toBe(1);
-      expect(document.getElementById('screen-decrypt-keys')!.classList.contains('hidden')).toBe(false);
+      expect(window.wizardFlow).toBe('decrypt');
+      expect(window.wizardStep).toBe(1);
+      expect(document.getElementById('wizard-decrypt-keys')!.classList.contains('hidden')).toBe(false);
 
       // Step 2: Advance to file
       window.advanceStep();
-      expect(getState().currentStep).toBe(2);
-      expect(document.getElementById('screen-decrypt-file')!.classList.contains('hidden')).toBe(false);
+      expect(window.wizardStep).toBe(2);
+      expect(document.getElementById('wizard-decrypt-file')!.classList.contains('hidden')).toBe(false);
     });
   });
 
@@ -122,14 +119,14 @@ describe('Decrypt Flow', () => {
   describe('Flow switching', () => {
     it('should properly switch between encrypt and decrypt flows', () => {
       window.startFlow('encrypt');
-      expect(getState().currentFlow).toBe('encrypt');
-      expect(document.getElementById('screen-encrypt-recipient')!.classList.contains('hidden')).toBe(false);
+      expect(window.wizardFlow).toBe('encrypt');
+      expect(document.getElementById('wizard-encrypt-recipient')!.classList.contains('hidden')).toBe(false);
 
       window.startOver();
       window.startFlow('decrypt');
-      expect(getState().currentFlow).toBe('decrypt');
-      expect(document.getElementById('screen-decrypt-keys')!.classList.contains('hidden')).toBe(false);
-      expect(document.getElementById('screen-encrypt-recipient')!.classList.contains('hidden')).toBe(true);
+      expect(window.wizardFlow).toBe('decrypt');
+      expect(document.getElementById('wizard-decrypt-keys')!.classList.contains('hidden')).toBe(false);
+      expect(document.getElementById('wizard-encrypt-recipient')!.classList.contains('hidden')).toBe(true);
     });
   });
 });

@@ -60,7 +60,7 @@ describe('Key Management', () => {
       });
     });
 
-    it('should set state and auto-advance after successful generation', async () => {
+    it('should set state after successful generation', async () => {
       window.startFlow('decrypt');
       (document.getElementById('genNameDecrypt') as HTMLInputElement).value = 'Test User';
       (document.getElementById('genEmailDecrypt') as HTMLInputElement).value = 'test@example.com';
@@ -71,8 +71,9 @@ describe('Key Management', () => {
       expect(state.armoredPublic).toBeTruthy();
       expect(state.privateKey).toBeTruthy();
       expect(state.userInfo).toBe('Test User <test@example.com>');
-      // Should auto-advance to decrypt file step
-      expect(state.currentStep).toBe(2);
+      // _generateKeys sets state but does not auto-advance; auto-advance
+      // is handled by doGenerateKeysDecrypt → _generateKeysAndAdvance
+      expect(window.wizardStep).toBe(1);
     });
 
     it('should show error toast on generation failure', async () => {
@@ -88,11 +89,13 @@ describe('Key Management', () => {
   });
 
   describe('Signing key generation (encrypt flow)', () => {
-    it('should show generate form when Create My Keys is clicked for signing', () => {
+    it('should be a no-op (sign section now links to Keys tab)', () => {
       window.startFlow('encrypt');
       window.generateKeysForSigning();
-      expect(document.getElementById('generate-form-sign')!.classList.contains('hidden')).toBe(false);
-      expect(document.getElementById('btnGenerateSign')!.classList.contains('hidden')).toBe(true);
+      // generateKeysForSigning is a no-op in the tab architecture; sign section
+      // directs users to the Keys tab instead of showing an inline form.
+      // The generate-form-sign stays hidden until the user interacts with it.
+      expect(document.getElementById('generate-form-sign')!.classList.contains('hidden')).toBe(true);
     });
 
     it('should generate keys for signing and update sign section', async () => {
@@ -105,7 +108,7 @@ describe('Key Management', () => {
       expect(state.privateKey).toBeTruthy();
       expect(state.userInfo).toBe('Signer <signer@example.com>');
       // Should NOT auto-advance (signing keys don't change the wizard step)
-      expect(state.currentStep).toBe(1);
+      expect(window.wizardStep).toBe(1);
     });
   });
 
@@ -152,7 +155,7 @@ describe('Key Management', () => {
       window.updateKeyStatus();
       const el = document.getElementById('keyStatus')!;
       expect(el.textContent).toBe('No keys loaded');
-      expect(el.className).toContain('bg-gray-100');
+      expect(el.className).toContain('key-pill');
     });
 
     it('should show user info when keys are loaded', async () => {
@@ -163,7 +166,7 @@ describe('Key Management', () => {
       await window._generateKeys('genNameDecrypt', 'genEmailDecrypt', 'genPassphraseDecrypt', 'btnDoGenerateDecrypt');
       const el = document.getElementById('keyStatus')!;
       expect(el.textContent).toContain('Test User');
-      expect(el.className).toContain('bg-green-100');
+      expect(el.className).toContain('key-pill-ok');
     });
   });
 });

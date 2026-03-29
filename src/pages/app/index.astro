@@ -4,291 +4,652 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout title="CryptDrop — Encrypt & Decrypt Files in Your Browser">
 
-  <!-- Progress bar (hidden on path selection) -->
-  <div id="progress-bar" class="bg-white border-b border-gray-200 hidden">
-    <div class="max-w-3xl mx-auto px-6 py-3">
-      <div class="flex items-center justify-between">
-        <button onclick="navigateBack()" id="btn-back" class="text-sm text-gray-500 hover:text-gray-700 cursor-pointer flex items-center gap-1">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Back
-        </button>
-        <div id="step-indicators" class="flex items-center gap-2"></div>
-        <div class="w-12"></div>
-      </div>
+  <!-- ======================== TAB NAV ======================== -->
+  <div class="app-tab-bar">
+    <div class="app-tab-inner">
+      <button class="app-tab active" data-tab="encrypt" onclick="switchTab('encrypt')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Encrypt
+      </button>
+      <button class="app-tab" data-tab="decrypt" onclick="switchTab('decrypt')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Decrypt
+      </button>
+      <button class="app-tab" data-tab="keys" onclick="switchTab('keys')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Keys
+      </button>
+      <button class="app-tab" data-tab="wizard" onclick="switchTab('wizard')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 000 4h6a2 2 0 000-4M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Wizard
+      </button>
     </div>
   </div>
 
   <div class="max-w-3xl mx-auto p-6">
 
-    <!-- ======================== PATH SELECTION ======================== -->
-    <section id="screen-path-select" class="fade-in">
-      <div class="text-center mb-6" style="margin-top:2rem;">
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight mb-2">What would you like to do?</h1>
-        <p class="text-sm text-gray-500">All encryption happens locally in your browser. Files never leave your device.</p>
-      </div>
-
-      <div class="grid gap-4" style="grid-template-columns: repeat(2, 1fr);">
-        <!-- Encrypt Card -->
-        <button onclick="startFlow('encrypt')" class="bg-white rounded-xl border-2 border-gray-200 p-6 text-left cursor-pointer transition hover:border-indigo-400 hover:shadow-lg" style="display:flex;flex-direction:column;align-items:flex-start;gap:0.75rem;">
-          <div style="width:48px;height:48px;border-radius:12px;background:#eef2ff;display:flex;align-items:center;justify-content:center;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#4f46e5" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/></svg>
-          </div>
-          <div>
-            <h2 class="text-base font-semibold text-gray-900 mb-1">Encrypt a File</h2>
-            <p class="text-sm text-gray-500">Lock a file so only your intended recipient can open it. You'll need their public key.</p>
-          </div>
-        </button>
-
-        <!-- Decrypt Card -->
-        <button onclick="startFlow('decrypt')" class="bg-white rounded-xl border-2 border-gray-200 p-6 text-left cursor-pointer transition hover:border-indigo-400 hover:shadow-lg" style="display:flex;flex-direction:column;align-items:flex-start;gap:0.75rem;">
-          <div style="width:48px;height:48px;border-radius:12px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#16a34a" stroke-width="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/></svg>
-          </div>
-          <div>
-            <h2 class="text-base font-semibold text-gray-900 mb-1">Decrypt a File</h2>
-            <p class="text-sm text-gray-500">Unlock an encrypted file someone sent you. You'll need your private key.</p>
-          </div>
-        </button>
-      </div>
-
-      <div class="text-center" style="margin-top:2rem;">
-        <a href="/how-it-works" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
-          New to encryption? Learn how it works with our illustrated guide &rarr;
-        </a>
-      </div>
-    </section>
-
-    <!-- ======================== ENCRYPT FLOW: STEP 1 — RECIPIENT ======================== -->
-    <section id="screen-encrypt-recipient" class="fade-in hidden">
-      <!-- Saved contacts -->
-      <div id="saved-contacts" class="hidden bg-white rounded-lg border border-gray-200 p-4 mb-4"></div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 class="text-base font-semibold text-gray-900 mb-1">Find Recipient's Public Key</h2>
-        <p class="text-sm text-gray-500 mb-4">You need their public key (their open padlock) to lock the file so only they can open it.</p>
-
-        <div class="flex gap-2 mb-3">
-          <input id="recipientEmail" type="email" placeholder="recipient@email.com" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
-          <button onclick="lookupRecipient()" id="btnLookup" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition whitespace-nowrap cursor-pointer">Find Their Key</button>
-        </div>
-        <div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
-          <span class="flex-1 border-t border-gray-200"></span> or <span class="flex-1 border-t border-gray-200"></span>
-        </div>
-        <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-indigo-400 transition block">
-          <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" onchange="importRecipientKeyFile(event)" />
-          <p class="text-sm text-gray-500">Click to import recipient's public key file</p>
-        </label>
-        <div id="recipientStatus" class="mt-3 hidden"></div>
-      </div>
-
-      <div id="inviteBox" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-5" style="margin-top:1.5rem;">
-        <h3 class="text-sm font-semibold text-amber-900 mb-2">Recipient not found on keyserver</h3>
-        <p class="text-sm text-amber-800 mb-3">They need to set up their own keys on CryptDrop first. Share these instructions:</p>
-        <div class="bg-white border border-amber-200 rounded-md p-3 text-xs text-gray-700 font-mono mb-3" id="inviteText"></div>
-        <button onclick="copyInvite()" class="text-xs bg-amber-600 text-white px-3 py-1.5 rounded hover:bg-amber-700 transition cursor-pointer">Copy Instructions</button>
-      </div>
-
-      <div id="recipient-continue" class="hidden" style="margin-top:1.5rem;">
-        <button onclick="advanceStep()" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition cursor-pointer">
-          Continue to Encrypt &rarr;
-        </button>
-      </div>
-    </section>
-
-    <!-- ======================== ENCRYPT FLOW: STEP 2 — ENCRYPT FILE ======================== -->
-    <section id="screen-encrypt-file" class="fade-in hidden">
-      <!-- Recipient indicator -->
-      <div id="encrypt-recipient-info" class="hidden bg-indigo-50 border border-indigo-200 rounded-lg px-4 py-3 mb-4 flex items-center justify-between">
+    <!-- ======================== ENCRYPT TAB ======================== -->
+    <section id="tab-encrypt" class="tab-panel fade-in">
+      <div class="tab-header">
         <div>
-          <p class="text-xs text-indigo-500">Encrypting for</p>
-          <p class="text-sm font-semibold text-indigo-900" id="encrypt-recipient-name"></p>
-          <p class="text-xs text-indigo-600" id="encrypt-recipient-email"></p>
+          <h2 class="tab-title">Encrypt a File</h2>
+          <p class="tab-subtitle">Select a recipient from your contacts, then drop a file to encrypt it.</p>
         </div>
-        <button onclick="navigateBack()" class="text-xs text-indigo-600 hover:text-indigo-800 cursor-pointer bg-transparent border-0 font-medium">Change</button>
+        <button onclick="switchTab('wizard')" class="btn-ghost">
+          + New recipient
+        </button>
       </div>
 
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 class="text-base font-semibold text-gray-900 mb-1">Select File to Encrypt</h2>
-        <p class="text-sm text-gray-500 mb-4">The file is encrypted right here in your browser. It never leaves your device unencrypted.</p>
-        <label id="encryptDropZone" class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-8 text-center cursor-pointer hover:border-indigo-400 transition block">
-          <input type="file" id="fileToEncrypt" class="hidden" onchange="handleFileSelect(event)" />
+      <!-- FSA unavailable notice (hidden when supported) -->
+      <div class="fsa-notice notice-box notice-warn mb-4 hidden">
+        <p class="text-xs text-amber-800"><strong>Folder saving not available</strong> — your browser doesn't support the File System Access API. Files will download to your default Downloads folder. Try Chrome or Edge for per-recipient folder saving.</p>
+      </div>
+
+      <!-- Save folder picker (hidden when FSA not supported) -->
+      <div class="fsa-folder-row folder-bar mb-4 hidden">
+        <div class="folder-bar-inner">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span class="folder-bar-label">Save to: <strong class="fsa-folder-name">Not set</strong></span>
+        </div>
+        <button onclick="pickSaveFolder()" class="fsa-folder-set btn-xs">Set save folder</button>
+      </div>
+
+      <!-- Local-only assurance -->
+      <div class="local-assurance-bar mb-4">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Encryption happens <strong>entirely in your browser</strong>. Your file is never uploaded to any server.</span>
+      </div>
+
+      <!-- Search bar -->
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="quick-search" type="text" placeholder="Search recipients…" oninput="filterQuickContacts(this.value)" class="search-input" />
+      </div>
+
+      <!-- Contact list -->
+      <div id="quick-contact-list" class="contact-list"></div>
+
+      <!-- Empty state -->
+      <div id="quick-empty" class="hidden empty-state">
+        <div class="empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <p class="empty-msg" id="quick-empty-msg">No saved recipients yet.</p>
+        <p class="empty-hint">Use the Wizard tab to look up a recipient by email — they'll be saved here automatically.</p>
+        <button onclick="switchTab('wizard')" class="btn-primary mt-3">Go to Wizard &rarr;</button>
+      </div>
+
+      <!-- Inline encrypt panel -->
+      <div id="quick-encrypt-panel" class="hidden encrypt-panel">
+        <div class="encrypt-panel-header">
+          <div>
+            <p class="encrypt-panel-label">Encrypting for</p>
+            <p class="encrypt-panel-name" id="quick-panel-name"></p>
+            <p class="encrypt-panel-fp" id="quick-panel-fp"></p>
+          </div>
+          <button onclick="closeQuickPanel()" class="btn-ghost-sm">&times; change</button>
+        </div>
+
+        <label id="quick-drop-zone" class="drop-zone drop-zone-lg block">
+          <input type="file" id="quick-file-input" class="hidden" onchange="handleQuickFileSelect(event)" />
+          <svg class="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <p class="text-sm text-gray-500">Drop a file here or click to select</p>
         </label>
-        <div id="selectedFileInfo" class="mt-3 hidden text-sm text-gray-600"></div>
-      </div>
+        <div id="quick-file-info" class="hidden file-info"></div>
 
-      <!-- Signing section (optional) -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6" style="margin-top:1.5rem;">
-        <div class="flex items-center gap-3">
-          <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-            <input type="checkbox" id="signFile" class="rounded border-gray-300" onchange="toggleSignSection()" />
-            Sign this file (optional — proves it's from you)
-          </label>
+        <div class="sign-row">
+          <input type="checkbox" id="quick-sign" class="rounded border-gray-300" onchange="toggleQuickSign()" />
+          <label for="quick-sign" class="text-xs text-gray-500 cursor-pointer">Sign this file <span class="text-gray-400">(optional — requires your private key)</span></label>
         </div>
-        <p class="text-xs text-gray-400 mt-1">Signing requires your private key. The recipient can verify your identity if you sign.</p>
+        <div id="quick-sign-status" class="hidden mb-3"></div>
 
-        <!-- Sign key setup — shown when checkbox is checked and no keys loaded -->
-        <div id="sign-key-setup" class="hidden" style="margin-top:1rem;">
-          <div id="sign-keys-loaded" class="hidden">
-            <div class="bg-green-50 border border-green-200 rounded-md p-3">
-              <p class="text-sm font-medium text-green-800" id="sign-keys-loaded-info"></p>
-              <p class="text-xs text-green-600 font-mono mt-1" id="sign-keys-loaded-fp"></p>
-            </div>
-          </div>
+        <button onclick="encryptQuick()" id="btnEncryptQuick" class="btn-primary w-full" disabled>
+          Encrypt &amp; Download
+        </button>
 
-          <div id="sign-keys-form">
-            <div class="bg-indigo-50 border border-indigo-200 rounded-md p-3 mb-3">
-              <p class="text-xs text-indigo-700">To sign files, you need your own keys. Create a new key pair or import an existing one.</p>
-            </div>
-
-            <button onclick="generateKeysForSigning()" id="btnGenerateSign" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition cursor-pointer mb-3">
-              Create My Keys
-            </button>
-
-            <div id="generate-form-sign" class="hidden">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                <input id="genNameSign" type="text" placeholder="Your name" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
-                <input id="genEmailSign" type="email" placeholder="Your email" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
-              </div>
-              <input id="genPassphraseSign" type="password" placeholder="Passphrase (protects your private key)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2" />
-              <button onclick="doGenerateKeysSign()" id="btnDoGenerateSign" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition cursor-pointer">Generate Keys</button>
-            </div>
-
-            <details id="import-toggle-sign">
-              <summary class="text-sm text-gray-600 cursor-pointer hover:text-gray-800 font-medium" style="margin-top:0.75rem;">I already have keys</summary>
-              <div class="mt-3">
-                <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:border-indigo-400 transition block mb-3" id="importDropLabelSign">
-                  <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" id="importKeyFileInputSign" onchange="handleImportFileSelect(event)" />
-                  <p class="text-sm text-gray-500" id="importFileLabelSign">Drop your private key file here or click to select (.asc)</p>
-                </label>
-                <input id="importPassphraseSign" type="password" placeholder="Passphrase" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2" />
-                <button onclick="applyImportKeyForSigning()" id="btnImportSign" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled>Import Key</button>
-              </div>
-            </details>
-          </div>
-        </div>
-      </div>
-
-      <button onclick="encryptFile()" id="btnEncrypt" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled style="margin-top:1.5rem;">
-        Encrypt &amp; Download File
-      </button>
-
-      <div id="encrypt-success" class="hidden bg-green-50 border border-green-200 rounded-lg p-5 fade-in" style="margin-top:1.5rem;">
-        <h3 class="text-sm font-semibold text-green-900 mb-1">File Encrypted Successfully</h3>
-        <p id="encrypt-success-text" class="text-sm text-green-800"></p>
-        <div class="flex gap-2" style="margin-top:0.75rem;">
-          <button onclick="resetEncryptFile()" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition cursor-pointer">Encrypt Another File</button>
-          <button onclick="startOver()" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded hover:bg-gray-300 transition cursor-pointer">Start Over</button>
+        <div id="quick-success" class="hidden success-box">
+          <p class="success-title">Encrypted!</p>
+          <p id="quick-success-text" class="success-body"></p>
+          <button onclick="resetQuickPanel()" class="btn-sm mt-2">Encrypt another file</button>
         </div>
       </div>
     </section>
 
-    <!-- ======================== DECRYPT FLOW: STEP 1 — KEYS ======================== -->
-    <section id="screen-decrypt-keys" class="fade-in hidden">
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 class="text-base font-semibold text-gray-900 mb-1">Set Up Your Keys</h2>
-        <p class="text-sm text-gray-500 mb-4">You need your private key to decrypt files that were encrypted for you.</p>
-
-        <div class="bg-indigo-50 border border-indigo-200 rounded-md p-3 mb-5">
-          <p class="text-xs text-indigo-700">Only your private key can decrypt files locked with your public key. No one else — not even CryptDrop — can read them.</p>
+    <!-- ======================== DECRYPT TAB ======================== -->
+    <section id="tab-decrypt" class="tab-panel fade-in hidden">
+      <div class="tab-header">
+        <div>
+          <h2 class="tab-title">Decrypt a File</h2>
+          <p class="tab-subtitle">Unlock an encrypted file using your private key.</p>
         </div>
-
-        <!-- Key already loaded state -->
-        <div id="decrypt-keys-loaded" class="hidden">
-          <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
-            <p class="text-sm font-medium text-green-800" id="decrypt-keys-loaded-info"></p>
-            <p class="text-xs text-green-600 font-mono mt-1" id="decrypt-keys-loaded-fp"></p>
-          </div>
-          <button onclick="advanceStep()" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition cursor-pointer">
-            Continue &rarr;
-          </button>
-        </div>
-
-        <!-- Key setup forms (shared with encrypt, populated by JS) -->
-        <div id="decrypt-keys-setup">
-          <button onclick="generateKeys()" id="btnGenerateDecrypt" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition cursor-pointer mb-3">
-            Create My Keys
-          </button>
-
-          <div id="generate-form-decrypt" class="hidden">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-              <input id="genNameDecrypt" type="text" placeholder="Your name" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
-              <input id="genEmailDecrypt" type="email" placeholder="Your email" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
-            </div>
-            <input id="genPassphraseDecrypt" type="password" placeholder="Passphrase (protects your private key)" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2" />
-            <button onclick="doGenerateKeysDecrypt()" id="btnDoGenerateDecrypt" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition cursor-pointer">Generate & Continue</button>
-          </div>
-
-          <div class="flex items-center gap-3 text-xs text-gray-400 my-4">
-            <span class="flex-1 border-t border-gray-200"></span> or <span class="flex-1 border-t border-gray-200"></span>
-          </div>
-
-          <details id="import-toggle-decrypt">
-            <summary class="text-sm text-gray-600 cursor-pointer hover:text-gray-800 font-medium">I already have keys</summary>
-            <div class="mt-3">
-              <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:border-indigo-400 transition block mb-3" id="importDropLabelDecrypt">
-                <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" id="importKeyFileInputDecrypt" onchange="handleImportFileSelect(event)" />
-                <p class="text-sm text-gray-500" id="importFileLabelDecrypt">Drop your private key file here or click to select (.asc)</p>
-              </label>
-              <input id="importPassphraseDecrypt" type="password" placeholder="Passphrase" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2" />
-              <button onclick="applyImportKey()" id="btnImportDecrypt" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled>Import & Continue</button>
-            </div>
-          </details>
+        <div id="decrypt-key-badge" class="hidden key-badge key-badge-ok">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span id="decrypt-key-badge-label">Key loaded</span>
         </div>
       </div>
-    </section>
 
-    <!-- ======================== DECRYPT FLOW: STEP 2 — SELECT FILE ======================== -->
-    <section id="screen-decrypt-file" class="fade-in hidden">
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 class="text-base font-semibold text-gray-900 mb-1">Select Encrypted File</h2>
-        <p class="text-sm text-gray-500 mb-4">Choose the encrypted file you received (.pgp, .gpg, or .asc).</p>
-        <label id="decryptDropZone" class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-8 text-center cursor-pointer hover:border-indigo-400 transition block">
+      <!-- FSA unavailable notice -->
+      <div class="fsa-notice notice-box notice-warn mb-4 hidden">
+        <p class="text-xs text-amber-800"><strong>Folder saving not available</strong> — your browser doesn't support the File System Access API. Files will download to your default Downloads folder. Try Chrome or Edge for organised folder saving.</p>
+      </div>
+
+      <!-- Save folder picker -->
+      <div class="fsa-folder-row folder-bar mb-4 hidden">
+        <div class="folder-bar-inner">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span class="folder-bar-label">Save to: <strong class="fsa-folder-name">Not set</strong></span>
+        </div>
+        <button onclick="pickSaveFolder()" class="fsa-folder-set btn-xs">Set save folder</button>
+      </div>
+
+      <!-- Local-only assurance -->
+      <div class="local-assurance-bar mb-4">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Decryption happens <strong>entirely in your browser</strong>. Your private key and file content never leave your device.</span>
+      </div>
+
+      <!-- Keys required notice (shown when no key loaded) -->
+      <div id="decrypt-no-keys" class="notice-box notice-info mb-4">
+        <p class="text-sm text-indigo-800 font-medium mb-1">Private key required</p>
+        <p class="text-xs text-indigo-700">You need your private key to decrypt files. Set it up in the <button onclick="switchTab('keys')" class="link-inline">Keys tab</button> or use the Wizard.</p>
+      </div>
+
+      <!-- File drop -->
+      <div class="card mb-4">
+        <h3 class="card-title">Encrypted File</h3>
+        <label id="decryptDropZone" class="drop-zone drop-zone-lg block">
           <input type="file" id="fileToDecrypt" class="hidden" onchange="handleEncryptedFileSelect(event)" />
-          <p class="text-sm text-gray-500">Drop encrypted file here or click to select</p>
+          <svg class="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p class="text-sm text-gray-500">Drop an encrypted file here or click to select (.pgp, .gpg, .asc)</p>
         </label>
-        <div id="encryptedFileInfo" class="mt-3 hidden text-sm text-gray-600"></div>
+        <div id="encryptedFileInfo" class="mt-3 hidden file-info"></div>
       </div>
 
-      <div class="bg-white rounded-lg border border-gray-200 p-6" style="margin-top:1.5rem;">
-        <h2 class="text-base font-semibold text-gray-900 mb-1">Verify Sender (Optional)</h2>
-        <p class="text-sm text-gray-500 mb-4">If the file was signed, you can verify who sent it by providing their public key.</p>
+      <!-- Verify sender -->
+      <div class="card mb-4">
+        <h3 class="card-title">Verify Sender <span class="text-gray-400 font-normal">(optional)</span></h3>
+        <p class="text-xs text-gray-500 mb-3">If the file was signed, load the sender's public key to verify their identity.</p>
+        <div id="decrypt-sender-contacts" class="hidden mb-3"></div>
         <div class="flex gap-2 mb-3">
-          <input id="senderEmail" type="email" placeholder="sender@email.com" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2" />
-          <button onclick="lookupSender()" class="bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-800 transition whitespace-nowrap cursor-pointer">Find Key</button>
+          <input id="senderEmail" type="email" placeholder="sender@email.com" class="input flex-1" />
+          <button onclick="lookupSender()" class="btn-secondary whitespace-nowrap">Find Key</button>
         </div>
-        <div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
-          <span class="flex-1 border-t border-gray-200"></span> or <span class="flex-1 border-t border-gray-200"></span>
-        </div>
-        <label class="drop-zone border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-indigo-400 transition block">
+        <div class="divider">or</div>
+        <label class="drop-zone drop-zone-sm block">
           <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" onchange="importSenderKeyFile(event)" />
           <p class="text-sm text-gray-500">Click to import sender's public key file</p>
         </label>
         <div id="senderStatus" class="mt-3 hidden"></div>
       </div>
 
-      <button onclick="decryptFile()" id="btnDecrypt" class="w-full bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-md hover:bg-indigo-700 transition disabled:opacity-40 cursor-pointer" disabled style="margin-top:1.5rem;">
+      <button onclick="decryptFile()" id="btnDecrypt" class="btn-primary w-full" disabled>
         Decrypt &amp; Download File
       </button>
 
-      <div id="decryptResult" class="hidden bg-green-50 border border-green-200 rounded-lg p-5 fade-in" style="margin-top:1.5rem;">
-        <h3 class="text-sm font-semibold text-green-900 mb-1">Decryption Successful</h3>
-        <p id="decryptResultText" class="text-sm text-green-800"></p>
-        <div class="flex gap-2" style="margin-top:0.75rem;">
-          <button onclick="resetDecryptFile()" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition cursor-pointer">Decrypt Another File</button>
-          <button onclick="startOver()" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded hover:bg-gray-300 transition cursor-pointer">Start Over</button>
+      <div id="decryptResult" class="hidden success-box mt-4 fade-in">
+        <p class="success-title">Decryption Successful</p>
+        <p id="decryptResultText" class="success-body"></p>
+        <div class="flex gap-2 mt-3">
+          <button onclick="resetDecryptFile()" class="btn-sm">Decrypt Another File</button>
+          <button onclick="resetDecryptTab()" class="btn-sm btn-ghost-sm">Clear All</button>
         </div>
       </div>
     </section>
 
+    <!-- ======================== KEYS TAB ======================== -->
+    <section id="tab-keys" class="tab-panel fade-in hidden">
+      <div class="tab-header">
+        <div>
+          <h2 class="tab-title">Your Keys</h2>
+          <p class="tab-subtitle">Manage your private key and public key. Everything stays in your browser.</p>
+        </div>
+      </div>
+
+      <!-- ── SUB-TAB BAR ── -->
+      <div id="keys-subtab-bar" class="keys-subtab-bar mb-5">
+        <button class="keys-subtab keys-subtab-private active" data-keys-subtab="private" onclick="switchKeysSubtab('private')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Private Key
+        </button>
+        <button class="keys-subtab keys-subtab-public" data-keys-subtab="public" onclick="switchKeysSubtab('public')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Public Keys
+        </button>
+      </div>
+
+      <!-- ══════════════════ PRIVATE KEY PANEL ══════════════════ -->
+      <div id="keys-panel-private">
+        <!-- Local-only assurance -->
+        <div class="local-assurance-bar mb-5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>All key operations run <strong>locally in your browser</strong>. Your private key is <strong>never transmitted</strong> to any server.</span>
+        </div>
+
+        <!-- ── State 1: Choice screen (no key loaded, no form open) ── -->
+        <div id="keys-private-empty">
+          <div class="private-key-card private-key-card-empty mb-5">
+            <div class="private-key-empty-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <p class="private-key-empty-title">No private key loaded</p>
+            <p class="private-key-empty-body">You need your private key to <strong>decrypt</strong> files sent to you, or to <strong>sign</strong> files you encrypt. If you only want to encrypt files <em>for others</em>, you don't need one here.</p>
+          </div>
+
+          <div class="keys-choice-grid">
+            <button onclick="showKeysGenerateForm()" class="keys-choice-card">
+              <div class="keys-choice-icon keys-choice-icon-generate">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <p class="keys-choice-title">Generate a New Key Pair</p>
+              <p class="keys-choice-desc">Create fresh Curve25519 keys. Your private key downloads immediately.</p>
+            </button>
+            <button onclick="showKeysImportForm()" class="keys-choice-card">
+              <div class="keys-choice-icon keys-choice-icon-import">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <p class="keys-choice-title">Import Existing Key</p>
+              <p class="keys-choice-desc">Load a private key file (.asc) you already have.</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- ── State 2: Generate form ── -->
+        <div id="keys-private-generate" class="hidden">
+          <button onclick="showKeysChoiceScreen()" class="keys-back-link">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back to options
+          </button>
+          <div class="private-key-card mb-4">
+            <h3 class="private-key-section-title">Generate a New Key Pair</h3>
+            <p class="private-key-section-body">Creates a Curve25519 key pair. Your <strong>private key file downloads immediately</strong> — you must save it securely yourself. CryptDrop cannot recover it.</p>
+
+            <div class="key-gen-local-note">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Generated entirely in your browser. Never sent to any server.
+            </div>
+
+            <div id="keys-gen-form" class="mt-4">
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <input id="genNameKeys" type="text" placeholder="Your name" class="input" />
+                <input id="genEmailKeys" type="email" placeholder="your@email.com" class="input" />
+              </div>
+              <input id="genPassphraseKeys" type="password" placeholder="Strong passphrase — protects your private key" class="input w-full mb-4" />
+              <button onclick="doGenerateKeysTab()" id="btnDoGenerateKeys" class="btn-vault-generate">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Generate Keys &amp; Download
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── State 3: Import form ── -->
+        <div id="keys-private-import" class="hidden">
+          <button onclick="showKeysChoiceScreen()" class="keys-back-link">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back to options
+          </button>
+          <div class="private-key-card">
+            <h3 class="private-key-section-title">Import Existing Keys</h3>
+            <p class="private-key-section-body">Load a private key file (.asc) you already have. It will be held in memory for this session only.</p>
+            <div class="key-gen-local-note mt-3">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Read locally — your key never leaves your device.
+            </div>
+            <div id="keys-import-form" class="mt-4">
+              <label class="drop-zone drop-zone-sm block mb-3" id="importDropLabelKeys">
+                <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" id="importKeyFileInputKeys" onchange="handleImportFileSelect(event)" />
+                <p class="text-sm text-gray-500" id="importFileLabelKeys">Drop your private key file here or click to select</p>
+              </label>
+              <input id="importPassphraseKeys" type="password" placeholder="Passphrase (if your key has one)" class="input w-full mb-3" />
+              <button onclick="applyImportKeyTab()" id="btnImportKeys" class="btn-vault-action" disabled>Import Keys</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── State 4: Key loaded ── -->
+        <div id="keys-private-loaded" class="hidden">
+          <div class="private-key-card mb-4">
+            <div class="private-key-vault-row">
+              <div class="private-key-vault-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="currentColor"/></svg>
+              </div>
+              <div class="private-key-vault-info">
+                <p class="private-key-uid" id="keys-loaded-name"></p>
+                <p class="private-key-fp" id="keys-loaded-fp"></p>
+              </div>
+              <div class="private-key-vault-status">
+                <span class="vault-loaded-badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                  Loaded
+                </span>
+              </div>
+            </div>
+
+            <div class="private-key-warning-strip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>This key lives only in your browser's memory and is erased when you close this tab. We intentionally don't save it — browser storage can be read by malicious scripts or extensions. <strong>Back it up securely</strong> — if you lose it, you cannot decrypt files sent to you.</span>
+            </div>
+
+            <div class="private-key-actions">
+              <button onclick="downloadPrivateKey()" class="btn-vault-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Download Private Key
+              </button>
+              <button onclick="showKeysChoiceScreen()" class="btn-vault-secondary">
+                Replace keys
+              </button>
+            </div>
+          </div>
+
+          <!-- CTA banner to view public key -->
+          <div class="keys-public-cta" onclick="switchKeysSubtab('public')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <div>
+              <p class="keys-public-cta-title">Your public key is ready to share</p>
+              <p class="keys-public-cta-desc">Download, copy, email, or publish it to a keyserver.</p>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════ PUBLIC KEYS PANEL ══════════════════ -->
+      <div id="keys-panel-public" class="hidden">
+
+        <!-- ── YOUR PUBLIC KEY ── -->
+        <div class="keys-section-label keys-public-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Your Public Key
+          <span class="keys-section-badge keys-public-badge">Safe to share freely</span>
+        </div>
+
+        <!-- Public key: loaded -->
+        <div id="keys-your-public-loaded" class="hidden">
+          <div class="public-key-card mb-4">
+            <div class="public-key-intro">
+              <p class="public-key-desc">Your public key is your open padlock — anyone can use it to encrypt files for you. Share it widely. It's designed to be public.</p>
+              <p class="public-key-source-note">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                When someone searches for your email in CryptDrop, your public key is retrieved from <strong>keys.openpgp.org</strong> — a public keyserver. Publishing it there lets anyone find you automatically.
+              </p>
+            </div>
+            <div class="public-key-actions">
+              <button onclick="downloadPublicKey()" class="btn-public-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Download Public Key
+              </button>
+              <button onclick="copyPublicKey()" class="btn-public-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/></svg>
+                Copy Public Key
+              </button>
+              <button onclick="sharePublicKeyViaEmail()" class="btn-public-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/></svg>
+                Share via Email
+              </button>
+              <button onclick="publishPublicKey()" class="btn-public-publish">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2"/></svg>
+                Publish to Keyserver
+              </button>
+            </div>
+            <div id="publish-status" class="hidden mt-3"></div>
+          </div>
+        </div>
+
+        <!-- Public key: empty state -->
+        <div id="keys-your-public-empty">
+          <div class="public-key-card public-key-card-empty mb-4">
+            <div class="public-key-empty-inner">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <div>
+                <p class="public-key-empty-title">No public key yet</p>
+                <p class="public-key-empty-desc">Generate or import a private key first — your public key is derived from it.</p>
+              </div>
+            </div>
+            <button onclick="switchKeysSubtab('private')" class="btn-public-action mt-3">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Go to Private Key
+            </button>
+          </div>
+        </div>
+
+        <!-- ── RECIPIENTS' PUBLIC KEYS ── -->
+        <div class="keys-section-label keys-public-label" style="margin-top:1.5rem;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Recipients' Public Keys
+          <span class="keys-section-badge keys-public-badge">Saved from keyserver lookups</span>
+        </div>
+        <div class="public-key-card">
+          <p class="public-key-desc" style="margin-bottom:0.75rem;">These are your saved contacts' public keys — retrieved from the internet when you looked them up. They're safe to store and share.</p>
+          <div id="saved-contacts-keys" class="hidden"></div>
+          <div id="saved-contacts-keys-empty" class="public-contacts-empty">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+            <p>No saved recipients yet. Look up a recipient in the Wizard or Encrypt tab to save their key here.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================== WIZARD TAB ======================== -->
+    <section id="tab-wizard" class="tab-panel fade-in hidden">
+
+      <!-- Wizard step progress bar -->
+      <div id="wizard-progress" class="wizard-progress hidden">
+        <button onclick="wizardBack()" class="btn-ghost-sm flex items-center gap-1">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Back
+        </button>
+        <div id="wizard-step-indicators" class="flex items-center gap-2"></div>
+        <div style="width:48px;"></div>
+      </div>
+
+      <!-- Wizard home -->
+      <div id="wizard-home" class="fade-in">
+        <div class="text-center mb-6" style="margin-top:1rem;">
+          <h2 class="tab-title">Step-by-step guide</h2>
+          <p class="tab-subtitle">New here? We'll walk you through finding a recipient and encrypting your first file.</p>
+        </div>
+        <div class="grid gap-4" style="grid-template-columns:repeat(2,1fr);">
+          <button onclick="startWizardFlow('encrypt')" class="card card-btn text-left">
+            <div class="card-icon bg-indigo-50">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#4f46e5" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-900 mb-1">Encrypt a File</p>
+              <p class="text-xs text-gray-500">Find a recipient's key, then encrypt any file for them.</p>
+            </div>
+          </button>
+          <button onclick="startWizardFlow('decrypt')" class="card card-btn text-left">
+            <div class="card-icon bg-green-50">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#16a34a" stroke-width="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-900 mb-1">Decrypt a File</p>
+              <p class="text-xs text-gray-500">Set up your private key, then decrypt a file sent to you.</p>
+            </div>
+          </button>
+        </div>
+        <div class="text-center mt-4">
+          <a href="/how-it-works" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+            How does encryption work? &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Wizard: Encrypt Step 1 — Recipient ── -->
+      <div id="wizard-encrypt-recipient" class="hidden fade-in">
+        <div id="saved-contacts" class="hidden bg-white rounded-lg border border-gray-200 p-4 mb-4"></div>
+        <div class="card">
+          <h3 class="card-title">Find Recipient's Public Key</h3>
+          <p class="text-xs text-gray-500 mb-4">You need their public key (their open padlock) to lock the file so only they can open it.</p>
+          <div class="flex gap-2 mb-3">
+            <input id="recipientEmail" type="email" placeholder="recipient@email.com" class="input flex-1" />
+            <button onclick="lookupRecipient()" id="btnLookup" class="btn-primary whitespace-nowrap">Find Their Key</button>
+          </div>
+          <div class="divider">or</div>
+          <label class="drop-zone drop-zone-sm block">
+            <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" onchange="importRecipientKeyFile(event)" />
+            <p class="text-sm text-gray-500">Import recipient's public key file</p>
+          </label>
+          <div id="recipientStatus" class="mt-3 hidden"></div>
+        </div>
+        <div id="inviteBox" class="hidden notice-box notice-warn mt-4">
+          <h4 class="text-sm font-semibold text-amber-900 mb-2">Recipient not found on keyserver</h4>
+          <p class="text-xs text-amber-800 mb-3">They need to set up their own keys first. Share these instructions:</p>
+          <div class="code-block mb-3" id="inviteText"></div>
+          <button onclick="copyInvite()" class="btn-sm">Copy Instructions</button>
+        </div>
+        <div id="recipient-continue" class="hidden mt-4">
+          <button onclick="wizardAdvance()" class="btn-primary w-full">Continue to Encrypt &rarr;</button>
+        </div>
+      </div>
+
+      <!-- ── Wizard: Encrypt Step 2 — Encrypt File ── -->
+      <div id="wizard-encrypt-file" class="hidden fade-in">
+        <div id="encrypt-recipient-info" class="hidden notice-box notice-info mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-indigo-500">Encrypting for</p>
+            <p class="text-sm font-semibold text-indigo-900" id="encrypt-recipient-name"></p>
+            <p class="text-xs text-indigo-600" id="encrypt-recipient-email"></p>
+          </div>
+          <button onclick="wizardBack()" class="link-inline text-xs">Change</button>
+        </div>
+        <div class="card mb-4">
+          <h3 class="card-title">Select File to Encrypt</h3>
+          <p class="text-xs text-gray-500 mb-4">The file is encrypted entirely in your browser.</p>
+          <label id="encryptDropZone" class="drop-zone drop-zone-lg block">
+            <input type="file" id="fileToEncrypt" class="hidden" onchange="handleFileSelect(event)" />
+            <svg class="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="text-sm text-gray-500">Drop a file here or click to select</p>
+          </label>
+          <div id="selectedFileInfo" class="mt-3 hidden file-info"></div>
+        </div>
+
+        <div class="card mb-4">
+          <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="checkbox" id="signFile" class="rounded border-gray-300" onchange="toggleSignSection()" />
+            Sign this file (optional — proves it's from you)
+          </label>
+          <p class="text-xs text-gray-400 mt-1 ml-5">Requires your private key. Set it up in the <button onclick="switchTab('keys')" class="link-inline">Keys tab</button>.</p>
+          <div id="sign-key-setup" class="hidden mt-3">
+            <div id="sign-keys-loaded" class="hidden">
+              <div class="bg-green-50 border border-green-200 rounded-md p-3">
+                <p class="text-sm font-medium text-green-800" id="sign-keys-loaded-info"></p>
+                <p class="text-xs text-green-600 font-mono mt-1" id="sign-keys-loaded-fp"></p>
+              </div>
+            </div>
+            <div id="sign-keys-form">
+              <div class="notice-box notice-info mb-3">
+                <p class="text-xs text-indigo-700">No private key loaded. <button onclick="switchTab('keys')" class="link-inline">Set up your keys</button> first.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="encryptFile()" id="btnEncrypt" class="btn-primary w-full" disabled>Encrypt &amp; Download File</button>
+
+        <div id="encrypt-success" class="hidden success-box mt-4 fade-in">
+          <p class="success-title">File Encrypted Successfully</p>
+          <p id="encrypt-success-text" class="success-body"></p>
+          <div class="flex gap-2 mt-3">
+            <button onclick="resetEncryptFile()" class="btn-sm">Encrypt Another File</button>
+            <button onclick="switchTab('encrypt')" class="btn-sm btn-ghost-sm">Go to Encrypt tab</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Wizard: Decrypt Step 1 — Keys ── -->
+      <div id="wizard-decrypt-keys" class="hidden fade-in">
+        <div class="card">
+          <h3 class="card-title">Set Up Your Private Key</h3>
+          <p class="text-xs text-gray-500 mb-4">You need your private key to decrypt files encrypted for you.</p>
+          <div class="notice-box notice-info mb-4">
+            <p class="text-xs text-indigo-700">Only your private key can decrypt files locked with your public key. CryptDrop never sees it.</p>
+          </div>
+
+          <div id="decrypt-keys-loaded" class="hidden">
+            <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+              <p class="text-sm font-medium text-green-800" id="decrypt-keys-loaded-info"></p>
+              <p class="text-xs text-green-600 font-mono mt-1" id="decrypt-keys-loaded-fp"></p>
+            </div>
+            <button onclick="wizardAdvance()" class="btn-primary">Continue &rarr;</button>
+          </div>
+
+          <div id="decrypt-keys-setup">
+            <button onclick="generateKeys()" id="btnGenerateDecrypt" class="btn-primary w-full mb-3">Create My Keys</button>
+            <div id="generate-form-decrypt" class="hidden mb-4">
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <input id="genNameDecrypt" type="text" placeholder="Your name" class="input" />
+                <input id="genEmailDecrypt" type="email" placeholder="Your email" class="input" />
+              </div>
+              <input id="genPassphraseDecrypt" type="password" placeholder="Passphrase (protects your private key)" class="input w-full mb-4" />
+              <button onclick="doGenerateKeysDecrypt()" id="btnDoGenerateDecrypt" class="btn-primary">Generate &amp; Continue</button>
+            </div>
+            <div class="divider">or</div>
+            <details id="import-toggle-decrypt">
+              <summary class="text-sm text-gray-600 cursor-pointer hover:text-gray-800 font-medium mt-3">I already have keys</summary>
+              <div class="mt-3">
+                <label class="drop-zone drop-zone-sm block mb-3" id="importDropLabelDecrypt">
+                  <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" id="importKeyFileInputDecrypt" onchange="handleImportFileSelect(event)" />
+                  <p class="text-sm text-gray-500" id="importFileLabelDecrypt">Drop your private key file here or click to select</p>
+                </label>
+                <input id="importPassphraseDecrypt" type="password" placeholder="Passphrase" class="input w-full mb-3" />
+                <button onclick="applyImportKey()" id="btnImportDecrypt" class="btn-primary" disabled>Import &amp; Continue</button>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Wizard: Decrypt Step 2 — Decrypt File ── -->
+      <div id="wizard-decrypt-file" class="hidden fade-in">
+        <div class="card mb-4">
+          <h3 class="card-title">Select Encrypted File</h3>
+          <label id="decryptDropZoneWizard" class="drop-zone drop-zone-lg block">
+            <input type="file" id="fileToDecryptWizard" class="hidden" onchange="handleEncryptedFileSelectWizard(event)" />
+            <svg class="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="text-sm text-gray-500">Drop encrypted file here or click to select</p>
+          </label>
+          <div id="encryptedFileInfoWizard" class="mt-3 hidden file-info"></div>
+        </div>
+
+        <div class="card mb-4">
+          <h3 class="card-title">Verify Sender <span class="text-gray-400 font-normal">(optional)</span></h3>
+          <div id="wizard-sender-contacts" class="hidden mb-3"></div>
+          <div class="flex gap-2 mb-3">
+            <input id="senderEmailWizard" type="email" placeholder="sender@email.com" class="input flex-1" />
+            <button onclick="lookupSenderWizard()" class="btn-secondary whitespace-nowrap">Find Key</button>
+          </div>
+          <div class="divider">or</div>
+          <label class="drop-zone drop-zone-sm block">
+            <input type="file" accept=".asc,.key,.pgp,.gpg" class="hidden" onchange="importSenderKeyFileWizard(event)" />
+            <p class="text-sm text-gray-500">Import sender's public key file</p>
+          </label>
+          <div id="senderStatusWizard" class="mt-3 hidden"></div>
+        </div>
+
+        <button onclick="decryptFileWizard()" id="btnDecryptWizard" class="btn-primary w-full" disabled>Decrypt &amp; Download File</button>
+
+        <div id="decryptResultWizard" class="hidden success-box mt-4 fade-in">
+          <p class="success-title">Decryption Successful</p>
+          <p id="decryptResultTextWizard" class="success-body"></p>
+          <div class="flex gap-2 mt-3">
+            <button onclick="resetDecryptFileWizard()" class="btn-sm">Decrypt Another</button>
+            <button onclick="switchTab('decrypt')" class="btn-sm btn-ghost-sm">Go to Decrypt tab</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
   </div>
 
-  <!-- Key status indicator -->
-  <div id="keyStatusFloat" style="position:fixed;top:4.5rem;right:1rem;z-index:50;">
-    <div id="keyStatus" class="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-500">No keys loaded</div>
+  <!-- Key status pill (floating) -->
+  <div id="keyStatusFloat" style="position:fixed;top:4rem;right:1rem;z-index:50;">
+    <div id="keyStatus" class="key-pill">No keys loaded</div>
   </div>
 
-  <!-- Status toast -->
+  <!-- Toast -->
   <div id="toast" class="fixed hidden z-50" style="bottom:1.5rem;left:50%;transform:translateX(-50%);">
     <div id="toastInner" class="px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium"></div>
   </div>
@@ -296,3 +657,443 @@ import Layout from '../../layouts/Layout.astro';
   <script is:inline src="/js/openpgp.min.js"></script>
   <script is:inline src="/js/app.js"></script>
 </Layout>
+
+<style>
+  /* ── Tab bar ── */
+  .app-tab-bar {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 3.5rem;
+    z-index: 40;
+  }
+  .app-tab-inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 0;
+  }
+  .app-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #6b7280;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .app-tab:hover { color: #374151; }
+  .app-tab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
+  .app-tab svg { opacity: 0.7; }
+  .app-tab.active svg { opacity: 1; }
+
+  /* ── Tab panels ── */
+  .tab-panel { min-height: 60vh; }
+  .tab-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-top: 0.5rem;
+  }
+  .tab-title { font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0 0 0.2rem; }
+  .tab-subtitle { font-size: 0.8125rem; color: #6b7280; margin: 0; }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.625rem;
+    padding: 1.25rem;
+    margin-bottom: 0;
+  }
+  .card-title { font-size: 0.875rem; font-weight: 600; color: #111827; margin: 0 0 0.5rem; }
+  .card-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-btn {
+    display: flex; flex-direction: column; gap: 0.625rem;
+    cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+    background: #fff; border: 2px solid #e5e7eb;
+  }
+  .card-btn:hover { border-color: #818cf8; box-shadow: 0 4px 12px rgb(99 102 241 / 0.1); }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+    background: #4f46e5; color: #fff;
+    font-size: 0.875rem; font-weight: 600;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem; border: none; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #4338ca; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary {
+    display: inline-flex; align-items: center;
+    background: #f3f4f6; color: #374151;
+    font-size: 0.8125rem; font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: #e5e7eb; }
+  .btn-ghost { background: transparent; border: none; cursor: pointer; font-size: 0.8125rem; color: #9ca3af; transition: color 0.15s; padding: 0.25rem 0; }
+  .btn-ghost:hover { color: #4f46e5; }
+  .btn-ghost-sm { background: transparent; border: none; cursor: pointer; font-size: 0.75rem; color: #9ca3af; transition: color 0.15s; padding: 0.25rem 0.5rem; }
+  .btn-ghost-sm:hover { color: #374151; }
+  .btn-sm {
+    display: inline-flex; align-items: center;
+    background: #4f46e5; color: #fff;
+    font-size: 0.75rem; font-weight: 500;
+    padding: 0.375rem 0.875rem; border-radius: 0.375rem; border: none; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-sm:hover { background: #4338ca; }
+  .link-inline { background: none; border: none; cursor: pointer; color: #4f46e5; font-size: inherit; padding: 0; text-decoration: underline; }
+  .link-inline:hover { color: #3730a3; }
+
+  /* ── Inputs ── */
+  .input {
+    border: 1px solid #d1d5db; border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem; font-size: 0.875rem;
+    outline: none; transition: box-shadow 0.15s;
+    font-family: inherit;
+  }
+  .input:focus { box-shadow: 0 0 0 2px #6366f1; border-color: #6366f1; }
+
+  /* ── Drop zones ── */
+  .drop-zone { border: 2px dashed #d1d5db; border-radius: 0.5rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .drop-zone:hover, .drop-zone.dragover { border-color: #6366f1; background: #eef2ff; }
+  .drop-zone-lg { padding: 2rem 1rem; text-align: center; }
+  .drop-zone-sm { padding: 1rem; text-align: center; }
+  .drop-icon { margin: 0 auto 0.5rem; color: #d1d5db; }
+
+  /* ── Search ── */
+  .search-wrap { position: relative; margin-bottom: 0.75rem; }
+  .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
+  .search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.25rem; border: 1px solid #d1d5db; border-radius: 0.625rem; font-size: 0.875rem; outline: none; box-sizing: border-box; }
+  .search-input:focus { box-shadow: 0 0 0 2px #6366f1; border-color: #6366f1; }
+
+  /* ── Contact list ── */
+  .contact-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 3rem 1rem; }
+  .empty-icon { width: 56px; height: 56px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #9ca3af; }
+  .empty-msg { font-size: 0.875rem; font-weight: 500; color: #374151; margin: 0 0 0.25rem; }
+  .empty-hint { font-size: 0.75rem; color: #9ca3af; margin: 0; }
+
+  /* ── Encrypt panel ── */
+  .encrypt-panel { background: #fff; border: 1px solid #c7d2fe; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 4px rgb(99 102 241 / 0.08); }
+  .encrypt-panel-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+  .encrypt-panel-label { font-size: 0.625rem; font-weight: 600; color: #6366f1; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.2rem; }
+  .encrypt-panel-name { font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.15rem; }
+  .encrypt-panel-fp { font-size: 0.7rem; color: #6b7280; font-family: ui-monospace, monospace; margin: 0; }
+
+  /* ── Notice boxes ── */
+  .notice-box { border-radius: 0.5rem; padding: 0.875rem 1rem; }
+  .notice-info { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .notice-warn { background: #fffbeb; border: 1px solid #fde68a; }
+
+  /* ── Success box ── */
+  .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.625rem; padding: 1rem 1.25rem; }
+  .success-title { font-size: 0.875rem; font-weight: 600; color: #14532d; margin: 0 0 0.25rem; }
+  .success-body { font-size: 0.8125rem; color: #166534; margin: 0; }
+
+  /* ── File info ── */
+  .file-info { font-size: 0.875rem; color: #4b5563; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.375rem; padding: 0.5rem 0.75rem; }
+
+  /* ── Divider ── */
+  .divider { display: flex; align-items: center; gap: 0.75rem; font-size: 0.75rem; color: #9ca3af; margin: 0.75rem 0; }
+  .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid #e5e7eb; }
+
+  /* ── Key badge ── */
+  .key-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.625rem; border-radius: 9999px; }
+  .key-badge-ok { background: #dcfce7; color: #15803d; }
+  .key-pill { font-size: 0.75rem; padding: 0.375rem 0.75rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; }
+  .key-pill-ok { background: #dcfce7; color: #15803d; }
+
+  /* ── Folder save bar ── */
+  .folder-bar { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.5rem 0.875rem; }
+  .folder-bar-inner { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #64748b; min-width: 0; overflow: hidden; }
+  .folder-bar-inner strong { color: #334155; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+  .folder-bar-label { white-space: nowrap; }
+  .btn-xs {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    background: #fff; color: #4f46e5; border: 1px solid #c7d2fe;
+    font-size: 0.6875rem; font-weight: 600;
+    padding: 0.25rem 0.625rem; border-radius: 0.375rem; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-xs:hover { background: #eef2ff; border-color: #818cf8; }
+
+  /* ── Sign row ── */
+  .sign-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+
+  /* ── Code block ── */
+  .code-block { background: #fff; border: 1px solid #fde68a; border-radius: 0.375rem; padding: 0.75rem; font-size: 0.75rem; font-family: ui-monospace, monospace; color: #374151; white-space: pre-wrap; }
+
+  /* ── Wizard progress ── */
+  .wizard-progress { display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 0; margin-bottom: 1rem; border-bottom: 1px solid #e5e7eb; }
+
+  /* ── Grid ── */
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mt-3 { margin-top: 0.75rem; }
+  .mt-4 { margin-top: 1rem; }
+  .mb-3 { margin-bottom: 0.75rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-5 { margin-bottom: 1.25rem; }
+  .ml-5 { margin-left: 1.25rem; }
+  .mt-0\.5 { margin-top: 0.125rem; }
+  .w-full { width: 100%; }
+
+  /* ── Local assurance bar ── */
+  .local-assurance-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem; color: #166534;
+  }
+  .local-assurance-bar svg { flex-shrink: 0; color: #16a34a; }
+
+  /* ── Keys section labels ── */
+  .keys-section-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+  .keys-private-label { color: #92400e; }
+  .keys-private-label svg { color: #d97706; }
+  .keys-public-label { color: #065f46; }
+  .keys-public-label svg { color: #059669; }
+  .keys-section-badge {
+    font-size: 0.625rem; font-weight: 600; text-transform: none; letter-spacing: 0.02em;
+    padding: 0.15rem 0.5rem; border-radius: 9999px;
+  }
+  .keys-private-badge { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .keys-public-badge { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+
+  /* ── Private key card (vault aesthetic) ── */
+  .private-key-card {
+    background: #1c1917; border: 1px solid #44403c; border-radius: 0.75rem; padding: 1.25rem;
+    color: #e7e5e4;
+  }
+  .private-key-card-empty {
+    background: #292524; border-color: #3c3835;
+    text-align: center; padding: 1.75rem 1.25rem;
+  }
+  .private-key-vault-row { display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1rem; }
+  .private-key-vault-icon {
+    width: 44px; height: 44px; background: #292524; border: 1px solid #57534e;
+    border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: #f59e0b;
+  }
+  .private-key-vault-info { flex: 1; min-width: 0; }
+  .private-key-vault-status { flex-shrink: 0; }
+  .private-key-uid { font-size: 0.9375rem; font-weight: 600; color: #f5f5f4; margin: 0 0 0.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .private-key-fp { font-size: 0.6875rem; font-family: ui-monospace, monospace; color: #a8a29e; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vault-loaded-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    background: #14532d; color: #bbf7d0; border: 1px solid #166534;
+    font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem; border-radius: 9999px;
+  }
+  .private-key-warning-strip {
+    display: flex; align-items: flex-start; gap: 0.5rem;
+    background: #292524; border: 1px solid #78350f; border-radius: 0.5rem;
+    padding: 0.625rem 0.75rem; margin-bottom: 1rem;
+    font-size: 0.75rem; color: #fbbf24; line-height: 1.4;
+  }
+  .private-key-warning-strip strong { color: #fde68a; }
+  .private-key-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .private-key-empty-icon {
+    width: 52px; height: 52px; background: #292524; border: 1px solid #44403c;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 0.875rem; color: #57534e;
+  }
+  .private-key-empty-title { font-size: 0.9375rem; font-weight: 600; color: #d6d3d1; margin: 0 0 0.375rem; }
+  .private-key-empty-body { font-size: 0.8125rem; color: #a8a29e; margin: 0; line-height: 1.5; }
+  .private-key-section-title { font-size: 0.875rem; font-weight: 600; color: #f5f5f4; margin: 0 0 0.375rem; }
+  .private-key-section-body { font-size: 0.8125rem; color: #a8a29e; margin: 0 0 0.75rem; line-height: 1.5; }
+  .private-key-section-body strong { color: #fde68a; }
+  .key-gen-local-note {
+    display: flex; align-items: center; gap: 0.375rem;
+    font-size: 0.75rem; color: #6ee7b7; background: #022c22; border: 1px solid #065f46;
+    border-radius: 0.375rem; padding: 0.375rem 0.625rem;
+  }
+  .key-gen-local-note svg { color: #34d399; flex-shrink: 0; }
+
+  /* ── Private key card buttons ── */
+  .btn-vault-action {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    background: #292524; color: #fbbf24; border: 1px solid #57534e;
+    font-size: 0.8125rem; font-weight: 600;
+    padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-vault-action:hover { background: #3c3835; border-color: #78350f; }
+  .btn-vault-action:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-vault-secondary {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    background: transparent; color: #a8a29e; border: 1px solid #44403c;
+    font-size: 0.8125rem; font-weight: 500;
+    padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .btn-vault-secondary:hover { color: #d6d3d1; border-color: #57534e; }
+  .btn-vault-generate {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    background: #f59e0b; color: #1c1917; border: none;
+    font-size: 0.875rem; font-weight: 700;
+    padding: 0.625rem 1.25rem; border-radius: 0.5rem; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-vault-generate:hover { background: #d97706; }
+
+  /* ── Public key card (open, light aesthetic) ── */
+  .public-key-card {
+    background: #f0fdf4; border: 1px solid #a7f3d0; border-radius: 0.75rem; padding: 1.25rem;
+  }
+  .public-key-intro { margin-bottom: 0.875rem; }
+  .public-key-desc { font-size: 0.8125rem; color: #065f46; margin: 0 0 0.5rem; line-height: 1.5; }
+  .public-key-source-note {
+    display: flex; align-items: flex-start; gap: 0.375rem;
+    font-size: 0.75rem; color: #047857; line-height: 1.4;
+  }
+  .public-key-source-note svg { flex-shrink: 0; margin-top: 0.1rem; }
+  .public-key-source-note strong { color: #065f46; }
+  .public-key-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  .btn-public-action {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    background: #fff; color: #059669; border: 1px solid #6ee7b7;
+    font-size: 0.8125rem; font-weight: 500;
+    padding: 0.4375rem 0.875rem; border-radius: 0.5rem; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-public-action:hover { background: #ecfdf5; border-color: #34d399; }
+  .btn-public-publish {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    background: #059669; color: #fff; border: none;
+    font-size: 0.8125rem; font-weight: 600;
+    padding: 0.4375rem 0.875rem; border-radius: 0.5rem; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-public-publish:hover { background: #047857; }
+  .btn-public-publish:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Contact key rows (Keys tab recipients section) ── */
+  .contact-key-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.5rem 0; border-bottom: 1px solid #a7f3d0;
+  }
+  .contact-key-row:last-child { border-bottom: none; }
+  .contact-key-info { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; min-width: 0; }
+  .contact-key-name { font-size: 0.8125rem; font-weight: 600; color: #065f46; }
+  .contact-key-email { font-size: 0.75rem; color: #059669; }
+  .contact-key-fp { font-size: 0.6875rem; font-family: ui-monospace, monospace; color: #6ee7b7; }
+  .btn-contact-remove {
+    background: none; border: none; cursor: pointer; color: #6ee7b7; padding: 0.25rem; border-radius: 0.25rem;
+    transition: color 0.15s;
+  }
+  .btn-contact-remove:hover { color: #dc2626; }
+  .public-contacts-empty {
+    display: flex; align-items: center; gap: 0.625rem;
+    font-size: 0.8125rem; color: #059669;
+    padding: 0.5rem 0;
+  }
+  .public-contacts-empty svg { flex-shrink: 0; color: #6ee7b7; }
+
+  /* ── Keys tab input overrides (on dark cards) ── */
+  .private-key-card .input {
+    background: #292524; color: #e7e5e4; border-color: #57534e;
+  }
+  .private-key-card .input::placeholder { color: #78716c; }
+  .private-key-card .input:focus { box-shadow: 0 0 0 2px #f59e0b; border-color: #f59e0b; }
+  .private-key-card .drop-zone {
+    border-color: #57534e; background: #292524;
+  }
+  .private-key-card .drop-zone:hover { border-color: #f59e0b; background: #1c1917; }
+  .private-key-card .drop-zone p { color: #78716c; }
+
+  /* ── Keys sub-tab bar ── */
+  .keys-subtab-bar {
+    display: flex; gap: 0.25rem;
+    background: #f3f4f6; border-radius: 0.5rem; padding: 0.25rem;
+  }
+  .keys-subtab {
+    display: flex; align-items: center; gap: 0.375rem;
+    flex: 1; justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem; font-weight: 500;
+    color: #6b7280; background: transparent;
+    border: none; border-radius: 0.375rem; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .keys-subtab:hover { color: #374151; }
+  .keys-subtab.active { background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.08); }
+  .keys-subtab-private.active { color: #92400e; }
+  .keys-subtab-public.active { color: #065f46; }
+  .keys-subtab svg { opacity: 0.6; }
+  .keys-subtab.active svg { opacity: 1; }
+
+  /* ── Keys choice grid ── */
+  .keys-choice-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
+  }
+  .keys-choice-card {
+    background: #1c1917; border: 2px solid #44403c; border-radius: 0.75rem;
+    padding: 1.25rem; text-align: center; cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .keys-choice-card:hover { border-color: #f59e0b; box-shadow: 0 4px 12px rgb(245 158 11 / 0.15); }
+  .keys-choice-icon {
+    width: 48px; height: 48px; border-radius: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 0.75rem;
+  }
+  .keys-choice-icon-generate { background: #292524; color: #f59e0b; border: 1px solid #57534e; }
+  .keys-choice-icon-import { background: #292524; color: #a8a29e; border: 1px solid #57534e; }
+  .keys-choice-title { font-size: 0.875rem; font-weight: 600; color: #f5f5f4; margin: 0 0 0.25rem; }
+  .keys-choice-desc { font-size: 0.75rem; color: #a8a29e; margin: 0; line-height: 1.4; }
+
+  /* ── Keys back link ── */
+  .keys-back-link {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    background: none; border: none; cursor: pointer;
+    font-size: 0.8125rem; color: #a8a29e; padding: 0;
+    margin-bottom: 0.75rem; transition: color 0.15s;
+  }
+  .keys-back-link:hover { color: #f59e0b; }
+
+  /* ── Keys public CTA ── */
+  .keys-public-cta {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: #f0fdf4; border: 1px solid #a7f3d0; border-radius: 0.75rem;
+    padding: 1rem 1.25rem; cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .keys-public-cta:hover { border-color: #34d399; box-shadow: 0 2px 8px rgb(5 150 105 / 0.1); }
+  .keys-public-cta svg:first-child { color: #059669; flex-shrink: 0; }
+  .keys-public-cta-title { font-size: 0.875rem; font-weight: 600; color: #065f46; margin: 0 0 0.15rem; }
+  .keys-public-cta-desc { font-size: 0.75rem; color: #059669; margin: 0; }
+
+  /* ── Public key empty state ── */
+  .public-key-card-empty { text-align: left; }
+  .public-key-empty-inner {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+  .public-key-empty-inner svg { flex-shrink: 0; color: #6ee7b7; margin-top: 0.1rem; }
+  .public-key-empty-title { font-size: 0.875rem; font-weight: 600; color: #065f46; margin: 0 0 0.25rem; }
+  .public-key-empty-desc { font-size: 0.8125rem; color: #059669; margin: 0; line-height: 1.5; }
+</style>

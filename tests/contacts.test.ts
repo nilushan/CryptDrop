@@ -122,8 +122,10 @@ describe('Contacts (localStorage)', () => {
     });
   });
 
-  describe('Encrypted filename includes recipient', () => {
-    it('should include recipient name in filename', async () => {
+  describe('Encrypted file naming (recipient in folder path)', () => {
+    // Recipient is now encoded in the save sub-directory, not the filename.
+    // Filename is always originalname.pgp for clean downloads.
+    it('should save as originalname.pgp with named recipient', async () => {
       window.startFlow('encrypt');
       const state = getState();
       state.recipientKey = { mock: true } as unknown as import('openpgp').PublicKey;
@@ -132,10 +134,11 @@ describe('Contacts (localStorage)', () => {
       let downloadedFilename = '';
       window.downloadBlob = vi.fn((blob, name) => { downloadedFilename = name; });
       await window.encryptFile();
-      expect(downloadedFilename).toBe('report.pdf_for_Alice_Smith.pgp');
+      // No folder handle in tests → falls back to downloadBlob with clean filename
+      expect(downloadedFilename).toBe('report.pdf.pgp');
     });
 
-    it('should use email if no name', async () => {
+    it('should save as originalname.pgp with email-only recipient', async () => {
       window.startFlow('encrypt');
       const state = getState();
       state.recipientKey = { mock: true } as unknown as import('openpgp').PublicKey;
@@ -144,10 +147,10 @@ describe('Contacts (localStorage)', () => {
       let downloadedFilename = '';
       window.downloadBlob = vi.fn((blob, name) => { downloadedFilename = name; });
       await window.encryptFile();
-      expect(downloadedFilename).toBe('report.pdf_for_alice_example.com.pgp');
+      expect(downloadedFilename).toBe('report.pdf.pgp');
     });
 
-    it('should not add suffix when no recipientInfo', async () => {
+    it('should save as originalname.pgp when no recipientInfo', async () => {
       window.startFlow('encrypt');
       const state = getState();
       state.recipientKey = { mock: true } as unknown as import('openpgp').PublicKey;

@@ -10,25 +10,23 @@ describe('Encrypt Flow', () => {
 
   describe('Full encrypt wizard flow (2 steps, no keys required)', () => {
     it('should go directly to recipient lookup, then to file encrypt', () => {
-      // Step 0: Path selection visible
-      expect(document.getElementById('screen-path-select')!.classList.contains('hidden')).toBe(false);
-
-      // Step 1: Start encrypt flow — goes straight to recipient (no keys step)
+      // Step 1: Start encrypt flow via wizard tab
       window.startFlow('encrypt');
-      expect(getState().currentFlow).toBe('encrypt');
-      expect(getState().currentStep).toBe(1);
-      expect(document.getElementById('screen-encrypt-recipient')!.classList.contains('hidden')).toBe(false);
+      expect(window.wizardFlow).toBe('encrypt');
+      expect(window.wizardStep).toBe(1);
+      expect(document.getElementById('wizard-encrypt-recipient')!.classList.contains('hidden')).toBe(false);
 
       // Step 2: Advance to file encrypt
       window.advanceStep();
-      expect(getState().currentStep).toBe(2);
-      expect(document.getElementById('screen-encrypt-file')!.classList.contains('hidden')).toBe(false);
+      expect(window.wizardStep).toBe(2);
+      expect(document.getElementById('wizard-encrypt-file')!.classList.contains('hidden')).toBe(false);
     });
 
     it('should not have a keys step in encrypt flow', () => {
       window.startFlow('encrypt');
       // First screen should be recipient, not keys
-      expect(document.getElementById('screen-encrypt-recipient')!.classList.contains('hidden')).toBe(false);
+      expect(document.getElementById('wizard-encrypt-recipient')!.classList.contains('hidden')).toBe(false);
+      expect(document.getElementById('wizard-decrypt-keys')!.classList.contains('hidden')).toBe(true);
     });
   });
 
