@@ -9,4 +9,8 @@ database_id = "c0a47e3e-6cc4-477a-8df4-03c553f21db6"
 migrations_dir = "migrations"
 
 [vars]
-SITE_URL = "https://cryptdrop.app"
+SITE_URL = "https://cryptdrop-site.pages.dev"
+[observability]
+[observability.logs]
+enabled = true
+invocation_logs = true
