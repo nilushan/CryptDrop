@@ -4,6 +4,7 @@ import { $privateKey, $userInfo } from '../../stores/keys';
 import { $activeTab } from '../../stores/activeTab';
 import FolderBar from '../shared/FolderBar';
 import DecryptFilePanel from '../shared/DecryptFilePanel';
+import ActivityHistory from '../shared/ActivityHistory';
 
 export default function DecryptTab() {
   const privateKey = useStore($privateKey);
@@ -34,15 +35,9 @@ export default function DecryptTab() {
         </div>
       )}
 
-      <DecryptFilePanel
-        folderHandle={folderHandle}
-        successActions={(onReset) => (
-          <div className="flex gap-2 mt-3" style={{ justifyContent: 'center' }}>
-            <button onClick={onReset} className="btn-sm">Unlock Another File</button>
-            <button onClick={() => { onReset(); }} className="btn-sm btn-ghost-sm">Clear All</button>
-          </div>
-        )}
-      />
+      <DecryptFilePanel folderHandle={folderHandle} />
+
+      <ActivityHistory />
     </div>
   );
 }

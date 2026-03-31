@@ -5,6 +5,7 @@ import { $activeTab } from '../../stores/activeTab';
 import QuickEncryptPanel from './QuickEncryptPanel';
 import FolderBar from '../shared/FolderBar';
 import ContactListPicker from '../shared/ContactListPicker';
+import ActivityHistory from '../shared/ActivityHistory';
 
 export default function EncryptTab() {
   const contacts = useStore($contacts);
@@ -79,6 +80,8 @@ export default function EncryptTab() {
           onClose={handleClearSelection}
         />
       )}
+
+      <ActivityHistory />
     </div>
   );
 }

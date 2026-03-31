@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { $privateKey, $userInfo } from '../../stores/keys';
+import { addHistoryEntry } from '../../stores/history';
 import { showToast } from '../../stores/toast';
 import { decryptFileData } from '../../lib/openpgp-helpers';
-import { formatSize, sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
+import { sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
 import type { PublicKey } from 'openpgp';
 import * as openpgp from 'openpgp';
 import type { Contact } from '../../stores/contacts';
@@ -12,17 +13,24 @@ import KeyLookupCard from './KeyLookupCard';
 import type { KeyLookupResult } from './KeyLookupCard';
 import FileSelectedCard from './FileSelectedCard';
 import ActionButton from './ActionButton';
-import SuccessState from './SuccessState';
-import SignatureResult from './SignatureResult';
+import ResultState from './ResultState';
 
 interface Props {
   /** Folder handle for saving decrypted files (null = default Downloads) */
   folderHandle?: FileSystemDirectoryHandle | null;
-  /** Children rendered inside the success state (e.g. extra buttons) */
-  successActions?: (onReset: () => void) => React.ReactNode;
+  /** Extra buttons rendered in the result state */
+  resultActions?: React.ReactNode;
 }
 
-export default function DecryptFilePanel({ folderHandle = null, successActions }: Props) {
+interface DecryptResult {
+  blob: Blob;
+  filename: string;
+  size: number;
+  sigText: string;
+  encryptedFile: { name: string; size: number };
+}
+
+export default function DecryptFilePanel({ folderHandle = null, resultActions }: Props) {
   const privateKey = useStore($privateKey);
   const userInfo = useStore($userInfo);
 
@@ -31,7 +39,7 @@ export default function DecryptFilePanel({ folderHandle = null, successActions }
   const [showLookup, setShowLookup] = useState(false);
   const [decrypting, setDecrypting] = useState(false);
   const [senderEmail, setSenderEmail] = useState('');
-  const [result, setResult] = useState<{ filename: string; size: number; sigText: string; savedPath: string } | null>(null);
+  const [result, setResult] = useState<DecryptResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -63,16 +71,39 @@ export default function DecryptFilePanel({ folderHandle = null, successActions }
       const fileData = new Uint8Array(await encryptedFile.arrayBuffer());
       const decResult = await decryptFileData(fileData, privateKey, senderKey);
       const outName = decResult.filename || encryptedFile.name.replace(/\.(pgp|gpg|asc)$/, '') || 'decrypted_file';
-      const senderLabel = senderEmail.trim() || 'unknown';
-      const subDir = 'decrypted/' + sanitizeFolderName(senderLabel);
-      const savedPath = await saveToFolder(new Blob([decResult.data as BlobPart]), outName, subDir, folderHandle ?? null);
-      setResult({ filename: outName, size: decResult.data.byteLength, sigText: decResult.signatureText, savedPath });
+      const blob = new Blob([decResult.data as BlobPart]);
+
+      setResult({
+        blob,
+        filename: outName,
+        size: decResult.data.byteLength,
+        sigText: decResult.signatureText,
+        encryptedFile: { name: encryptedFile.name, size: encryptedFile.size },
+      });
+
+      addHistoryEntry({
+        action: 'decrypt',
+        originalFilename: encryptedFile.name,
+        originalSize: encryptedFile.size,
+        resultFilename: outName,
+        resultSize: decResult.data.byteLength,
+        recipientOrSender: senderEmail.trim() || 'unknown',
+        signed: !!decResult.signatureText,
+      });
+
       showToast('File decrypted!', 'success');
     } catch (e) {
       showToast('Decryption failed: ' + (e as Error).message, 'error');
     } finally {
       setDecrypting(false);
     }
+  }
+
+  function handleDownload() {
+    if (!result) return;
+    const senderLabel = senderEmail.trim() || 'unknown';
+    const subDir = 'decrypted/' + sanitizeFolderName(senderLabel);
+    saveToFolder(result.blob, result.filename, subDir, folderHandle ?? null);
   }
 
   function handleRemoveFile() {
@@ -108,19 +139,17 @@ export default function DecryptFilePanel({ folderHandle = null, successActions }
 
   if (result) {
     return (
-      <SuccessState
+      <ResultState
         type="decrypt"
         ownerName={userInfo || 'You'}
-        title="File Unlocked!"
-        description={`Decrypted "${result.filename}" (${formatSize(result.size)}). Saved to: ${result.savedPath}`}
+        originalFile={result.encryptedFile}
+        resultFile={{ name: result.filename, size: result.size }}
+        onDownload={handleDownload}
+        onReset={handleReset}
+        signatureText={result.sigText}
       >
-        <SignatureResult signatureText={result.sigText} />
-        {successActions ? successActions(handleReset) : (
-          <div className="flex gap-2 mt-3" style={{ justifyContent: 'center' }}>
-            <button onClick={handleReset} className="btn-sm">Unlock Another File</button>
-          </div>
-        )}
-      </SuccessState>
+        {resultActions}
+      </ResultState>
     );
   }
 
@@ -199,7 +228,7 @@ export default function DecryptFilePanel({ folderHandle = null, successActions }
         loadingText="Unlocking..."
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        Unlock & Download File
+        Unlock File
       </ActionButton>
     </div>
   );

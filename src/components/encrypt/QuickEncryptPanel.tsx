@@ -3,18 +3,25 @@ import { useStore } from '@nanostores/react';
 import { touchContact, type Contact } from '../../stores/contacts';
 import { $privateKey, $publicKey, $userInfo } from '../../stores/keys';
 import { $activeTab } from '../../stores/activeTab';
+import { addHistoryEntry } from '../../stores/history';
 import { showToast } from '../../stores/toast';
 import { encryptFileData } from '../../lib/openpgp-helpers';
-import { formatSize, sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
+import { sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
 import FileSelectedCard from '../shared/FileSelectedCard';
 import ActionButton from '../shared/ActionButton';
-import SuccessState from '../shared/SuccessState';
+import ResultState from '../shared/ResultState';
 import * as openpgp from 'openpgp';
 
 interface Props {
   contact: Contact;
   folderHandle: FileSystemDirectoryHandle | null;
   onClose: () => void;
+}
+
+interface EncryptResult {
+  blob: Blob;
+  filename: string;
+  originalFile: { name: string; size: number };
 }
 
 export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Props) {
@@ -25,7 +32,7 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [signEnabled, setSignEnabled] = useState(false);
   const [encrypting, setEncrypting] = useState(false);
-  const [success, setSuccess] = useState<{ text: string; ownerName: string } | null>(null);
+  const [result, setResult] = useState<EncryptResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -57,12 +64,24 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
       const fileData = new Uint8Array(await selectedFile.arrayBuffer());
       const encrypted = await encryptFileData(fileData, selectedFile.name, recipientKey, signEnabled ? privateKey ?? undefined : undefined);
       const outFilename = selectedFile.name + '_for_' + sanitizeFolderName(contact.email || 'unknown') + '.pgp';
-      const subDir = 'encrypted/' + sanitizeFolderName(contact.email || 'unknown');
-      const savedPath = await saveToFolder(new Blob([encrypted as BlobPart], { type: 'application/pgp-encrypted' }), outFilename, subDir, folderHandle);
-      setSuccess({
-        text: `"${selectedFile.name}" encrypted for ${contact.name || contact.email} (${formatSize(selectedFile.size)}). Saved to: ${savedPath}`,
-        ownerName: contact.name || contact.email,
+      const blob = new Blob([encrypted as BlobPart], { type: 'application/pgp-encrypted' });
+
+      setResult({
+        blob,
+        filename: outFilename,
+        originalFile: { name: selectedFile.name, size: selectedFile.size },
       });
+
+      addHistoryEntry({
+        action: 'encrypt',
+        originalFilename: selectedFile.name,
+        originalSize: selectedFile.size,
+        resultFilename: outFilename,
+        resultSize: blob.size,
+        recipientOrSender: contact.name || contact.email,
+        signed: signEnabled && !!privateKey,
+      });
+
       touchContact(contact.email);
       showToast('File encrypted!', 'success');
     } catch (e) {
@@ -72,9 +91,15 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
     }
   }
 
+  function handleDownload() {
+    if (!result) return;
+    const subDir = 'encrypted/' + sanitizeFolderName(contact.email || 'unknown');
+    saveToFolder(result.blob, result.filename, subDir, folderHandle);
+  }
+
   function handleReset() {
     setSelectedFile(null);
-    setSuccess(null);
+    setResult(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
@@ -82,17 +107,17 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
     ? publicKey.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? ''
     : '';
 
-  if (success) {
+  if (result) {
     return (
       <div className="encrypt-panel">
-        <SuccessState
+        <ResultState
           type="encrypt"
-          ownerName={success.ownerName}
-          title="File Locked!"
-          description={success.text}
-        >
-          <button onClick={handleReset} className="btn-sm">Lock another file</button>
-        </SuccessState>
+          ownerName={contact.name || contact.email}
+          originalFile={result.originalFile}
+          resultFile={{ name: result.filename, size: result.blob.size }}
+          onDownload={handleDownload}
+          onReset={handleReset}
+        />
       </div>
     );
   }
@@ -157,7 +182,7 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
         loadingText="Locking..."
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        {signEnabled ? 'Lock & Sign' : 'Lock & Download'}
+        {signEnabled ? 'Lock & Sign' : 'Lock File'}
       </ActionButton>
     </div>
   );
