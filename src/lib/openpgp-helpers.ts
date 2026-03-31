@@ -100,22 +100,29 @@ export async function decryptFileData(
     ...(verificationKey ? { verificationKeys: verificationKey } : {}),
   };
 
-  const result = await (openpgp.decrypt as unknown as (o: unknown) => Promise<{
+  type DecryptOutput = {
     data: Uint8Array;
     filename?: string;
     signatures?: Array<{ verified: Promise<void> }>;
-  }>)(opts);
+  };
+  const decrypt = openpgp.decrypt as unknown as (o: unknown) => Promise<DecryptOutput>;
+
+  const result = await decrypt(opts);
+
+  // signatures[] is non-empty only when the message actually contains signature packets.
+  // When no verification key is provided, openpgp still populates signatures[] for signed
+  // messages but leaves them unverified. We use this to distinguish "unsigned" from
+  // "signed but unverifiable" before attempting .verified.
+  const isSigned = (result.signatures?.length ?? 0) > 0;
 
   let signatureText = '';
-  if (verificationKey && result.signatures?.length) {
+  if (isSigned && verificationKey) {
     try {
-      await result.signatures[0].verified;
+      await result.signatures![0].verified;
       signatureText = ' Signature verified!';
     } catch {
       signatureText = ' Warning: signature could not be verified.';
     }
-  } else if (!verificationKey) {
-    signatureText = ' Signature not checked (no sender key provided).';
   }
 
   return {

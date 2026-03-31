@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { $contacts, type Contact } from '../../stores/contacts';
+import { $contacts, saveContact, type Contact } from '../../stores/contacts';
 import { $activeTab } from '../../stores/activeTab';
+import { $publicKey, $armoredPublic, $userInfo } from '../../stores/keys';
 import QuickEncryptPanel from './QuickEncryptPanel';
 import FolderBar from '../shared/FolderBar';
 import ContactListPicker from '../shared/ContactListPicker';
@@ -9,6 +10,9 @@ import ActivityHistory from '../shared/ActivityHistory';
 
 export default function EncryptTab() {
   const contacts = useStore($contacts);
+  const publicKey = useStore($publicKey);
+  const armoredPublic = useStore($armoredPublic);
+  const userInfo = useStore($userInfo);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [folderHandle, setFolderHandle] = useState<FileSystemDirectoryHandle | null>(null);
 
@@ -22,6 +26,16 @@ export default function EncryptTab() {
 
   function handleNewRecipient() {
     $activeTab.set('addressbook');
+  }
+
+  function handleEncryptForMyself() {
+    if (!publicKey || !armoredPublic) return;
+    const fp = publicKey.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? '';
+    const match = (userInfo || '').match(/^(.+?)\s*<(.+?)>$/);
+    const name = match?.[1]?.trim() || userInfo || 'Me';
+    const email = match?.[2]?.trim() || '';
+    saveContact(email, name, armoredPublic, fp);
+    setSelectedContact({ email, name, armoredPublicKey: armoredPublic, fingerprint: fp, lastUpdated: new Date().toISOString() });
   }
 
   return (
@@ -66,7 +80,14 @@ export default function EncryptTab() {
               </div>
               <p className="empty-msg">No saved recipients yet.</p>
               <p className="empty-hint">Add recipients in the Address Book — search by email or import a key file.</p>
-              <button onClick={handleNewRecipient} className="btn-primary mt-3">Open Address Book &rarr;</button>
+              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={handleNewRecipient} className="btn-primary mt-3">Open Address Book &rarr;</button>
+                {publicKey && (
+                  <button onClick={handleEncryptForMyself} className="btn-ghost mt-3">
+                    Encrypt for myself
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>

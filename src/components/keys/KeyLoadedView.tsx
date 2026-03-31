@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { downloadTextFile } from '../../lib/file-helpers';
-import { saveKey, deleteSavedKey, hasSavedKey } from '../../lib/key-storage';
+import { saveKey, deleteSavedKey } from '../../lib/key-storage';
 import { showToast } from '../../stores/toast';
 
 interface Props {
@@ -16,8 +16,10 @@ export default function KeyLoadedView({ userInfo, fingerprint, armoredPrivate, a
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    hasSavedKey().then(setIsSaved);
-  }, []);
+    import('../../lib/key-storage').then(({ getSavedKey }) =>
+      getSavedKey().then((saved) => setIsSaved(!!saved && saved.fingerprint === fingerprint))
+    );
+  }, [fingerprint]);
 
   function handleDownloadPrivate() {
     if (armoredPrivate) {

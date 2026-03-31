@@ -42,10 +42,6 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
       downloadTextFile(result.armoredPrivate, name.trim().replace(/\s/g, '_') + '_PRIVATE.asc');
       downloadTextFile(result.armoredPublic, name.trim().replace(/\s/g, '_') + '_PUBLIC.asc');
       showToast('Keys generated! Files downloaded.', 'success');
-      if (onSuccess) {
-        onSuccess();
-        return;
-      }
       setArmoredPrivate(result.armoredPrivate);
       setGeneratedName(name.trim());
       setGenerated(true);
@@ -103,7 +99,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
         </div>
 
         <button
-          onClick={() => {/* Keys are already set in stores — the loaded view will show automatically */}}
+          onClick={() => onSuccess?.()}
           disabled={!backupConfirmed}
           style={{
             width: '100%', padding: '0.75rem', borderRadius: '0.75rem', border: 'none',
@@ -137,8 +133,8 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
 
         <div className="mt-4">
           <div className="grid grid-cols-2 gap-3 mb-3">
-            <input type="text" placeholder="Your name" className="input" value={name} onChange={(e) => setName(e.target.value)} />
-            <input type="email" placeholder="your@email.com" className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="text" placeholder="Your name" className="input" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
+            <input type="email" placeholder="your@email.com" className="input" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <input type="password" placeholder="Strong passphrase — protects your private key" className="input w-full mb-4" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} />
           <ActionButton onClick={handleGenerate} loading={generating} loadingText="Generating..." className="btn-vault-generate">
