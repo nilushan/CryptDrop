@@ -12,6 +12,8 @@ export default function AddressBook() {
   const [searching, setSearching] = useState(false);
   const [status, setStatus] = useState<{ type: 'success'; text: string; sub?: string } | null>(null);
   const [showInvite, setShowInvite] = useState(false);
+  const [newContactPrompt, setNewContactPrompt] = useState<{ email: string; suggestedName: string } | null>(null);
+  const [newContactName, setNewContactName] = useState('');
 
   async function handleLookup() {
     if (!email.trim()) { showToast('Enter an email address', 'warning'); return; }
@@ -26,8 +28,18 @@ export default function AddressBook() {
         return;
       }
       const parsed = parseUserId(result.key);
+      const isNew = !contacts.find((c) => c.email === email.trim());
       saveContact(email.trim(), parsed.name, result.armored, parsed.fingerprint);
-      setStatus({ type: 'success', text: 'Added: ' + (parsed.name || email.trim()), sub: 'Fingerprint: ' + parsed.fingerprint });
+
+      if (isNew && !parsed.name) {
+        // Key found but no name in the UID — prompt user to name the contact
+        setNewContactPrompt({ email: email.trim(), suggestedName: '' });
+        setNewContactName('');
+        setStatus(null);
+      } else {
+        setNewContactPrompt(null);
+        setStatus({ type: 'success', text: 'Added: ' + (parsed.name || email.trim()), sub: 'Fingerprint: ' + parsed.fingerprint });
+      }
       setEmail('');
       showToast('Contact added!', 'success');
     } catch (e) {
@@ -44,17 +56,41 @@ export default function AddressBook() {
       const text = await file.text();
       const key = await openpgp.readKey({ armoredKey: text });
       const parsed = parseUserId(key);
+      const isNew = parsed.email && !contacts.find((c) => c.email === parsed.email);
+
       if (parsed.email) {
         saveContact(parsed.email, parsed.name, text, parsed.fingerprint);
       }
-      setStatus({ type: 'success', text: 'Imported: ' + (parsed.name || parsed.email || parsed.uid), sub: 'Fingerprint: ' + parsed.fingerprint });
+
       setShowInvite(false);
-      showToast('Contact key imported', 'success');
-    } catch (e) {
-      showToast('Import failed: ' + (e as Error).message, 'error');
+
+      if (isNew && parsed.email) {
+        // Show "New padlock detected!" prompt to name the contact
+        setNewContactPrompt({ email: parsed.email, suggestedName: parsed.name });
+        setNewContactName(parsed.name);
+        setStatus(null);
+        showToast('New contact key detected!', 'success');
+      } else {
+        setNewContactPrompt(null);
+        setStatus({ type: 'success', text: 'Updated: ' + (parsed.name || parsed.email || parsed.uid), sub: 'Fingerprint: ' + parsed.fingerprint });
+        showToast('Contact key updated', 'success');
+      }
+    } catch (err) {
+      showToast('Import failed: ' + (err as Error).message, 'error');
     }
-    // Reset the input so the same file can be selected again
     e.target.value = '';
+  }
+
+  function handleSaveNewContactName() {
+    if (!newContactPrompt) return;
+    // Re-save with the user's chosen name
+    const existing = contacts.find((c) => c.email === newContactPrompt.email);
+    if (existing) {
+      saveContact(existing.email, newContactName || existing.name, existing.armoredPublicKey, existing.fingerprint);
+    }
+    setStatus({ type: 'success', text: 'Added: ' + (newContactName || newContactPrompt.email) });
+    setNewContactPrompt(null);
+    showToast('Contact saved!', 'success');
   }
 
   function handleCopyInvite() {
@@ -104,6 +140,50 @@ export default function AddressBook() {
           <input type="file" accept=".asc,.key,.pgp,.gpg" className="hidden" onChange={handleImportFile} />
           <p className="text-sm text-gray-500">Import a public key file (.asc, .key)</p>
         </label>
+
+        {/* New contact detected prompt */}
+        {newContactPrompt && (
+          <div className="animate-fade-in" style={{
+            background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '0.75rem',
+            padding: '1rem', marginTop: '0.75rem',
+          }}>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, color: '#4f46e5', marginTop: '0.125rem' }}>
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
+                <path d="M23 11h-6M20 8v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#312e81', margin: '0 0 0.25rem' }}>New padlock detected!</p>
+                <p style={{ fontSize: '0.75rem', color: '#4338ca', margin: '0 0 0.5rem' }}>{newContactPrompt.email}</p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    type="text"
+                    placeholder="Name (e.g., Alice)"
+                    value={newContactName}
+                    onChange={(e) => setNewContactName(e.target.value)}
+                    style={{
+                      flex: 1, fontSize: '0.8125rem', padding: '0.375rem 0.625rem',
+                      borderRadius: '0.375rem', border: '1px solid #c7d2fe',
+                      outline: 'none',
+                    }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleSaveNewContactName(); }}
+                  />
+                  <button
+                    onClick={handleSaveNewContactName}
+                    style={{
+                      background: '#4f46e5', color: '#fff', fontSize: '0.8125rem',
+                      fontWeight: 600, padding: '0.375rem 0.75rem', borderRadius: '0.375rem',
+                      border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+                    }}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Status feedback */}
         {status && (

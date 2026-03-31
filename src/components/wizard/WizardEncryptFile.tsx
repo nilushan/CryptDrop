@@ -6,7 +6,9 @@ import { showToast } from '../../stores/toast';
 import { encryptFileData } from '../../lib/openpgp-helpers';
 import { formatSize, sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
 import type { PublicKey } from 'openpgp';
-import LockIllustration from '../shared/LockIllustration';
+import FileSelectedCard from '../shared/FileSelectedCard';
+import ActionButton from '../shared/ActionButton';
+import SuccessState from '../shared/SuccessState';
 
 interface Props {
   recipientKey: PublicKey;
@@ -31,7 +33,7 @@ export default function WizardEncryptFile({ recipientKey, recipientInfo, onBack 
   }
 
   function handleSwitchToKeys() {
-    $activeTab.set('keys');
+    $activeTab.set('keyring');
   }
 
   async function handleEncrypt() {
@@ -79,13 +81,14 @@ export default function WizardEncryptFile({ recipientKey, recipientInfo, onBack 
       <div className="card mb-4">
         <h3 className="card-title">Select File to Encrypt</h3>
         <p className="text-xs text-gray-500 mb-4">The file is encrypted entirely in your browser.</p>
-        <label className="drop-zone drop-zone-lg block">
-          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
-          <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          <p className="text-sm text-gray-500">Drop a file here or click to select</p>
-        </label>
-        {selectedFile && (
-          <div className="mt-3 file-info">{selectedFile.name} ({formatSize(selectedFile.size)})</div>
+        {!selectedFile ? (
+          <label className="drop-zone drop-zone-lg block">
+            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
+            <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <p className="text-sm text-gray-500">Drop a file here or click to select</p>
+          </label>
+        ) : (
+          <FileSelectedCard file={selectedFile} variant="encrypt" />
         )}
       </div>
 
@@ -112,19 +115,29 @@ export default function WizardEncryptFile({ recipientKey, recipientInfo, onBack 
         )}
       </div>
 
-      <button onClick={handleEncrypt} className="btn-primary w-full" disabled={!selectedFile || encrypting}>
-        {encrypting ? 'Encrypting…' : 'Encrypt & Download File'}
-      </button>
+      <ActionButton
+        onClick={handleEncrypt}
+        disabled={!selectedFile || (signEnabled && !privateKey)}
+        loading={encrypting}
+        loadingText="Locking..."
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+        {signEnabled ? 'Lock & Sign File' : 'Lock & Download File'}
+      </ActionButton>
 
       {success && (
-        <div className="success-box mt-4 fade-in">
-          <LockIllustration ownerName={recipientInfo.name || recipientInfo.email} animationType="lock" />
-          <p className="success-title">File Encrypted Successfully</p>
-          <p className="success-body">{success}</p>
-          <div className="flex gap-2 mt-3">
-            <button onClick={handleReset} className="btn-sm">Encrypt Another File</button>
-            <button onClick={() => $activeTab.set('encrypt')} className="btn-sm btn-ghost-sm">Go to Encrypt tab</button>
-          </div>
+        <div className="mt-4">
+          <SuccessState
+            type="encrypt"
+            ownerName={recipientInfo.name || recipientInfo.email}
+            title="File Locked!"
+            description={success}
+          >
+            <div className="flex gap-2" style={{ justifyContent: 'center' }}>
+              <button onClick={handleReset} className="btn-sm">Lock Another File</button>
+              <button onClick={() => $activeTab.set('encrypt')} className="btn-sm btn-ghost-sm">Go to Encrypt tab</button>
+            </div>
+          </SuccessState>
         </div>
       )}
     </div>

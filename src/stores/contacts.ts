@@ -6,6 +6,7 @@ export interface Contact {
   armoredPublicKey: string;
   fingerprint: string;
   lastUpdated: string;
+  lastUsed?: string;
 }
 
 const CONTACTS_KEY = 'cryptdrop_contacts';
@@ -56,6 +57,15 @@ export function removeContact(email: string): Contact[] {
   const contacts = readContacts().filter((c) => c.email !== email);
   writeContacts(contacts);
   return contacts;
+}
+
+export function touchContact(email: string): void {
+  const contacts = readContacts();
+  const idx = contacts.findIndex((c) => c.email === email);
+  if (idx >= 0) {
+    contacts[idx].lastUsed = new Date().toISOString();
+    writeContacts(contacts);
+  }
 }
 
 export function clearContacts(): void {

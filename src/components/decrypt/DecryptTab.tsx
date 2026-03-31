@@ -9,7 +9,10 @@ import type { PublicKey } from 'openpgp';
 import FolderBar from '../shared/FolderBar';
 import SenderContactPills from '../shared/SenderContactPills';
 import SenderLookup from './SenderLookup';
-import LockIllustration from '../shared/LockIllustration';
+import FileSelectedCard from '../shared/FileSelectedCard';
+import ActionButton from '../shared/ActionButton';
+import SuccessState from '../shared/SuccessState';
+import SignatureResult from '../shared/SignatureResult';
 
 export default function DecryptTab() {
   const privateKey = useStore($privateKey);
@@ -44,10 +47,6 @@ export default function DecryptTab() {
     if (file) setEncryptedFile(file);
   }
 
-  function handleSwitchToKeys() {
-    $activeTab.set('keys');
-  }
-
   async function handleDecrypt() {
     if (!privateKey || !encryptedFile) return;
     setDecrypting(true);
@@ -80,14 +79,37 @@ export default function DecryptTab() {
     setSenderEmail('');
   }
 
-  const canDecrypt = !!privateKey && !!encryptedFile && !decrypting;
+  if (result) {
+    return (
+      <div>
+        <div className="tab-header">
+          <div>
+            <h2 className="tab-title">Decrypt a File</h2>
+            <p className="tab-subtitle">Unlock an encrypted file using your private key.</p>
+          </div>
+        </div>
+        <SuccessState
+          type="decrypt"
+          ownerName={userInfo || 'You'}
+          title="File Unlocked!"
+          description={`Decrypted "${result.filename}" (${formatSize(result.size)}). Saved to: ${result.savedPath}`}
+        >
+          <SignatureResult signatureText={result.sigText} />
+          <div className="flex gap-2 mt-3" style={{ justifyContent: 'center' }}>
+            <button onClick={handleResetFile} className="btn-sm">Unlock Another File</button>
+            <button onClick={handleResetAll} className="btn-sm btn-ghost-sm">Clear All</button>
+          </div>
+        </SuccessState>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="tab-header">
         <div>
-          <h2 className="tab-title">Decrypt a File</h2>
-          <p className="tab-subtitle">Unlock an encrypted file using your private key.</p>
+          <h2 className="tab-title">Unlock a File</h2>
+          <p className="tab-subtitle">Decrypt an encrypted file using your private key.</p>
         </div>
         {privateKey && (
           <div className="key-badge key-badge-ok">
@@ -99,57 +121,68 @@ export default function DecryptTab() {
 
       <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />
 
-      <div className="local-assurance-bar mb-4">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        <span>Decryption happens <strong>entirely in your browser</strong>. Your private key and file content never leave your device.</span>
-      </div>
-
       {!privateKey && (
-        <div className="notice-box notice-info mb-4">
+        <div className="notice-box notice-info mb-4 animate-fade-in">
           <p className="text-sm text-indigo-800 font-medium mb-1">Private key required</p>
-          <p className="text-xs text-indigo-700">You need your private key to decrypt files. Set it up in the <button onClick={handleSwitchToKeys} className="link-inline">Keys tab</button> or use the Wizard.</p>
+          <p className="text-xs text-indigo-700">You need your private key to decrypt files. Set it up in <button onClick={() => $activeTab.set('keyring')} className="link-inline">My Key Ring</button> or use the Wizard.</p>
         </div>
       )}
 
       {/* File drop */}
       <div className="card mb-4">
         <h3 className="card-title">Encrypted File</h3>
-        <label
-          className="drop-zone drop-zone-lg block"
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
-          <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          <p className="text-sm text-gray-500">Drop an encrypted file here or click to select (.pgp, .gpg, .asc)</p>
-        </label>
-        {encryptedFile && (
-          <div className="mt-3 file-info">{encryptedFile.name} ({formatSize(encryptedFile.size)})</div>
+        {!encryptedFile ? (
+          <label
+            className="drop-zone drop-zone-lg block"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
+            <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <p className="text-sm text-gray-500">Drop an encrypted file here or click to select (.pgp, .gpg, .asc)</p>
+          </label>
+        ) : (
+          <FileSelectedCard file={encryptedFile} variant="decrypt" />
         )}
       </div>
 
       {/* Verify sender */}
-      <SenderContactPills onSenderKeyLoaded={(key) => setSenderKey(key)} />
-      <SenderLookup onSenderKeyLoaded={(key) => setSenderKey(key)} />
-
-      <button onClick={handleDecrypt} className="btn-primary w-full" disabled={!canDecrypt}>
-        {decrypting ? 'Decrypting…' : 'Decrypt & Download File'}
-      </button>
-
-      {result && (
-        <div className="success-box mt-4 fade-in">
-          <LockIllustration ownerName={userInfo || 'You'} animationType="unlock" />
-          <p className="success-title">Decryption Successful</p>
-          <p className="success-body">
-            Decrypted "{result.filename}" ({formatSize(result.size)}). Saved to: {result.savedPath}{result.sigText}
-          </p>
-          <div className="flex gap-2 mt-3">
-            <button onClick={handleResetFile} className="btn-sm">Decrypt Another File</button>
-            <button onClick={handleResetAll} className="btn-sm btn-ghost-sm">Clear All</button>
-          </div>
+      {senderKey && (
+        <div className="animate-fade-in" style={{
+          display: 'flex', alignItems: 'center', gap: '0.5rem',
+          background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '0.5rem',
+          padding: '0.625rem 0.875rem', marginBottom: '0.75rem',
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: '#16a34a', flexShrink: 0 }}>
+            <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+          </svg>
+          <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#166534' }}>Sender verification key loaded</span>
+          <button
+            onClick={() => setSenderKey(null)}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#6ee7b7', cursor: 'pointer', padding: '0.125rem', fontSize: '0.75rem' }}
+          >
+            clear
+          </button>
         </div>
       )}
+      {!senderKey && (
+        <>
+          <SenderContactPills onSenderKeyLoaded={(key) => setSenderKey(key)} />
+          <SenderLookup onSenderKeyLoaded={(key) => setSenderKey(key)} />
+        </>
+      )}
+
+      <ActionButton
+        onClick={handleDecrypt}
+        disabled={!privateKey || !encryptedFile}
+        loading={decrypting}
+        loadingText="Unlocking..."
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+        Unlock & Download File
+      </ActionButton>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import KeysTab from '../../components/keys/KeysTab';
+import KeyRingTab from '../../components/keys/KeyRingTab';
+import AddressBookTab from '../../components/keys/AddressBookTab';
 import EncryptTab from '../../components/encrypt/EncryptTab';
 import DecryptTab from '../../components/decrypt/DecryptTab';
 import WizardTab from '../../components/wizard/WizardTab';
@@ -12,23 +13,34 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
 
   <!-- ======================== TAB NAV ======================== -->
   <div class="app-tab-bar">
-    <div class="app-tab-inner">
-      <button class="app-tab active" data-tab="encrypt">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Encrypt
-      </button>
-      <button class="app-tab" data-tab="decrypt">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Decrypt
-      </button>
-      <button class="app-tab" data-tab="keys">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Keys
-      </button>
-      <button class="app-tab" data-tab="wizard">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 000 4h6a2 2 0 000-4M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Wizard
-      </button>
+    <div class="app-tab-bar-content">
+      <!-- Key identity status -->
+      <div class="app-tab-identity">
+        <KeyStatusPill client:load />
+      </div>
+      <!-- Segmented tab controls -->
+      <div class="app-tab-inner">
+        <button class="app-tab active" data-tab="encrypt">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Encrypt
+        </button>
+        <button class="app-tab" data-tab="decrypt">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Decrypt
+        </button>
+        <button class="app-tab" data-tab="keyring">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          My Key Ring
+        </button>
+        <button class="app-tab" data-tab="addressbook">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Address Book
+        </button>
+        <button class="app-tab" data-tab="wizard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 000 4h6a2 2 0 000-4M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Wizard
+        </button>
+      </div>
     </div>
   </div>
 
@@ -44,9 +56,14 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
       <DecryptTab client:load />
     </div>
 
-    <!-- ======================== KEYS TAB (React Island) ======================== -->
-    <div id="tab-keys" class="tab-panel fade-in hidden">
-      <KeysTab client:load />
+    <!-- ======================== KEY RING TAB (React Island) ======================== -->
+    <div id="tab-keyring" class="tab-panel fade-in hidden">
+      <KeyRingTab client:load />
+    </div>
+
+    <!-- ======================== ADDRESS BOOK TAB (React Island) ======================== -->
+    <div id="tab-addressbook" class="tab-panel fade-in hidden">
+      <AddressBookTab client:load />
     </div>
 
     <!-- ======================== WIZARD TAB (React Island) ======================== -->
@@ -56,17 +73,21 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
 
   </div>
 
-  <!-- Key status pill (React Island) -->
-  <KeyStatusPill client:load />
-
   <!-- Toast (React Island) -->
   <Toast client:load />
 
+  <!-- Privacy badge -->
+  <div class="privacy-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Privacy First: Everything runs locally in your browser
+  </div>
+
   <!-- Tab navigation via Nano Stores -->
   <script>
-    import { $activeTab } from '../../stores/activeTab';
+    import { $activeTab, type TabId } from '../../stores/activeTab';
+    const tabIds: TabId[] = ['encrypt', 'decrypt', 'keyring', 'addressbook', 'wizard'];
     $activeTab.subscribe((tab) => {
-      ['encrypt', 'decrypt', 'keys', 'wizard'].forEach((t) => {
+      tabIds.forEach((t) => {
         document.getElementById('tab-' + t)?.classList.toggle('hidden', t !== tab);
       });
       document.querySelectorAll('.app-tab').forEach((btn) => {
@@ -76,14 +97,14 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     document.querySelectorAll('.app-tab').forEach((btn) => {
       btn.addEventListener('click', () => {
         const tab = (btn as HTMLElement).dataset.tab;
-        if (tab) $activeTab.set(tab as 'encrypt' | 'decrypt' | 'keys' | 'wizard');
+        if (tab) $activeTab.set(tab as TabId);
       });
     });
   </script>
 </Layout>
 
 <style is:global>
-  /* ── Tab bar ── */
+  /* ── Segmented control tab bar ── */
   .app-tab-bar {
     background: #fff;
     border-bottom: 1px solid #e5e7eb;
@@ -91,32 +112,121 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     top: 3.5rem;
     z-index: 40;
   }
-  .app-tab-inner {
+  .app-tab-bar-content {
     max-width: 48rem;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0.5rem 1.5rem;
+  }
+  .app-tab-identity {
+    margin-bottom: 0.5rem;
+  }
+  .app-tab-inner {
     display: flex;
-    gap: 0;
+    gap: 0.25rem;
+    background: #f1f5f9;
+    border-radius: 0.75rem;
+  }
+
+  /* ── Key status bar (in nav) ── */
+  .key-status-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    width: 100%; padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem; border: 1px solid transparent;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit; text-align: left;
+  }
+  .key-status-empty {
+    background: #f8fafc; border-color: #e2e8f0; color: #64748b;
+    font-size: 0.8125rem;
+  }
+  .key-status-empty:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .key-status-empty svg { color: #94a3b8; flex-shrink: 0; }
+  .key-status-empty strong { color: #4f46e5; font-weight: 600; }
+  .key-status-loaded {
+    background: #f0fdf4; border-color: #bbf7d0;
+  }
+  .key-status-loaded:hover { border-color: #86efac; background: #dcfce7; }
+  .key-status-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #dcfce7; color: #166534;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+  }
+  .key-status-info { flex: 1; min-width: 0; overflow: hidden; }
+  .key-status-name {
+    display: block; font-size: 0.8125rem; font-weight: 600; color: #166534;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .key-status-email {
+    display: block; font-size: 0.6875rem; color: #16a34a;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .app-tab {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.375rem;
-    padding: 0.75rem 1rem;
+    flex: 1;
+    padding: 0.625rem 0.75rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #6b7280;
+    color: #64748b;
     background: transparent;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-radius: 0.5rem;
     cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
+    transition: all 0.2s ease;
     white-space: nowrap;
   }
-  .app-tab:hover { color: #374151; }
-  .app-tab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
-  .app-tab svg { opacity: 0.7; }
+  .app-tab:hover { color: #0f172a; }
+  .app-tab.active {
+    color: #0f172a;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  }
+  .app-tab svg { opacity: 0.5; transition: opacity 0.2s; }
+  .app-tab:hover svg { opacity: 0.7; }
   .app-tab.active svg { opacity: 1; }
+
+  /* ── Fade-in animation ── */
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
+  /* ── Spinner ── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .animate-spin { animation: spin 1s linear infinite; }
+
+  /* ── Privacy badge ── */
+  .privacy-badge {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    padding: 0.375rem 0.75rem; border-radius: 9999px;
+    background: rgba(241, 245, 249, 0.9); backdrop-filter: blur(8px);
+    font-size: 0.625rem; font-weight: 500; color: #64748b;
+    z-index: 30; pointer-events: none;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+  }
+
+  /* ── File selected card ── */
+  .file-selected-card {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .file-selected-icon {
+    width: 40px; height: 40px; border-radius: 0.625rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .file-selected-icon-encrypt { background: #eef2ff; color: #4f46e5; }
+  .file-selected-icon-decrypt { background: #f0fdf4; color: #16a34a; }
+  .file-selected-info { flex: 1; min-width: 0; }
+  .file-selected-name { font-size: 0.875rem; font-weight: 500; color: #0f172a; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-selected-size { font-size: 0.75rem; color: #64748b; margin: 0; }
+  .file-selected-check { color: #16a34a; flex-shrink: 0; }
 
   /* ── Tab panels ── */
   .tab-panel { min-height: 60vh; }
@@ -217,6 +327,25 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
   .empty-msg { font-size: 0.875rem; font-weight: 500; color: #374151; margin: 0 0 0.25rem; }
   .empty-hint { font-size: 0.75rem; color: #9ca3af; margin: 0; }
 
+  /* ── Encrypt contact rows ── */
+  .encrypt-contact-row {
+    display: flex; align-items: center; gap: 0.75rem; width: 100%;
+    padding: 0.625rem 1rem; background: #fff; border: none;
+    cursor: pointer; text-align: left; transition: background 0.1s;
+  }
+  .encrypt-contact-row:hover { background: #f8fafc; }
+  .encrypt-contact-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #eef2ff; color: #4f46e5;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 600; flex-shrink: 0;
+  }
+  .encrypt-contact-recent {
+    font-size: 0.625rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.04em; color: #6366f1; background: #eef2ff;
+    padding: 0.15rem 0.5rem; border-radius: 9999px; flex-shrink: 0;
+  }
+
   /* ── Encrypt panel ── */
   .encrypt-panel { background: #fff; border: 1px solid #c7d2fe; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 4px rgb(99 102 241 / 0.08); }
   .encrypt-panel-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
@@ -244,8 +373,7 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
   /* ── Key badge ── */
   .key-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.625rem; border-radius: 9999px; }
   .key-badge-ok { background: #dcfce7; color: #15803d; }
-  .key-pill { font-size: 0.75rem; padding: 0.375rem 0.75rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; }
-  .key-pill-ok { background: #dcfce7; color: #15803d; }
+  /* key-pill classes removed — replaced by key-status-bar in nav */
 
   /* ── Folder save bar ── */
   .folder-bar { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.5rem 0.875rem; }
@@ -456,27 +584,6 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
   .private-key-card .drop-zone:hover { border-color: #f59e0b; background: #1c1917; }
   .private-key-card .drop-zone p { color: #78716c; }
 
-  /* ── Keys sub-tab bar ── */
-  .keys-subtab-bar {
-    display: flex; gap: 0.25rem;
-    background: #f3f4f6; border-radius: 0.5rem; padding: 0.25rem;
-  }
-  .keys-subtab {
-    display: flex; align-items: center; gap: 0.375rem;
-    flex: 1; justify-content: center;
-    padding: 0.5rem 1rem;
-    font-size: 0.8125rem; font-weight: 500;
-    color: #6b7280; background: transparent;
-    border: none; border-radius: 0.375rem; cursor: pointer;
-    transition: all 0.15s;
-  }
-  .keys-subtab:hover { color: #374151; }
-  .keys-subtab.active { background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.08); }
-  .keys-subtab-private.active { color: #92400e; }
-  .keys-subtab-public.active { color: #065f46; }
-  .keys-subtab svg { opacity: 0.6; }
-  .keys-subtab.active svg { opacity: 1; }
-
   /* ── Keys choice grid ── */
   .keys-choice-grid {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
@@ -505,18 +612,6 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     margin-bottom: 0.75rem; transition: color 0.15s;
   }
   .keys-back-link:hover { color: #f59e0b; }
-
-  /* ── Keys public CTA ── */
-  .keys-public-cta {
-    display: flex; align-items: center; gap: 0.75rem;
-    background: #f0fdf4; border: 1px solid #a7f3d0; border-radius: 0.75rem;
-    padding: 1rem 1.25rem; cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .keys-public-cta:hover { border-color: #34d399; box-shadow: 0 2px 8px rgb(5 150 105 / 0.1); }
-  .keys-public-cta svg:first-child { color: #059669; flex-shrink: 0; }
-  .keys-public-cta-title { font-size: 0.875rem; font-weight: 600; color: #065f46; margin: 0 0 0.15rem; }
-  .keys-public-cta-desc { font-size: 0.75rem; color: #059669; margin: 0; }
 
   /* ── Public key empty state ── */
   .public-key-card-empty { text-align: left; }
