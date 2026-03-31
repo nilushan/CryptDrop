@@ -28,8 +28,8 @@ export default function EncryptTab() {
     <div>
       <div className="tab-header">
         <div>
-          <h2 className="tab-title">Lock a File</h2>
-          <p className="tab-subtitle">Select a recipient, then drop a file to encrypt it.</p>
+          <h2 className="tab-title">Encrypt a File</h2>
+          <p className="tab-subtitle">Pick who should be able to open it, then drop your file.</p>
         </div>
       </div>
 

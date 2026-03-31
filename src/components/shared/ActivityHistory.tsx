@@ -20,7 +20,9 @@ function EntryRow({ entry }: { entry: HistoryEntry }) {
   const bgColor = isEncrypt ? '#eef2ff' : '#f0fdf4';
   const label = isEncrypt
     ? `for ${entry.recipientOrSender}`
-    : `from ${entry.recipientOrSender}`;
+    : entry.signed || entry.recipientOrSender !== 'unknown'
+      ? `from ${entry.recipientOrSender}`
+      : 'unsigned';
 
   return (
     <div style={{

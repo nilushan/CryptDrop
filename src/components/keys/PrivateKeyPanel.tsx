@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { $privateKey, $publicKey, $userInfo, $armoredPrivate, $armoredPublic, setKeys } from '../../stores/keys';
+import { $activeTab } from '../../stores/activeTab';
 import { getSavedKey, type SavedKey } from '../../lib/key-storage';
 import { importPrivateKey } from '../../lib/openpgp-helpers';
 import { showToast } from '../../stores/toast';
@@ -19,6 +20,7 @@ export default function PrivateKeyPanel() {
   const userInfo = useStore($userInfo);
   const armoredPrivate = useStore($armoredPrivate);
   const armoredPublic = useStore($armoredPublic);
+  const activeTab = useStore($activeTab);
   const [view, setView] = useState<View>(privateKey && publicKey ? 'loaded' : 'choice');
   const [savedKey, setSavedKey] = useState<SavedKey | null>(null);
   const [restorePassphrase, setRestorePassphrase] = useState('');
@@ -30,6 +32,12 @@ export default function PrivateKeyPanel() {
       setView('loaded');
     }
   }, [privateKey, publicKey]);
+
+  // Clear stale passphrase error when the user navigates back to this tab
+  useEffect(() => {
+    setRestoreError('');
+    setRestorePassphrase('');
+  }, [activeTab]);
 
   // Check for saved key on mount
   useEffect(() => {

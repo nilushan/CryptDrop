@@ -107,7 +107,19 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
         <div>
           <p className="encrypt-panel-label">Encrypting for</p>
           <p className="encrypt-panel-name">{contact.name || contact.email}</p>
-          <p className="encrypt-panel-fp">{contact.fingerprint ? 'Fingerprint: ' + contact.fingerprint : contact.email}</p>
+          <p className="encrypt-panel-fp">
+            {contact.fingerprint ? (
+              <>
+                Fingerprint: {contact.fingerprint}
+                <span
+                  className="fp-tooltip-anchor"
+                  title="This is a unique ID for their encryption key. It confirms you have the right key for this person — like a phone number you can verify."
+                >
+                  {' '}?
+                </span>
+              </>
+            ) : contact.email}
+          </p>
         </div>
         <button onClick={onClose} className="btn-ghost-sm">&times; change</button>
       </div>
@@ -127,7 +139,7 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
           onChange={(e) => setSignEnabled(e.target.checked)}
         />
         <label htmlFor="quick-sign-react" className="text-xs text-gray-500 cursor-pointer">
-          Sign this file <span className="text-gray-400">(optional — requires your private key)</span>
+          Prove it came from me <span className="text-gray-400">(optional — lets the recipient verify you sent this)</span>
         </label>
       </div>
       {signEnabled && (
@@ -151,10 +163,10 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
         onClick={handleEncrypt}
         disabled={!selectedFile || (signEnabled && !privateKey)}
         loading={encrypting}
-        loadingText="Locking..."
+        loadingText="Encrypting..."
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        {signEnabled ? 'Lock & Sign' : 'Lock File'}
+        {signEnabled ? 'Encrypt & Sign' : 'Encrypt File'}
       </ActionButton>
     </div>
   );

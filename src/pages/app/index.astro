@@ -136,12 +136,12 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     font-family: inherit; text-align: left;
   }
   .key-status-empty {
-    background: #f8fafc; border-color: #e2e8f0; color: #64748b;
+    background: #fffbeb; border-color: #fde68a; color: #78350f;
     font-size: 0.8125rem;
   }
-  .key-status-empty:hover { border-color: #cbd5e1; background: #f1f5f9; }
-  .key-status-empty svg { color: #94a3b8; flex-shrink: 0; }
-  .key-status-empty strong { color: #4f46e5; font-weight: 600; }
+  .key-status-empty:hover { border-color: #fbbf24; background: #fef3c7; }
+  .key-status-empty svg { color: #d97706; flex-shrink: 0; }
+  .key-status-empty strong { color: #b45309; font-weight: 600; }
   .key-status-loaded {
     background: #f0fdf4; border-color: #bbf7d0;
   }
@@ -345,6 +345,17 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     letter-spacing: 0.04em; color: #6366f1; background: #eef2ff;
     padding: 0.15rem 0.5rem; border-radius: 9999px; flex-shrink: 0;
   }
+
+  /* ── Fingerprint tooltip anchor ── */
+  .fp-tooltip-anchor {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #e0e7ff; color: #4f46e5;
+    font-size: 0.6rem; font-weight: 700; font-family: inherit;
+    cursor: help; vertical-align: middle; margin-left: 2px;
+    border: 1px solid #c7d2fe;
+  }
+  .fp-tooltip-anchor:hover { background: #c7d2fe; }
 
   /* ── Encrypt panel ── */
   .encrypt-panel { background: #fff; border: 1px solid #c7d2fe; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 4px rgb(99 102 241 / 0.08); }

@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { $contacts, type Contact } from '../../stores/contacts';
+import { $activeTab } from '../../stores/activeTab';
 import ContactAvatar from './ContactAvatar';
 
 interface Props {
@@ -25,6 +26,12 @@ export default function ContactListPicker({
 }: Props) {
   const contacts = useStore($contacts);
   const [searchQuery, setSearchQuery] = useState('');
+  const activeTab = useStore($activeTab);
+
+  // Clear stale search text whenever the user switches tabs
+  useEffect(() => {
+    if (showSearch) setSearchQuery('');
+  }, [activeTab]);
 
   const sorted = useMemo(() => {
     return [...contacts].sort((a, b) => {
@@ -57,6 +64,7 @@ export default function ContactListPicker({
             type="text"
             placeholder="Search contacts..."
             className="search-input"
+            autoComplete="off"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
