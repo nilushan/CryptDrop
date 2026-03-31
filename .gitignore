@@ -3,3 +3,4 @@ dist/
 .astro/
 .DS_Store
 **/.DS_Store
+packages/server/.env
