@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { formatSize, sanitizeFolderName, shortName } from '../src/lib/file-helpers';
+import { formatSize, sanitizeFolderName, sanitizeDownloadFilename, shortName } from '../src/lib/file-helpers';
+import { evaluatePassphrase, isPassphraseAcceptable } from '../src/lib/passphrase-strength';
 
 describe('Utility Functions', () => {
   describe('formatSize()', () => {
@@ -51,6 +52,80 @@ describe('Utility Functions', () => {
 
     it('should return ? for empty string', () => {
       expect(shortName('')).toBe('?');
+    });
+  });
+
+  describe('sanitizeDownloadFilename()', () => {
+    it('should strip directory traversal paths', () => {
+      expect(sanitizeDownloadFilename('../../../../etc/passwd')).toBe('passwd');
+    });
+
+    it('should strip backslash paths', () => {
+      expect(sanitizeDownloadFilename('C:\\Users\\malware.exe')).toBe('malware.exe');
+    });
+
+    it('should remove control characters', () => {
+      expect(sanitizeDownloadFilename('file\x00name.txt')).toBe('filename.txt');
+    });
+
+    it('should cap length at 255 characters', () => {
+      const longName = 'a'.repeat(300) + '.txt';
+      const result = sanitizeDownloadFilename(longName);
+      expect(result.length).toBeLessThanOrEqual(255);
+      expect(result).toMatch(/\.txt$/);
+    });
+
+    it('should return fallback for empty string', () => {
+      expect(sanitizeDownloadFilename('')).toBe('decrypted_file');
+    });
+
+    it('should pass through normal filenames', () => {
+      expect(sanitizeDownloadFilename('document.pdf')).toBe('document.pdf');
+    });
+  });
+
+  describe('evaluatePassphrase()', () => {
+    it('should rate empty passphrase as weak', () => {
+      expect(evaluatePassphrase('').level).toBe('weak');
+    });
+
+    it('should rate short passphrase as weak', () => {
+      expect(evaluatePassphrase('abc').level).toBe('weak');
+    });
+
+    it('should rate medium passphrase as fair', () => {
+      // 10+ chars (score +1) + has digit (score +1) = 2 → fair
+      expect(evaluatePassphrase('abcdefghij1').level).toBe('fair');
+    });
+
+    it('should rate long mixed passphrase as strong', () => {
+      expect(evaluatePassphrase('Correct Horse Battery!1').level).toBe('strong');
+    });
+
+    it('should rate multi-word passphrase as strong', () => {
+      expect(evaluatePassphrase('correct horse battery staple').level).toBe('strong');
+    });
+  });
+
+  describe('isPassphraseAcceptable()', () => {
+    it('should reject short passphrases', () => {
+      expect(isPassphraseAcceptable('short')).toBe(false);
+    });
+
+    it('should reject passphrases under 12 characters', () => {
+      expect(isPassphraseAcceptable('longenough!')).toBe(false); // 11 chars
+    });
+
+    it('should reject weak 12+ char passphrases with no complexity', () => {
+      expect(isPassphraseAcceptable('aaaaaaaaaaaa')).toBe(false); // 12 chars, score 1
+    });
+
+    it('should accept 12+ char passphrases with fair strength', () => {
+      expect(isPassphraseAcceptable('MyPassphrase1')).toBe(true); // mixed case + digit, 13 chars
+    });
+
+    it('should accept strong multi-word passphrases', () => {
+      expect(isPassphraseAcceptable('correct horse battery')).toBe(true);
     });
   });
 });

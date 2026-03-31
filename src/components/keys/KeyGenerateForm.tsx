@@ -3,6 +3,7 @@ import { generateKeyPair } from '../../lib/openpgp-helpers';
 import { downloadTextFile } from '../../lib/file-helpers';
 import { setKeys } from '../../stores/keys';
 import { showToast } from '../../stores/toast';
+import { evaluatePassphrase, isPassphraseAcceptable } from '../../lib/passphrase-strength';
 import ActionButton from '../shared/ActionButton';
 
 interface Props {
@@ -34,6 +35,10 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
       showToast('Please set a passphrase to protect your private key', 'warning');
       return;
     }
+    if (!isPassphraseAcceptable(passphrase)) {
+      showToast('Passphrase must be at least 12 characters and rated "Fair" or better', 'warning');
+      return;
+    }
 
     setGenerating(true);
     try {
@@ -44,6 +49,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
       showToast('Keys generated! Files downloaded.', 'success');
       setArmoredPrivate(result.armoredPrivate);
       setGeneratedName(name.trim());
+      setPassphrase('');
       setGenerated(true);
     } catch (e) {
       showToast('Key generation failed: ' + (e as Error).message, 'error');
@@ -136,7 +142,27 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
             <input type="text" placeholder="Your name" className="input" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
             <input type="email" placeholder="your@email.com" className="input" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-          <input type="password" placeholder="Strong passphrase — protects your private key" className="input w-full mb-4" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} />
+          <input type="password" placeholder="Strong passphrase — protects your private key (min 12 chars)" className="input w-full" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} />
+          {passphrase && (() => {
+            const strength = evaluatePassphrase(passphrase);
+            return (
+              <div style={{ marginTop: '0.375rem', marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '0.25rem' }}>
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} style={{
+                      flex: 1, height: 3, borderRadius: 2,
+                      background: i <= strength.score ? strength.color : '#e2e8f0',
+                      transition: 'background 0.2s',
+                    }} />
+                  ))}
+                </div>
+                <p style={{ fontSize: '0.6875rem', color: strength.color, margin: 0, fontWeight: 500 }}>
+                  {strength.label}{strength.level === 'weak' && passphrase.length < 12 ? ' — needs at least 12 characters' : ''}
+                </p>
+              </div>
+            );
+          })()}
+          {!passphrase && <div style={{ marginBottom: '0.75rem' }} />}
           <ActionButton onClick={handleGenerate} loading={generating} loadingText="Generating..." className="btn-vault-generate">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
             Generate Keys & Download

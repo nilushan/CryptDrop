@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { $privateKey, $userInfo } from '../../stores/keys';
 import { addHistoryEntry } from '../../stores/history';
 import { showToast } from '../../stores/toast';
 import { decryptFileData } from '../../lib/openpgp-helpers';
-import { sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
+import { sanitizeFolderName, sanitizeDownloadFilename, saveToFolder } from '../../lib/file-helpers';
 import type { PublicKey } from 'openpgp';
 import * as openpgp from 'openpgp';
 import type { Contact } from '../../stores/contacts';
@@ -42,6 +42,32 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
   const [decrypting, setDecrypting] = useState(false);
   const [senderEmail, setSenderEmail] = useState('');
   const [result, setResult] = useState<DecryptResult | null>(null);
+  const [expirySeconds, setExpirySeconds] = useState<number | null>(null);
+  const expiryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const RESULT_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+
+  useEffect(() => {
+    if (result) {
+      setExpirySeconds(Math.ceil(RESULT_EXPIRY_MS / 1000));
+
+      countdownTimer.current = setInterval(() => {
+        setExpirySeconds((prev) => (prev !== null && prev > 1 ? prev - 1 : 0));
+      }, 1000);
+
+      expiryTimer.current = setTimeout(() => {
+        setResult(null);
+        setExpirySeconds(null);
+        showToast('Decrypted file cleared from memory for security', 'info');
+      }, RESULT_EXPIRY_MS);
+    }
+
+    return () => {
+      if (expiryTimer.current) clearTimeout(expiryTimer.current);
+      if (countdownTimer.current) clearInterval(countdownTimer.current);
+    };
+  }, [result]);
 
   function handleFileSelect(file: File) {
     setEncryptedFile(file);
@@ -54,7 +80,9 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
     try {
       const fileData = new Uint8Array(await encryptedFile.arrayBuffer());
       const decResult = await decryptFileData(fileData, privateKey, senderKey);
-      const outName = decResult.filename || encryptedFile.name.replace(/\.(pgp|gpg|asc)$/, '') || 'decrypted_file';
+      const outName = sanitizeDownloadFilename(
+        decResult.filename || encryptedFile.name.replace(/\.(pgp|gpg|asc)$/, '') || 'decrypted_file',
+      );
       const blob = new Blob([decResult.data as BlobPart]);
 
       setResult({
@@ -95,10 +123,13 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
   }
 
   function handleReset() {
+    if (expiryTimer.current) clearTimeout(expiryTimer.current);
+    if (countdownTimer.current) clearInterval(countdownTimer.current);
     setEncryptedFile(null);
     setSenderKey(null);
     setSenderEmail('');
     setResult(null);
+    setExpirySeconds(null);
     setShowLookup(false);
   }
 
@@ -120,18 +151,36 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
   }
 
   if (result) {
+    const minutes = expirySeconds !== null ? Math.floor(expirySeconds / 60) : 0;
+    const seconds = expirySeconds !== null ? expirySeconds % 60 : 0;
+
     return (
-      <ResultState
-        type="decrypt"
-        ownerName={userInfo || 'You'}
-        originalFile={result.encryptedFile}
-        resultFile={{ name: result.filename, size: result.size }}
-        onDownload={handleDownload}
-        onReset={handleReset}
-        signatureText={result.sigText}
-      >
-        {resultActions}
-      </ResultState>
+      <>
+        <ResultState
+          type="decrypt"
+          ownerName={userInfo || 'You'}
+          originalFile={result.encryptedFile}
+          resultFile={{ name: result.filename, size: result.size }}
+          onDownload={handleDownload}
+          onReset={handleReset}
+          signatureText={result.sigText}
+        >
+          {resultActions}
+        </ResultState>
+        {expirySeconds !== null && (
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+            fontSize: '0.75rem', color: expirySeconds < 60 ? '#dc2626' : '#64748b',
+            marginTop: '0.75rem', transition: 'color 0.3s',
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            Decrypted file clears from memory in {minutes}:{seconds.toString().padStart(2, '0')}
+          </div>
+        )}
+      </>
     );
   }
 
