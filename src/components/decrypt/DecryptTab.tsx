@@ -5,6 +5,7 @@ import { $activeTab } from '../../stores/activeTab';
 import FolderBar from '../shared/FolderBar';
 import DecryptFilePanel from '../shared/DecryptFilePanel';
 import ActivityHistory from '../shared/ActivityHistory';
+import NoticeBox from '../shared/NoticeBox';
 
 export default function DecryptTab() {
   const privateKey = useStore($privateKey);
@@ -29,10 +30,10 @@ export default function DecryptTab() {
       <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />
 
       {!privateKey && (
-        <div className="notice-box notice-info mb-4 animate-fade-in">
+        <NoticeBox variant="info" className="mb-4 animate-fade-in">
           <p className="text-sm text-indigo-800 font-medium mb-1">Private key required</p>
           <p className="text-xs text-indigo-700">You need your private key to decrypt files. Set it up in <button onClick={() => $activeTab.set('keyring')} className="link-inline">My Key Ring</button> or use the Wizard.</p>
-        </div>
+        </NoticeBox>
       )}
 
       <DecryptFilePanel folderHandle={folderHandle} />

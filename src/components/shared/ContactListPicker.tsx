@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@nanostores/react';
 import { $contacts, type Contact } from '../../stores/contacts';
+import ContactAvatar from './ContactAvatar';
 
 interface Props {
   /** Called when a contact is selected */
@@ -77,9 +78,7 @@ export default function ContactListPicker({
                 borderBottom: i < filtered.length - 1 ? '1px solid #f1f5f9' : 'none',
               }}
             >
-              <div className="encrypt-contact-avatar">
-                {(c.name || c.email).charAt(0).toUpperCase()}
-              </div>
+              <ContactAvatar name={c.name || c.email} />
               <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                 <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {c.name || c.email}

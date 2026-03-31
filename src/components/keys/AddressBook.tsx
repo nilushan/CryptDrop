@@ -3,34 +3,24 @@ import { useStore } from '@nanostores/react';
 import { $contacts, saveContact } from '../../stores/contacts';
 import { showToast } from '../../stores/toast';
 import ContactKeyList from './ContactKeyList';
-import KeyLookupCard from '../shared/KeyLookupCard';
-import InviteBox from '../shared/InviteBox';
+import KeyLookupWithInvite from '../shared/KeyLookupWithInvite';
 import type { KeyLookupResult } from '../shared/KeyLookupCard';
 
 export default function AddressBook() {
   const contacts = useStore($contacts);
-  const [showInvite, setShowInvite] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
   const [newContactPrompt, setNewContactPrompt] = useState<{ email: string; suggestedName: string } | null>(null);
   const [newContactName, setNewContactName] = useState('');
 
   function handleKeyFound(result: KeyLookupResult) {
-    setShowInvite(false);
     const isNew = !contacts.find((c) => c.email === result.email);
 
     if (isNew && !result.name) {
-      // Key found but no name in the UID — prompt user to name the contact
       setNewContactPrompt({ email: result.email, suggestedName: '' });
       setNewContactName('');
     } else {
       setNewContactPrompt(null);
       showToast('Contact added!', 'success');
     }
-  }
-
-  function handleNotFound(email: string) {
-    setInviteEmail(email);
-    setShowInvite(true);
   }
 
   function handleSaveNewContactName() {
@@ -54,11 +44,10 @@ export default function AddressBook() {
 
       {/* Add contact card */}
       <div className="public-key-card mb-4">
-        <KeyLookupCard
+        <KeyLookupWithInvite
           title="Add a Contact"
           description="Search for someone by email on the public keyserver, or import their key file directly."
           onKeyFound={handleKeyFound}
-          onNotFound={handleNotFound}
           saveToContacts
           showCard={false}
         />
@@ -107,9 +96,6 @@ export default function AddressBook() {
           </div>
         )}
 
-        {showInvite && (
-          <InviteBox email={inviteEmail} className="mt-4" />
-        )}
       </div>
 
       {/* Saved contacts list */}

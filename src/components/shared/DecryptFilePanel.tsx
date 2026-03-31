@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { $privateKey, $userInfo } from '../../stores/keys';
 import { addHistoryEntry } from '../../stores/history';
@@ -8,6 +8,8 @@ import { sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
 import type { PublicKey } from 'openpgp';
 import * as openpgp from 'openpgp';
 import type { Contact } from '../../stores/contacts';
+import FileDropZone from './FileDropZone';
+import NoticeBox from './NoticeBox';
 import ContactListPicker from './ContactListPicker';
 import KeyLookupCard from './KeyLookupCard';
 import type { KeyLookupResult } from './KeyLookupCard';
@@ -40,27 +42,9 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
   const [decrypting, setDecrypting] = useState(false);
   const [senderEmail, setSenderEmail] = useState('');
   const [result, setResult] = useState<DecryptResult | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) setEncryptedFile(file);
-  }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    e.currentTarget.classList.add('dragover');
-  }
-
-  function handleDragLeave(e: React.DragEvent) {
-    e.currentTarget.classList.remove('dragover');
-  }
-
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('dragover');
-    const file = e.dataTransfer?.files[0];
-    if (file) setEncryptedFile(file);
+  function handleFileSelect(file: File) {
+    setEncryptedFile(file);
   }
 
   async function handleDecrypt() {
@@ -108,7 +92,6 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
 
   function handleRemoveFile() {
     setEncryptedFile(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   function handleReset() {
@@ -117,7 +100,6 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
     setSenderEmail('');
     setResult(null);
     setShowLookup(false);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   async function handleSelectSenderContact(contact: Contact) {
@@ -159,16 +141,10 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
       <div className="card mb-4">
         <h3 className="card-title">Encrypted File</h3>
         {!encryptedFile ? (
-          <label
-            className="drop-zone drop-zone-lg block"
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
-            <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <p className="text-sm text-gray-500">Drop an encrypted file here or click to select (.pgp, .gpg, .asc)</p>
-          </label>
+          <FileDropZone
+            onFile={handleFileSelect}
+            placeholder="Drop an encrypted file here or click to select (.pgp, .gpg, .asc)"
+          />
         ) : (
           <FileSelectedCard file={encryptedFile} variant="decrypt" onRemove={handleRemoveFile} />
         )}
@@ -176,23 +152,21 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
 
       {/* Verify sender */}
       {senderKey ? (
-        <div className="animate-fade-in" style={{
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '0.5rem',
-          padding: '0.625rem 0.875rem', marginBottom: '0.75rem',
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: '#16a34a', flexShrink: 0 }}>
-            <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-          </svg>
-          <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#166534' }}>Sender verification key loaded</span>
-          <button
-            onClick={() => setSenderKey(null)}
-            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#6ee7b7', cursor: 'pointer', padding: '0.125rem', fontSize: '0.75rem' }}
-          >
-            clear
-          </button>
-        </div>
+        <NoticeBox variant="success" className="mb-3 animate-fade-in">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: '#16a34a', flexShrink: 0 }}>
+              <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#166534' }}>Sender verification key loaded</span>
+            <button
+              onClick={() => setSenderKey(null)}
+              style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#6ee7b7', cursor: 'pointer', padding: '0.125rem', fontSize: '0.75rem' }}
+            >
+              clear
+            </button>
+          </div>
+        </NoticeBox>
       ) : (
         <div className="card mb-4">
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>

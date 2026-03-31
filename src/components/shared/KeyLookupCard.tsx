@@ -4,6 +4,7 @@ import { lookupKeyByEmail, parseUserId } from '../../lib/openpgp-helpers';
 import { saveContact } from '../../stores/contacts';
 import type { PublicKey } from 'openpgp';
 import * as openpgp from 'openpgp';
+import FileDropZone from './FileDropZone';
 
 export interface KeyLookupResult {
   key: PublicKey;
@@ -83,9 +84,7 @@ export default function KeyLookupCard({
     }
   }
 
-  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function handleImportFile(file: File) {
     try {
       const text = await file.text();
       const key = await openpgp.readKey({ armoredKey: text });
@@ -106,7 +105,6 @@ export default function KeyLookupCard({
     } catch (err) {
       showToast('Import failed: ' + (err as Error).message, 'error');
     }
-    e.target.value = '';
   }
 
   const content = (
@@ -130,10 +128,12 @@ export default function KeyLookupCard({
 
       <div className="divider">or</div>
 
-      <label className="drop-zone drop-zone-sm block">
-        <input type="file" accept=".asc,.key,.pgp,.gpg" className="hidden" onChange={handleImportFile} />
-        <p className="text-sm text-gray-500">Import a public key file (.asc, .key)</p>
-      </label>
+      <FileDropZone
+        onFile={handleImportFile}
+        placeholder="Import a public key file (.asc, .key)"
+        size="sm"
+        accept=".asc,.key,.pgp,.gpg"
+      />
 
       {status && (
         <div className={`mt-3 ${status.type === 'success' ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'} rounded-md p-3`}>

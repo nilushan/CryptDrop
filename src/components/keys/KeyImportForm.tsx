@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { importPrivateKey } from '../../lib/openpgp-helpers';
 import { setKeys } from '../../stores/keys';
 import { showToast } from '../../stores/toast';
+import FileDropZone from '../shared/FileDropZone';
 
 interface Props {
   onBack: () => void;
@@ -14,34 +15,13 @@ export default function KeyImportForm({ onBack, onSuccess }: Props) {
   const [fileName, setFileName] = useState<string | null>(null);
   const [passphrase, setPassphrase] = useState('');
   const [importing, setImporting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  function handleFile(file: File) {
     file.text().then((text) => {
       setArmoredKey(text);
       setFileName(file.name);
       showToast('Key file loaded — enter passphrase and click Import', 'info');
     });
-  }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    e.currentTarget.classList.add('dragover');
-  }
-
-  function handleDragLeave(e: React.DragEvent) {
-    e.currentTarget.classList.remove('dragover');
-  }
-
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('dragover');
-    if (e.dataTransfer?.files.length && fileInputRef.current) {
-      fileInputRef.current.files = e.dataTransfer.files;
-      fileInputRef.current.dispatchEvent(new Event('change', { bubbles: true }));
-    }
   }
 
   async function handleImport() {
@@ -81,23 +61,13 @@ export default function KeyImportForm({ onBack, onSuccess }: Props) {
           Read locally — your key never leaves your device.
         </div>
         <div className="mt-4">
-          <label
-            className="drop-zone drop-zone-sm block mb-3"
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".asc,.key,.pgp,.gpg"
-              className="hidden"
-              onChange={handleFileSelect}
-            />
-            <p className="text-sm text-gray-500">
-              {fileName || 'Drop your private key file here or click to select'}
-            </p>
-          </label>
+          <FileDropZone
+            onFile={handleFile}
+            placeholder={fileName || 'Drop your private key file here or click to select'}
+            size="sm"
+            accept=".asc,.key,.pgp,.gpg"
+            className="mb-3"
+          />
           <input
             type="password"
             placeholder="Passphrase (if your key has one)"

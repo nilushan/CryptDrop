@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { touchContact, type Contact } from '../../stores/contacts';
 import { $privateKey, $publicKey, $userInfo } from '../../stores/keys';
@@ -7,6 +7,8 @@ import { addHistoryEntry } from '../../stores/history';
 import { showToast } from '../../stores/toast';
 import { encryptFileData } from '../../lib/openpgp-helpers';
 import { sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
+import FileDropZone from '../shared/FileDropZone';
+import NoticeBox from '../shared/NoticeBox';
 import FileSelectedCard from '../shared/FileSelectedCard';
 import ActionButton from '../shared/ActionButton';
 import ResultState from '../shared/ResultState';
@@ -33,28 +35,6 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
   const [signEnabled, setSignEnabled] = useState(false);
   const [encrypting, setEncrypting] = useState(false);
   const [result, setResult] = useState<EncryptResult | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) setSelectedFile(file);
-  }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    e.currentTarget.classList.add('dragover');
-  }
-
-  function handleDragLeave(e: React.DragEvent) {
-    e.currentTarget.classList.remove('dragover');
-  }
-
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('dragover');
-    const file = e.dataTransfer?.files[0];
-    if (file) setSelectedFile(file);
-  }
 
   async function handleEncrypt() {
     if (!selectedFile) return;
@@ -100,7 +80,6 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
   function handleReset() {
     setSelectedFile(null);
     setResult(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   const fingerprint = publicKey
@@ -134,16 +113,7 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
       </div>
 
       {!selectedFile ? (
-        <label
-          className="drop-zone drop-zone-lg block"
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
-          <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          <p className="text-sm text-gray-500">Drop a file here or click to select</p>
-        </label>
+        <FileDropZone onFile={setSelectedFile} />
       ) : (
         <FileSelectedCard file={selectedFile} variant="encrypt" />
       )}
@@ -168,9 +138,11 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
               <p className="text-xs text-green-600 font-mono mt-1">Fingerprint: {fingerprint}</p>
             </div>
           ) : (
-            <p style={{ fontSize: '0.75rem', color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '0.375rem', padding: '0.5rem 0.75rem', margin: 0 }}>
-              No private key loaded. Set up your keys in <button onClick={() => $activeTab.set('keyring')} className="link-inline">My Key Ring</button> first.
-            </p>
+            <NoticeBox variant="warn">
+              <p style={{ fontSize: '0.75rem', color: '#92400e', margin: 0 }}>
+                No private key loaded. Set up your keys in <button onClick={() => $activeTab.set('keyring')} className="link-inline">My Key Ring</button> first.
+              </p>
+            </NoticeBox>
           )}
         </div>
       )}
