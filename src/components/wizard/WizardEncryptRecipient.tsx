@@ -1,24 +1,37 @@
 import { useState } from 'react';
+import { useStore } from '@nanostores/react';
 import { showToast } from '../../stores/toast';
-import type { Contact } from '../../stores/contacts';
-import type { PublicKey } from 'openpgp';
-import * as openpgp from 'openpgp';
+import { $contacts, type Contact } from '../../stores/contacts';
 import ContactListPicker from '../shared/ContactListPicker';
 import KeyLookupCard from '../shared/KeyLookupCard';
 import InviteBox from '../shared/InviteBox';
 import type { KeyLookupResult } from '../shared/KeyLookupCard';
 
 interface Props {
-  onRecipientReady: (key: PublicKey, info: RecipientInfo) => void;
+  onRecipientReady: (contact: Contact) => void;
 }
 
 export default function WizardEncryptRecipient({ onRecipientReady }: Props) {
+  const contacts = useStore($contacts);
   const [showInvite, setShowInvite] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
 
   function handleKeyFound(result: KeyLookupResult) {
     setShowInvite(false);
-    onRecipientReady(result.key, { email: result.email, name: result.name, fingerprint: result.fingerprint });
+    // KeyLookupCard already saved to contacts store — look it up
+    const saved = contacts.find((c) => c.email === result.email);
+    if (saved) {
+      onRecipientReady(saved);
+    } else {
+      // Fallback: construct a Contact-like object from the lookup result
+      onRecipientReady({
+        email: result.email,
+        name: result.name,
+        armoredPublicKey: result.armored,
+        fingerprint: result.fingerprint,
+        lastUpdated: new Date().toISOString(),
+      });
+    }
     showToast('Recipient key found!', 'success');
   }
 
@@ -27,15 +40,10 @@ export default function WizardEncryptRecipient({ onRecipientReady }: Props) {
     setShowInvite(true);
   }
 
-  async function handleSelectContact(c: Contact) {
-    try {
-      const key = await openpgp.readKey({ armoredKey: c.armoredPublicKey });
-      setShowInvite(false);
-      onRecipientReady(key, { email: c.email, name: c.name, fingerprint: c.fingerprint });
-      showToast('Loaded saved recipient', 'success');
-    } catch {
-      showToast('Failed to load saved key — try refreshing', 'error');
-    }
+  function handleSelectContact(c: Contact) {
+    setShowInvite(false);
+    onRecipientReady(c);
+    showToast('Loaded saved recipient', 'success');
   }
 
   return (

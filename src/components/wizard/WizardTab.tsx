@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import type { PublicKey } from 'openpgp';
+import type { Contact } from '../../stores/contacts';
 import WizardHome from './WizardHome';
 import WizardProgress from './WizardProgress';
 import WizardEncryptRecipient from './WizardEncryptRecipient';
-import WizardEncryptFile from './WizardEncryptFile';
+import QuickEncryptPanel from '../encrypt/QuickEncryptPanel';
 import WizardDecryptKeys from './WizardDecryptKeys';
 import WizardDecryptFile from './WizardDecryptFile';
 
@@ -14,8 +14,7 @@ export default function WizardTab() {
   const [step, setStep] = useState(0);
 
   // Encrypt flow state
-  const [recipientKey, setRecipientKey] = useState<PublicKey | null>(null);
-  const [recipientInfo, setRecipientInfo] = useState<RecipientInfo | null>(null);
+  const [recipientContact, setRecipientContact] = useState<Contact | null>(null);
 
   function handleStartFlow(f: 'encrypt' | 'decrypt') {
     setFlow(f);
@@ -26,8 +25,7 @@ export default function WizardTab() {
     if (!flow || step <= 1) {
       setFlow(null);
       setStep(0);
-      setRecipientKey(null);
-      setRecipientInfo(null);
+      setRecipientContact(null);
       return;
     }
     setStep(step - 1);
@@ -39,10 +37,8 @@ export default function WizardTab() {
     if (step < maxSteps) setStep(step + 1);
   }
 
-  const handleRecipientReady = useCallback((key: PublicKey, info: RecipientInfo) => {
-    setRecipientKey(key);
-    setRecipientInfo(info);
-    // Auto-advance to step 2
+  const handleRecipientReady = useCallback((contact: Contact) => {
+    setRecipientContact(contact);
     setStep(2);
   }, []);
 
@@ -59,11 +55,11 @@ export default function WizardTab() {
       {flow === 'encrypt' && step === 1 && (
         <WizardEncryptRecipient onRecipientReady={handleRecipientReady} />
       )}
-      {flow === 'encrypt' && step === 2 && recipientKey && recipientInfo && (
-        <WizardEncryptFile
-          recipientKey={recipientKey}
-          recipientInfo={recipientInfo}
-          onBack={() => setStep(1)}
+      {flow === 'encrypt' && step === 2 && recipientContact && (
+        <QuickEncryptPanel
+          contact={recipientContact}
+          folderHandle={null}
+          onClose={() => setStep(1)}
         />
       )}
 

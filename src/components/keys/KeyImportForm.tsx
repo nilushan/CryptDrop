@@ -5,9 +5,11 @@ import { showToast } from '../../stores/toast';
 
 interface Props {
   onBack: () => void;
+  /** Called after successful key import. */
+  onSuccess?: () => void;
 }
 
-export default function KeyImportForm({ onBack }: Props) {
+export default function KeyImportForm({ onBack, onSuccess }: Props) {
   const [armoredKey, setArmoredKey] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [passphrase, setPassphrase] = useState('');
@@ -52,6 +54,7 @@ export default function KeyImportForm({ onBack }: Props) {
       const result = await importPrivateKey(armoredKey, passphrase);
       setKeys(result.privateKey, result.publicKey, armoredKey, result.armoredPublic, result.userInfo);
       showToast('Keys imported: ' + result.userInfo, 'success');
+      onSuccess?.();
     } catch (e) {
       const msg = (e as Error).message;
       if (msg.includes('passphrase')) {

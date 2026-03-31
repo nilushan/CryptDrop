@@ -7,9 +7,11 @@ import ActionButton from '../shared/ActionButton';
 
 interface Props {
   onBack: () => void;
+  /** Called after successful key generation. If provided, skips the backup confirmation gate. */
+  onSuccess?: () => void;
 }
 
-export default function KeyGenerateForm({ onBack }: Props) {
+export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [passphrase, setPassphrase] = useState('');
@@ -39,10 +41,14 @@ export default function KeyGenerateForm({ onBack }: Props) {
       setKeys(result.privateKey, result.publicKey, result.armoredPrivate, result.armoredPublic, result.userInfo);
       downloadTextFile(result.armoredPrivate, name.trim().replace(/\s/g, '_') + '_PRIVATE.asc');
       downloadTextFile(result.armoredPublic, name.trim().replace(/\s/g, '_') + '_PUBLIC.asc');
+      showToast('Keys generated! Files downloaded.', 'success');
+      if (onSuccess) {
+        onSuccess();
+        return;
+      }
       setArmoredPrivate(result.armoredPrivate);
       setGeneratedName(name.trim());
       setGenerated(true);
-      showToast('Keys generated! Files downloaded.', 'success');
     } catch (e) {
       showToast('Key generation failed: ' + (e as Error).message, 'error');
     } finally {
