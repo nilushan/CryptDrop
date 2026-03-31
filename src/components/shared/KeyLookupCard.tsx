@@ -141,7 +141,7 @@ export default function KeyLookupCard({
         onFile={handleImportFile}
         placeholder="Import a public key file (.asc, .key)"
         size="sm"
-        accept=".asc,.key,.pgp,.gpg"
+        accept=".asc,.key,.pgp,.gpg,text/plain,application/pgp-keys,application/pgp-encrypted,application/octet-stream"
       />
 
       {status && (

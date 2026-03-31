@@ -69,7 +69,7 @@ export default function KeyImportForm({ onBack, onSuccess }: Props) {
             onFile={handleFile}
             placeholder={fileName || 'Drop your private key file here or click to select'}
             size="sm"
-            accept=".asc,.key,.pgp,.gpg"
+            accept=".asc,.key,.pgp,.gpg,text/plain,application/pgp-keys,application/pgp-encrypted,application/octet-stream"
             className="mb-3"
           />
           <input
