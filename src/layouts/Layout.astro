@@ -48,6 +48,15 @@ const currentPath = Astro.url.pathname;
         >
           How It Works
         </a>
+        <a
+          href="/security"
+          class:list={[
+            "header-nav-link",
+            (currentPath === "/security" || currentPath === "/security/") && "active"
+          ]}
+        >
+          Security
+        </a>
         <a href="/app" class="header-cta">
           Open App
         </a>
