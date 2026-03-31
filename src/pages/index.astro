@@ -242,13 +242,17 @@ import Layout from '../layouts/Layout.astro';
       border-top: 1px solid #e5e7eb;
       border-bottom: 1px solid #e5e7eb;
     }
+    .comparison-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+    }
     .comparison-table {
       width: 100%;
-      border-collapse: separate;
+      min-width: 500px;
+      border-collapse: collapse;
       border-spacing: 0;
-      border-radius: 0.75rem;
-      overflow: hidden;
-      border: 1px solid #e5e7eb;
       background: white;
     }
     .comparison-table th {
@@ -261,6 +265,7 @@ import Layout from '../layouts/Layout.astro';
       color: #6b7280;
       text-align: left;
       border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
     }
     .comparison-table td {
       padding: 0.625rem 1rem;
@@ -442,6 +447,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="ps-header">
         <h2>How CryptDrop compares</h2>
       </div>
+      <div class="comparison-table-wrap">
       <table class="comparison-table">
         <thead>
           <tr>
@@ -504,6 +510,7 @@ import Layout from '../layouts/Layout.astro';
           </tr>
         </tbody>
       </table>
+      </div>
       <p style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.75rem; text-align: center;">* Some messaging apps offer E2E encryption for messages, but typically not for file transfers, and lack sender verification via cryptographic signatures.</p>
     </div>
   </div>

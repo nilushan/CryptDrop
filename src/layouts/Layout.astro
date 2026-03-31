@@ -144,6 +144,11 @@ const currentPath = Astro.url.pathname;
     background: #818cf8;
     border-radius: 1px;
   }
+  /* Hide text nav links on small screens — keep only the CTA button */
+  @media (max-width: 540px) {
+    .header-nav-link { display: none; }
+    .header-nav { gap: 0; }
+  }
   .header-cta {
     font-size: 0.8125rem;
     font-weight: 600;
@@ -154,6 +159,7 @@ const currentPath = Astro.url.pathname;
     text-decoration: none;
     transition: all 0.15s ease;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    white-space: nowrap;
   }
   .header-cta:hover {
     background: #eef2ff;

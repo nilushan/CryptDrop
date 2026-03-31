@@ -44,7 +44,7 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     </div>
   </div>
 
-  <div class="max-w-3xl mx-auto p-6">
+  <div class="max-w-3xl mx-auto app-content-pad">
 
     <!-- ======================== ENCRYPT TAB (React Island) ======================== -->
     <div id="tab-encrypt" class="tab-panel fade-in">
@@ -122,7 +122,10 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
   .app-tab-bar-content {
     max-width: 48rem;
     margin: 0 auto;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 1rem;
+  }
+  @media (min-width: 480px) {
+    .app-tab-bar-content { padding: 0.5rem 1.5rem; }
   }
   .app-tab-identity {
     margin-bottom: 0.5rem;
@@ -132,7 +135,11 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     gap: 0.25rem;
     background: #f1f5f9;
     border-radius: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
   }
+  .app-tab-inner::-webkit-scrollbar { display: none; } /* Safari/Chrome */
 
   /* ── Key status bar (in nav) ── */
   .key-status-bar {
@@ -206,6 +213,14 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
   @keyframes spin { to { transform: rotate(360deg); } }
   .animate-spin { animation: spin 1s linear infinite; }
 
+  /* ── App content padding (responsive) ── */
+  .app-content-pad {
+    padding: 1rem;
+  }
+  @media (min-width: 480px) {
+    .app-content-pad { padding: 1.5rem; }
+  }
+
   /* ── Privacy badge ── */
   .privacy-badge {
     position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
@@ -215,6 +230,9 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
     font-size: 0.625rem; font-weight: 500; color: #64748b;
     z-index: 30; pointer-events: none;
     border: 1px solid rgba(226, 232, 240, 0.6);
+  }
+  @media (max-width: 640px) {
+    .privacy-badge { display: none; }
   }
 
   /* ── File selected card ── */
