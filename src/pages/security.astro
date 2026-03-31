@@ -39,8 +39,8 @@ const cloudItems = [
     icon: '&#x1f50d;',
     title: 'Public key lookup',
     what: 'The email address you search for',
-    where: 'keys.openpgp.org',
-    detail: 'When you look up a recipient by email, CryptDrop sends that email address to the keys.openpgp.org keyserver to fetch their public key. Only the email is sent — no files, no private keys, no other data.',
+    where: 'CryptDrop registry, then keys.openpgp.org',
+    detail: 'When you look up a recipient by email, CryptDrop first checks its own registry (GET /api/lookup/:email). If not found there, it falls back to the keys.openpgp.org public keyserver. Only the email address is sent — no files, no private keys, no other data.',
   },
   {
     icon: '&#x1f4e4;',
@@ -54,7 +54,28 @@ const cloudItems = [
     title: 'Email verification',
     what: 'A verification token and your email address',
     where: 'keys.openpgp.org',
-    detail: 'After publishing, CryptDrop sends a verification request to the keyserver so it can email you a confirmation link. Only the token and email address are sent.',
+    detail: 'After publishing to the keyserver, CryptDrop sends a verification request so it can email you a confirmation link. Only the token and email address are sent.',
+  },
+  {
+    icon: '&#x1f4dd;',
+    title: 'Key registration',
+    what: 'Your name, email, public key, and fingerprint',
+    where: 'CryptDrop registry (POST /api/register)',
+    detail: 'When you generate a new key pair, your name, email address, public key, and key fingerprint are registered with the CryptDrop backend. This lets others find your key by email via the registry. Your private key and passphrase are never sent.',
+  },
+  {
+    icon: '&#x1f4e7;',
+    title: 'Invitation emails',
+    what: 'Sender name, sender email, recipient email',
+    where: 'CryptDrop backend (POST /api/invite)',
+    detail: 'When you invite someone to use CryptDrop, their email address and your name are sent to the CryptDrop backend, which sends them an invitation email via Resend. No files or keys are involved.',
+  },
+  {
+    icon: '&#x1f514;',
+    title: 'Decrypt instructions email',
+    what: 'Recipient email, your name, encrypted filename',
+    where: 'CryptDrop backend (POST /api/notify)',
+    detail: 'Optionally, after encrypting a file you can send the recipient an email with instructions for decrypting it. Only their email address, your name, and the filename are sent — never the file itself.',
   },
 ];
 
@@ -314,7 +335,7 @@ const neverSent = [
           Network Requests
         </span>
         <h2>What reaches the cloud</h2>
-        <p>CryptDrop makes exactly three types of network request, all to the same destination: the <a href="https://keys.openpgp.org" style="color: #92400e; text-decoration: underline;">keys.openpgp.org</a> public keyserver. Nothing else leaves your browser.</p>
+        <p>CryptDrop makes network requests to two destinations: the <a href="https://keys.openpgp.org" style="color: #92400e; text-decoration: underline;">keys.openpgp.org</a> public keyserver, and the CryptDrop backend API (for key registry, invitations, and email notifications). Files and private keys never leave your browser.</p>
       </div>
 
       {cloudItems.map((item) => (
@@ -341,7 +362,7 @@ const neverSent = [
           Never Sent
         </span>
         <h2>What is never transmitted</h2>
-        <p>The following data never leaves your browser under any circumstances. There is no mechanism in CryptDrop to send this data, and the Content Security Policy blocks outbound connections to all domains except keys.openpgp.org.</p>
+        <p>The following data never leaves your browser under any circumstances. There is no mechanism in CryptDrop to send this data, and the Content Security Policy restricts outbound connections to only keys.openpgp.org and the CryptDrop backend.</p>
       </div>
 
       <div class="never-list">
