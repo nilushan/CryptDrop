@@ -63,6 +63,12 @@ export default function KeyLookupCard({
         return;
       }
       const parsed = parseUserId(result.key);
+
+      // Show any warnings from key validation
+      for (const warning of result.warnings) {
+        showToast(warning, 'warning');
+      }
+
       if (shouldSave && parsed.email) {
         saveContact(email.trim(), parsed.name, result.armored, parsed.fingerprint);
       }
@@ -74,7 +80,10 @@ export default function KeyLookupCard({
         fingerprint: parsed.fingerprint,
         uid: parsed.uid,
       };
-      setStatus({ type: 'success', text: 'Key found: ' + (parsed.name || parsed.uid), sub: 'Fingerprint: ' + parsed.fingerprint });
+      const statusText = result.warnings.length > 0
+        ? 'Key found (with warnings): ' + (parsed.name || parsed.uid)
+        : 'Key found: ' + (parsed.name || parsed.uid);
+      setStatus({ type: result.warnings.length > 0 ? 'warning' : 'success', text: statusText, sub: 'Fingerprint: ' + parsed.fingerprint });
       onKeyFound(lookupResult);
       setEmail('');
     } catch (e) {

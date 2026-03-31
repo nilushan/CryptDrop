@@ -49,3 +49,26 @@ export function clearHistory(): void {
   localStorage.removeItem(HISTORY_KEY);
   $history.set([]);
 }
+
+const AUTO_CLEAR_KEY = 'cryptdrop_history_autoclear';
+
+export function isAutoClearEnabled(): boolean {
+  try {
+    return localStorage.getItem(AUTO_CLEAR_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function setAutoClear(enabled: boolean): void {
+  localStorage.setItem(AUTO_CLEAR_KEY, String(enabled));
+}
+
+// Auto-clear history when the tab closes, if the user opted in
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', () => {
+    if (isAutoClearEnabled()) {
+      localStorage.removeItem(HISTORY_KEY);
+    }
+  });
+}

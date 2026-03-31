@@ -23,6 +23,20 @@ export function shortName(fullName: string): string {
   return first.length > 12 ? first.substring(0, 11) + '…' : first;
 }
 
+/** Strip path components and cap length to make untrusted filenames safe for download. */
+export function sanitizeDownloadFilename(raw: string): string {
+  // Take only the basename (strip any directory separators)
+  let name = raw.replace(/.*[/\\]/, '');
+  // Remove control characters and null bytes
+  name = name.replace(/[\x00-\x1f\x7f]/g, '');
+  // Cap length at 255 characters (common FS limit)
+  if (name.length > 255) {
+    const ext = name.lastIndexOf('.') > 0 ? name.slice(name.lastIndexOf('.')) : '';
+    name = name.slice(0, 255 - ext.length) + ext;
+  }
+  return name || 'decrypted_file';
+}
+
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

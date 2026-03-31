@@ -32,8 +32,12 @@ export default function KeyImportForm({ onBack, onSuccess }: Props) {
     setImporting(true);
     try {
       const result = await importPrivateKey(armoredKey, passphrase);
+      if (result.isUnprotected) {
+        showToast('Warning: this key has no passphrase protection. Consider adding one for security.', 'warning');
+      }
       setKeys(result.privateKey, result.publicKey, armoredKey, result.armoredPublic, result.userInfo);
       showToast('Keys imported: ' + result.userInfo, 'success');
+      setPassphrase('');
       onSuccess?.();
     } catch (e) {
       const msg = (e as Error).message;

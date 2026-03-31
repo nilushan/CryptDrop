@@ -49,10 +49,11 @@ export async function generateKeyPair(
 export async function importPrivateKey(
   armoredKey: string,
   passphrase: string,
-): Promise<{ privateKey: PrivateKey; publicKey: PublicKey; armoredPublic: string; userInfo: string }> {
+): Promise<{ privateKey: PrivateKey; publicKey: PublicKey; armoredPublic: string; userInfo: string; isUnprotected: boolean }> {
   let privKey = await openpgp.readPrivateKey({ armoredKey });
 
-  if (!privKey.isDecrypted()) {
+  const isUnprotected = privKey.isDecrypted();
+  if (!isUnprotected) {
     if (!passphrase) throw new Error('This key requires a passphrase');
     privKey = await openpgp.decryptKey({ privateKey: privKey, passphrase });
   }
@@ -61,7 +62,7 @@ export async function importPrivateKey(
   const armoredPublic = publicKey.armor();
   const uid = privKey.users[0]?.userID?.userID ?? 'Unknown';
 
-  return { privateKey: privKey, publicKey, armoredPublic, userInfo: uid };
+  return { privateKey: privKey, publicKey, armoredPublic, userInfo: uid, isUnprotected };
 }
 
 export async function encryptFileData(
@@ -134,15 +135,34 @@ export async function decryptFileData(
 
 export async function lookupKeyByEmail(
   email: string,
-): Promise<{ key: PublicKey; armored: string } | null> {
+): Promise<{ key: PublicKey; armored: string; warnings: string[] } | null> {
   const resp = await fetch(
     `https://keys.openpgp.org/vks/v1/by-email/${encodeURIComponent(email)}`,
+    { signal: AbortSignal.timeout(10_000) },
   );
   if (resp.status === 404) return null;
   if (!resp.ok) throw new Error(`Keyserver returned ${resp.status}`);
   const armored = await resp.text();
   const key = await openpgp.readKey({ armoredKey: armored });
-  return { key, armored };
+
+  const warnings: string[] = [];
+
+  // Check if key is usable (not expired or revoked)
+  try {
+    await key.getEncryptionKey();
+  } catch {
+    warnings.push('This key may be expired or revoked');
+  }
+
+  // Cross-check email in key UID vs searched email
+  const keyUid = key.users[0]?.userID?.userID ?? '';
+  const uidEmailMatch = keyUid.match(/<([^>]+)>/);
+  const keyEmail = uidEmailMatch ? uidEmailMatch[1] : keyUid;
+  if (keyEmail && email.toLowerCase() !== keyEmail.toLowerCase()) {
+    warnings.push(`Key belongs to ${keyEmail}, not ${email}`);
+  }
+
+  return { key, armored, warnings };
 }
 
 export function parseUserId(key: PublicKey): ParsedUserId {

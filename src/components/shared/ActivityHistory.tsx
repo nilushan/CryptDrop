@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { $history, clearHistory, type HistoryEntry } from '../../stores/history';
+import { $history, clearHistory, isAutoClearEnabled, setAutoClear, type HistoryEntry } from '../../stores/history';
 import { formatSize } from '../../lib/file-helpers';
 
 function timeAgo(iso: string): string {
@@ -67,6 +68,13 @@ function EntryRow({ entry }: { entry: HistoryEntry }) {
 
 export default function ActivityHistory() {
   const history = useStore($history);
+  const [autoClear, setAutoClearState] = useState(isAutoClearEnabled);
+
+  function toggleAutoClear() {
+    const next = !autoClear;
+    setAutoClearState(next);
+    setAutoClear(next);
+  }
 
   if (history.length === 0) return null;
 
@@ -76,14 +84,20 @@ export default function ActivityHistory() {
         <p style={{ fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', margin: 0 }}>
           Recent Activity
         </p>
-        <button
-          onClick={clearHistory}
-          style={{ fontSize: '0.6875rem', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', padding: '0.125rem 0.25rem' }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
-        >
-          Clear
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer', fontSize: '0.6875rem', color: '#94a3b8' }}>
+            <input type="checkbox" checked={autoClear} onChange={toggleAutoClear} style={{ accentColor: '#f59e0b' }} />
+            Clear on close
+          </label>
+          <button
+            onClick={clearHistory}
+            style={{ fontSize: '0.6875rem', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', padding: '0.125rem 0.25rem' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
+          >
+            Clear
+          </button>
+        </div>
       </div>
       <div style={{
         border: '1px solid #e2e8f0', borderRadius: '0.75rem',
