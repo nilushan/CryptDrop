@@ -6,9 +6,12 @@ import { showToast } from '../../stores/toast';
 import { decryptFileData } from '../../lib/openpgp-helpers';
 import { formatSize, sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
 import type { PublicKey } from 'openpgp';
+import * as openpgp from 'openpgp';
+import type { Contact } from '../../stores/contacts';
 import FolderBar from '../shared/FolderBar';
-import SenderContactPills from '../shared/SenderContactPills';
-import SenderLookup from './SenderLookup';
+import ContactListPicker from '../shared/ContactListPicker';
+import KeyLookupCard from '../shared/KeyLookupCard';
+import type { KeyLookupResult } from '../shared/KeyLookupCard';
 import FileSelectedCard from '../shared/FileSelectedCard';
 import ActionButton from '../shared/ActionButton';
 import SuccessState from '../shared/SuccessState';
@@ -24,6 +27,7 @@ export default function DecryptTab() {
   const [result, setResult] = useState<{ filename: string; size: number; sigText: string; savedPath: string } | null>(null);
   const [folderHandle, setFolderHandle] = useState<FileSystemDirectoryHandle | null>(null);
   const [senderEmail, setSenderEmail] = useState('');
+  const [showLookup, setShowLookup] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -77,6 +81,21 @@ export default function DecryptTab() {
     handleResetFile();
     setSenderKey(null);
     setSenderEmail('');
+  }
+
+  async function handleSelectSenderContact(contact: Contact) {
+    try {
+      const key = await openpgp.readKey({ armoredKey: contact.armoredPublicKey });
+      setSenderKey(key);
+      showToast('Sender key loaded', 'success');
+    } catch {
+      showToast('Could not load key for ' + contact.email, 'error');
+    }
+  }
+
+  function handleSenderKeyFound(result: KeyLookupResult) {
+    setSenderKey(result.key);
+    showToast('Sender key found', 'success');
   }
 
   if (result) {
@@ -148,7 +167,7 @@ export default function DecryptTab() {
       </div>
 
       {/* Verify sender */}
-      {senderKey && (
+      {senderKey ? (
         <div className="animate-fade-in" style={{
           display: 'flex', alignItems: 'center', gap: '0.5rem',
           background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '0.5rem',
@@ -166,12 +185,32 @@ export default function DecryptTab() {
             clear
           </button>
         </div>
-      )}
-      {!senderKey && (
-        <>
-          <SenderContactPills onSenderKeyLoaded={(key) => setSenderKey(key)} />
-          <SenderLookup onSenderKeyLoaded={(key) => setSenderKey(key)} />
-        </>
+      ) : (
+        <div className="card mb-4">
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div>
+              <h3 className="card-title" style={{ margin: '0 0 0.25rem' }}>Verify Sender <span className="text-gray-400 font-normal">(optional)</span></h3>
+              <p className="text-xs text-gray-500" style={{ margin: 0 }}>If the file was signed, load the sender's public key to verify their identity.</p>
+            </div>
+            <button onClick={() => setShowLookup((v) => !v)} className="btn-ghost" style={{ flexShrink: 0 }}>
+              {showLookup ? 'Cancel' : '+ New sender'}
+            </button>
+          </div>
+
+          {!showLookup && (
+            <ContactListPicker onSelect={handleSelectSenderContact} />
+          )}
+
+          {showLookup && (
+            <KeyLookupCard
+              placeholder="sender@email.com"
+              buttonText="Find Key"
+              onKeyFound={handleSenderKeyFound}
+              saveToContacts={false}
+              showCard={false}
+            />
+          )}
+        </div>
       )}
 
       <ActionButton

@@ -6,8 +6,11 @@ import { showToast } from '../../stores/toast';
 import { decryptFileData } from '../../lib/openpgp-helpers';
 import { formatSize, sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
 import type { PublicKey } from 'openpgp';
-import SenderContactPills from '../shared/SenderContactPills';
-import SenderLookup from '../decrypt/SenderLookup';
+import * as openpgp from 'openpgp';
+import type { Contact } from '../../stores/contacts';
+import ContactListPicker from '../shared/ContactListPicker';
+import KeyLookupCard from '../shared/KeyLookupCard';
+import type { KeyLookupResult } from '../shared/KeyLookupCard';
 import FileSelectedCard from '../shared/FileSelectedCard';
 import ActionButton from '../shared/ActionButton';
 import SuccessState from '../shared/SuccessState';
@@ -19,6 +22,7 @@ export default function WizardDecryptFile() {
 
   const [encryptedFile, setEncryptedFile] = useState<File | null>(null);
   const [senderKey, setSenderKey] = useState<PublicKey | null>(null);
+  const [showLookup, setShowLookup] = useState(false);
   const [decrypting, setDecrypting] = useState(false);
   const [result, setResult] = useState<{ filename: string; size: number; sigText: string; savedPath: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +58,21 @@ export default function WizardDecryptFile() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
+  async function handleSelectSenderContact(contact: Contact) {
+    try {
+      const key = await openpgp.readKey({ armoredKey: contact.armoredPublicKey });
+      setSenderKey(key);
+      showToast('Sender key loaded', 'success');
+    } catch {
+      showToast('Could not load key for ' + contact.email, 'error');
+    }
+  }
+
+  function handleSenderKeyFound(result: KeyLookupResult) {
+    setSenderKey(result.key);
+    showToast('Sender key found', 'success');
+  }
+
   return (
     <div className="fade-in">
       <div className="card mb-4">
@@ -83,10 +102,31 @@ export default function WizardDecryptFile() {
           <button onClick={() => setSenderKey(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#6ee7b7', cursor: 'pointer', padding: '0.125rem', fontSize: '0.75rem' }}>clear</button>
         </div>
       ) : (
-        <>
-          <SenderContactPills onSenderKeyLoaded={(key) => setSenderKey(key)} />
-          <SenderLookup onSenderKeyLoaded={(key) => setSenderKey(key)} />
-        </>
+        <div className="card mb-4">
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div>
+              <h3 className="card-title" style={{ margin: '0 0 0.25rem' }}>Verify Sender <span className="text-gray-400 font-normal">(optional)</span></h3>
+              <p className="text-xs text-gray-500" style={{ margin: 0 }}>If the file was signed, load the sender's public key to verify their identity.</p>
+            </div>
+            <button onClick={() => setShowLookup((v) => !v)} className="btn-ghost" style={{ flexShrink: 0 }}>
+              {showLookup ? 'Cancel' : '+ New sender'}
+            </button>
+          </div>
+
+          {!showLookup && (
+            <ContactListPicker onSelect={handleSelectSenderContact} />
+          )}
+
+          {showLookup && (
+            <KeyLookupCard
+              placeholder="sender@email.com"
+              buttonText="Find Key"
+              onKeyFound={handleSenderKeyFound}
+              saveToContacts={false}
+              showCard={false}
+            />
+          )}
+        </div>
       )}
 
       <ActionButton onClick={handleDecrypt} disabled={!privateKey || !encryptedFile} loading={decrypting} loadingText="Unlocking...">
