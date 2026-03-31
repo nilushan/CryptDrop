@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { touchContact, type Contact } from '../../stores/contacts';
 import { $privateKey, $publicKey, $userInfo } from '../../stores/keys';
+import { $activeTab } from '../../stores/activeTab';
 import { showToast } from '../../stores/toast';
 import { encryptFileData } from '../../lib/openpgp-helpers';
 import { formatSize, sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
@@ -143,7 +144,7 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
             </div>
           ) : (
             <p style={{ fontSize: '0.75rem', color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '0.375rem', padding: '0.5rem 0.75rem', margin: 0 }}>
-              No private key loaded. Set up your keys in the Keys tab first.
+              No private key loaded. Set up your keys in <button onClick={() => $activeTab.set('keyring')} className="link-inline">My Key Ring</button> first.
             </p>
           )}
         </div>
