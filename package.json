@@ -1,7 +1,9 @@
 {
   "name": "cryptdrop-site",
+  "private": true,
   "type": "module",
   "version": "1.0.0",
+  "workspaces": ["packages/server"],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

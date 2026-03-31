@@ -135,7 +135,34 @@ export async function decryptFileData(
 
 export async function lookupKeyByEmail(
   email: string,
-): Promise<{ key: PublicKey; armored: string; warnings: string[] } | null> {
+): Promise<{ key: PublicKey; armored: string; warnings: string[]; source?: string } | null> {
+  // Try CryptDrop API first (includes D1 registry + keyserver fallback)
+  const apiResult = await lookupViaApi(email);
+  if (apiResult) return apiResult;
+
+  // If API is unreachable, fall back to direct keyserver query
+  return lookupViaKeyserver(email);
+}
+
+async function lookupViaApi(
+  email: string,
+): Promise<{ key: PublicKey; armored: string; warnings: string[]; source: string } | null> {
+  try {
+    const { lookupKey } = await import('./api');
+    const result = await lookupKey(email);
+    if (!result.found || !result.publicKey) return null;
+
+    const key = await openpgp.readKey({ armoredKey: result.publicKey });
+    const warnings = validateKey(key, email);
+    return { key, armored: result.publicKey, warnings, source: result.source ?? 'registry' };
+  } catch {
+    return null; // API unreachable — caller will try keyserver directly
+  }
+}
+
+async function lookupViaKeyserver(
+  email: string,
+): Promise<{ key: PublicKey; armored: string; warnings: string[]; source: string } | null> {
   const resp = await fetch(
     `https://keys.openpgp.org/vks/v1/by-email/${encodeURIComponent(email)}`,
     { signal: AbortSignal.timeout(10_000) },
@@ -144,12 +171,16 @@ export async function lookupKeyByEmail(
   if (!resp.ok) throw new Error(`Keyserver returned ${resp.status}`);
   const armored = await resp.text();
   const key = await openpgp.readKey({ armoredKey: armored });
+  const warnings = validateKey(key, email);
+  return { key, armored, warnings, source: 'keyserver' };
+}
 
+function validateKey(key: PublicKey, email: string): string[] {
   const warnings: string[] = [];
 
   // Check if key is usable (not expired or revoked)
   try {
-    await key.getEncryptionKey();
+    key.getEncryptionKey();
   } catch {
     warnings.push('This key may be expired or revoked');
   }
@@ -162,7 +193,7 @@ export async function lookupKeyByEmail(
     warnings.push(`Key belongs to ${keyEmail}, not ${email}`);
   }
 
-  return { key, armored, warnings };
+  return warnings;
 }
 
 export function parseUserId(key: PublicKey): ParsedUserId {

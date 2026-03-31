@@ -5,11 +5,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # Astro dev server
-npm run build        # Production build → dist/
-npm test             # Run all tests (vitest, one-shot)
-npm run test:watch   # Vitest in watch mode
-npm run typecheck    # Type-check via astro check
+npm run dev                          # Astro dev server (localhost:4321)
+npm run build                        # Production build → dist/
+npm test                             # Run all tests (vitest, one-shot)
+npm run test:watch                   # Vitest in watch mode
+npm run typecheck                    # Type-check via astro check
+npm run dev -w packages/server       # Worker dev server (localhost:8787)
+npm run deploy -w packages/server    # Deploy Worker to Cloudflare
+npm run db:migrate:local -w packages/server   # Apply D1 migrations locally
+npm run db:migrate:remote -w packages/server  # Apply D1 migrations remotely
 ```
 
 Run a single test file:
@@ -74,6 +78,27 @@ All styles are in `<style is:global>` in `src/pages/app/index.astro`. React comp
 
 Tests use vitest + jsdom with `@testing-library/jest-dom` matchers. Test files are in `tests/` and can be `.test.ts` or `.test.tsx`. The setup file is `tests/rtl-setup.ts`.
 
-### Planned backend (not yet built)
+### Backend (packages/server/)
 
-Per `docs/ROADMAP.md`: Cloudflare Pages (frontend) + Cloudflare Workers (API) + Cloudflare D1 (SQLite). The app currently looks up recipient keys directly from `keys.openpgp.org`. Future phases add `/api/register`, `/api/lookup/:email`, and an invitation email flow via SendGrid.
+Cloudflare Worker with Hono.js + Cloudflare D1 (SQLite) + Resend for emails.
+
+| File | Purpose |
+|------|---------|
+| `src/index.ts` | Hono app entry, mounts all routes |
+| `src/routes/register.ts` | `POST /api/register` — store user key, auto-accept invitations |
+| `src/routes/lookup.ts` | `GET /api/lookup/:email` — D1 first, keyserver fallback |
+| `src/routes/invite.ts` | `POST /api/invite` + `GET /api/invite/:token` |
+| `src/routes/notify.ts` | `POST /api/notify` — send decrypt instructions email |
+| `src/routes/health.ts` | `GET /api/health` |
+| `src/services/email.ts` | Resend SDK wrapper |
+| `src/services/tokens.ts` | Crypto-random URL-safe token generation |
+| `src/db/schema.ts` | Typed D1 query helpers |
+| `src/middleware/cors.ts` | Origin-based CORS |
+| `src/middleware/rate-limit.ts` | D1-backed rate limiting |
+| `migrations/` | D1 SQL migrations (users, invitations, rate_limits) |
+
+**Environment**: `RESEND_API_KEY` (wrangler secret), `SITE_URL` (wrangler.toml var), `PUBLIC_API_URL` (Astro env var).
+
+### API client (src/lib/api.ts)
+
+Frontend fetch wrapper for all API calls. `lookupKeyByEmail()` in openpgp-helpers routes through `/api/lookup` first, falling back to direct keyserver if API unreachable.

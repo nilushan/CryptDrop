@@ -1,0 +1,12 @@
+name = "cryptdrop-server"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cryptdrop-db"
+database_id = "c0a47e3e-6cc4-477a-8df4-03c553f21db6"
+migrations_dir = "migrations"
+
+[vars]
+SITE_URL = "https://cryptdrop.app"

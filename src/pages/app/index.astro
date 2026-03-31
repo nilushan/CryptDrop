@@ -86,6 +86,13 @@ import KeyStatusPill from '../../components/shared/KeyStatusPill';
   <script>
     import { $activeTab, type TabId } from '../../stores/activeTab';
     const tabIds: TabId[] = ['encrypt', 'decrypt', 'keyring', 'addressbook', 'wizard'];
+
+    // Allow deep-linking to a tab via ?tab=keyring etc.
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    if (urlTab && tabIds.includes(urlTab as TabId)) {
+      $activeTab.set(urlTab as TabId);
+    }
+
     $activeTab.subscribe((tab) => {
       tabIds.forEach((t) => {
         document.getElementById('tab-' + t)?.classList.toggle('hidden', t !== tab);

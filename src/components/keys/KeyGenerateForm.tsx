@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { generateKeyPair } from '../../lib/openpgp-helpers';
+import { generateKeyPair, parseUserId } from '../../lib/openpgp-helpers';
 import { downloadTextFile } from '../../lib/file-helpers';
 import { setKeys } from '../../stores/keys';
 import { showToast } from '../../stores/toast';
 import { evaluatePassphrase, isPassphraseAcceptable } from '../../lib/passphrase-strength';
+import { registerUser } from '../../lib/api';
 import ActionButton from '../shared/ActionButton';
 
 interface Props {
@@ -51,6 +52,17 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
       setGeneratedName(name.trim());
       setPassphrase('');
       setGenerated(true);
+
+      // Register with CryptDrop server (non-blocking)
+      const parsed = parseUserId(result.publicKey);
+      registerUser({
+        email: email.trim().toLowerCase(),
+        name: name.trim(),
+        publicKey: result.armoredPublic,
+        fingerprint: parsed.fingerprint,
+      }).catch(() => {
+        // Registration is best-effort — don't block key generation
+      });
     } catch (e) {
       showToast('Key generation failed: ' + (e as Error).message, 'error');
     } finally {

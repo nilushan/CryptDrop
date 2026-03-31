@@ -5,7 +5,7 @@
 - **Frontend**: Cloudflare Pages (static Astro site)
 - **Backend**: Cloudflare Workers (thin API layer)
 - **Database**: Cloudflare D1 (SQLite at the edge)
-- **Email**: SendGrid API
+- **Email**: Resend API
 - **Key Server**: keys.openpgp.org (public keyserver, proxied via Workers)
 
 ## Trust Model
@@ -31,83 +31,34 @@ See [PHASE-1-PLAN.md](./PHASE-1-PLAN.md) for detailed specification.
 
 ---
 
-## Phase 2: Backend Server for Key Registration
+## Phase 2+3: Backend Server, User Registry & Invitations ✅
 
-**Goal**: User registry + key proxy for faster lookups and user tracking.
+**Status**: Implemented — `packages/server/` (Hono.js + D1 + Resend)
 
 **Infrastructure**:
-- Cloudflare Worker with 3 endpoints
-- Cloudflare D1 database
+- Cloudflare Worker (Hono.js) in `packages/server/`
+- Cloudflare D1 database with 3 tables (users, invitations, rate_limits)
+- Resend for transactional emails
+- npm workspaces monorepo
 
 **API Endpoints**:
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/api/register` | Store public key + user info, proxy to keyserver |
-| GET | `/api/lookup/:email` | Find user's public key (local first, keyserver fallback) |
 | GET | `/api/health` | Health check |
-
-**D1 Schema**:
-
-```sql
-CREATE TABLE users (
-  id TEXT PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  public_key TEXT NOT NULL,
-  fingerprint TEXT NOT NULL,
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
-);
-
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_fingerprint ON users(fingerprint);
-```
-
-**App Changes**:
-- Key generation calls `/api/register` after keyserver publish
-- Recipient lookup hits `/api/lookup/:email` first, falls back to keyserver
-
----
-
-## Phase 3: SendGrid Email Integration & Invitations
-
-**Goal**: Invitation loop that makes CryptDrop practical for real use.
-
-**New API Endpoints**:
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/api/invite` | Send invitation email via SendGrid |
-| POST | `/api/notify` | Notify sender when invitee completes registration |
+| POST | `/api/register` | Store public key, auto-accept pending invitations, notify senders |
+| GET | `/api/lookup/:email` | D1 registry first, keyserver fallback |
+| POST | `/api/invite` | Create invitation + send email via Resend |
 | GET | `/api/invite/:token` | Validate invitation token |
-
-**D1 Schema Addition**:
-
-```sql
-CREATE TABLE invitations (
-  id TEXT PRIMARY KEY,
-  token TEXT UNIQUE NOT NULL,
-  sender_email TEXT NOT NULL,
-  recipient_email TEXT NOT NULL,
-  status TEXT DEFAULT 'pending',  -- pending | accepted | expired
-  created_at TEXT DEFAULT (datetime('now')),
-  accepted_at TEXT,
-  FOREIGN KEY (sender_email) REFERENCES users(email)
-);
-
-CREATE INDEX idx_invitations_token ON invitations(token);
-CREATE INDEX idx_invitations_recipient ON invitations(recipient_email);
-```
-
-**Email Templates**:
-1. **Invitation**: "[Name] wants to send you an encrypted file"
-2. **Notification**: "[Name] has set up their keys — you can now encrypt files for them"
+| POST | `/api/notify` | Send decrypt instructions email |
 
 **App Changes**:
-- "Recipient not found" → offer to send invitation email
-- Invitation link lands on `/app?invite=TOKEN` with contextual onboarding
-- After key creation via invite, trigger notification to sender
+- `lookupKeyByEmail()` routes through `/api/lookup` first, falls back to direct keyserver
+- Key generation auto-registers via `POST /api/register`
+- InviteBox sends real invitation emails (mailto fallback if API unavailable)
+- `/invite?token=...` dedicated landing page for invited recipients
+- "Email decrypt instructions" button on post-encrypt result
+- D1-backed rate limiting on all endpoints
 
 ---
 
@@ -129,7 +80,6 @@ CREATE INDEX idx_invitations_recipient ON invitations(recipient_email);
 
 ## Build Order
 
-1. **Phase 1** — Immediate UX improvement, zero infrastructure
-2. **Phase 2** — Simple Worker + D1, unlocks Phase 3
-3. **Phase 3** — Big value-add: invitation loop for real-world usage
-4. **Phase 4** — Ongoing polish and hardening
+1. **Phase 1** — Immediate UX improvement, zero infrastructure ✅
+2. **Phase 2+3** — Worker + D1 + Resend: user registry, lookup, invitations ✅
+3. **Phase 4** — Ongoing polish and hardening

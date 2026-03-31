@@ -7,6 +7,7 @@ import { addHistoryEntry } from '../../stores/history';
 import { showToast } from '../../stores/toast';
 import { encryptFileData } from '../../lib/openpgp-helpers';
 import { sanitizeFolderName, saveToFolder } from '../../lib/file-helpers';
+import { sendDecryptInstructions } from '../../lib/api';
 import FileDropZone from '../shared/FileDropZone';
 import NoticeBox from '../shared/NoticeBox';
 import FileSelectedCard from '../shared/FileSelectedCard';
@@ -86,6 +87,21 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
     ? publicKey.getFingerprint().toUpperCase().match(/.{1,4}/g)?.join(' ') ?? ''
     : '';
 
+  async function handleEmailInstructions() {
+    if (!result || !contact.email) return;
+    const senderName = userInfo || 'Someone';
+    try {
+      await sendDecryptInstructions({
+        recipientEmail: contact.email,
+        senderName,
+        filename: result.originalFile.name,
+      });
+      showToast('Decrypt instructions sent!', 'success');
+    } catch {
+      showToast('Could not send instructions email', 'error');
+    }
+  }
+
   if (result) {
     return (
       <div className="encrypt-panel">
@@ -97,6 +113,12 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
           onDownload={handleDownload}
           onReset={handleReset}
         />
+        {contact.email && (
+          <button onClick={handleEmailInstructions} className="btn-sm btn-ghost-sm" style={{ marginTop: '0.75rem', width: '100%', justifyContent: 'center' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ marginRight: 4 }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/></svg>
+            Email decrypt instructions to {contact.name || contact.email}
+          </button>
+        )}
       </div>
     );
   }
