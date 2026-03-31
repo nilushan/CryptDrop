@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import type { Env } from '../types.js';
 import { rateLimit } from '../middleware/rate-limit.js';
-import { upsertUser, markInvitationsAccepted } from '../db/schema.js';
+import { upsertUser, markInvitationsAccepted, markInvitationAcceptedByToken } from '../db/schema.js';
 import { sendNotificationEmail } from '../services/email.js';
 
 export const registerRoutes = new Hono<{ Bindings: Env }>();
@@ -15,6 +15,7 @@ registerRoutes.post(
       name: string;
       publicKey: string;
       fingerprint: string;
+      inviteToken?: string;
     }>();
 
     if (!body.email || !body.name || !body.publicKey || !body.fingerprint) {
@@ -33,8 +34,18 @@ registerRoutes.post(
       fingerprint: body.fingerprint,
     });
 
-    // Auto-accept any pending invitations for this email and notify senders
-    const acceptedInvitations = await markInvitationsAccepted(c.env.DB, email);
+    // Accept invitations: by token first (handles email mismatch), then by email for any others
+    const acceptedInvitations: Array<{ sender_email: string }> = [];
+
+    if (body.inviteToken) {
+      const inv = await markInvitationAcceptedByToken(c.env.DB, body.inviteToken.trim());
+      if (inv) acceptedInvitations.push(inv);
+    }
+
+    // Also accept any pending invitations matching the registered email
+    const byEmail = await markInvitationsAccepted(c.env.DB, email);
+    acceptedInvitations.push(...byEmail);
+
     for (const inv of acceptedInvitations) {
       try {
         await sendNotificationEmail(c.env, {

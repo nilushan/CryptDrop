@@ -73,6 +73,7 @@ inviteRoutes.get('/invite/:token', async (c) => {
   return c.json({
     valid: invitation.status === 'pending',
     status: invitation.status,
+    token: invitation.token,
     senderName: invitation.sender_name,
     senderEmail: invitation.sender_email,
     recipientEmail: invitation.recipient_email,

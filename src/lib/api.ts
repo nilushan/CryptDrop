@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = import.meta.env.DEV ? 'http://localhost:8787' : '';
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
@@ -18,6 +18,7 @@ export async function registerUser(user: {
   name: string;
   publicKey: string;
   fingerprint: string;
+  inviteToken?: string;
 }): Promise<{ ok: boolean; invitationsAccepted: number }> {
   return apiFetch('/api/register', {
     method: 'POST',
@@ -62,6 +63,7 @@ export interface InviteValidation {
   senderEmail?: string;
   recipientEmail?: string;
   status?: string;
+  token?: string; // echoed back so the frontend can pass it to registration
 }
 
 export async function validateInviteToken(token: string): Promise<InviteValidation> {

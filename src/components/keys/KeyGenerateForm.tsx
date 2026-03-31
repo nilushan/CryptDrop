@@ -55,11 +55,13 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
 
       // Register with CryptDrop server (non-blocking)
       const parsed = parseUserId(result.publicKey);
+      const inviteToken = new URLSearchParams(window.location.search).get('inviteToken') ?? undefined;
       registerUser({
         email: email.trim().toLowerCase(),
         name: name.trim(),
         publicKey: result.armoredPublic,
         fingerprint: parsed.fingerprint,
+        inviteToken,
       }).catch(() => {
         // Registration is best-effort — don't block key generation
       });

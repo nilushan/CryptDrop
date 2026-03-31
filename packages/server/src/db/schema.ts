@@ -92,3 +92,19 @@ export async function findInvitationByToken(
 ): Promise<InvitationRow | null> {
   return db.prepare('SELECT * FROM invitations WHERE token = ?').bind(token).first<InvitationRow>();
 }
+
+/** Accept a specific invitation by token, regardless of what email the registrant used. */
+export async function markInvitationAcceptedByToken(
+  db: D1Database,
+  token: string
+): Promise<InvitationRow | null> {
+  const inv = await findInvitationByToken(db, token);
+  if (!inv || inv.status !== 'pending') return null;
+  await db
+    .prepare(
+      "UPDATE invitations SET status = 'accepted', accepted_at = datetime('now') WHERE token = ? AND status = 'pending'"
+    )
+    .bind(token)
+    .run();
+  return inv;
+}

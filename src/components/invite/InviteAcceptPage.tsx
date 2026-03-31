@@ -68,7 +68,10 @@ export default function InviteAcceptPage() {
           <p>
             To receive encrypted files, you need to set up your own encryption keys. It only takes a minute — your keys are created in your browser and never leave your device.
           </p>
-          <a href="/app?tab=keyring" className="invite-cta-btn">
+          <a
+            href={`/app?tab=keyring${invite?.token ? `&inviteToken=${encodeURIComponent(invite.token)}` : ''}`}
+            className="invite-cta-btn"
+          >
             Set Up My Keys
           </a>
           <p className="invite-footnote">
