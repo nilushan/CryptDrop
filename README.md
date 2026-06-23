@@ -4,6 +4,10 @@
 
 CryptDrop lets you encrypt and decrypt files using PGP — entirely in your browser tab. Your private key and file contents never leave your device.
 
+[![CryptDrop](docs/screenshot.png)](https://cryptdrop-site.pages.dev/)
+
+### 🔗 [Try the live demo →](https://cryptdrop-site.pages.dev/)
+
 ---
 
 ## What it does
