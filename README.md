@@ -94,6 +94,10 @@ npm run typecheck
 
 ---
 
+## Design system
+
+See the [shared design-system baseline](docs/design-system.md) for the UI inventory, app and marketing pattern catalogs, accessibility targets, ownership, and migration checklist. [Responsive visual references and validation](docs/design-system-evidence/issue-2/README.md) document the audited baseline; implementation follows independent review.
+
 ## Project structure
 
 ```

@@ -1,0 +1,238 @@
+{
+  "baseHead": "ee7e3085d7005cac68852c059286111cabdfdaaf",
+  "capturedAtUtc": "2026-10-23T16:58:03.368Z",
+  "origin": "http://127.0.0.1:4322",
+  "server": "Astro production preview (npm run build; npm run preview -- --host 127.0.0.1 --port 4322)",
+  "browser": "gstack browse / HeadlessChrome 145.0.7632.6",
+  "captureMode": "Viewport-only PNG, device scale 1, animations settled; empty local state, no keys or real identity data",
+  "captures": [
+    {
+      "file": "after-app-desktop.png",
+      "phase": "after",
+      "surface": "app",
+      "route": "/app?tab=encrypt",
+      "state": "Empty Encrypt; no contacts or private key; unsigned capability notice",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "9d2b739f89b0cd77943f27f634d39a925c51e090434ce24bfb31386f0137102e"
+    },
+    {
+      "file": "after-app-mobile.png",
+      "phase": "after",
+      "surface": "app",
+      "route": "/app?tab=encrypt",
+      "state": "Empty Encrypt; no contacts or private key; unsigned capability notice",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "8f3deb0cd284a7ee35239cc03825973b01e70eaf14bdbc734c725a598d7291a7"
+    },
+    {
+      "file": "after-app-tablet.png",
+      "phase": "after",
+      "surface": "app",
+      "route": "/app?tab=encrypt",
+      "state": "Empty Encrypt; no contacts or private key; unsigned capability notice",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "20529d657431da82a2378e88eff05c5e36b99715d4c057596c2629d6b8bbc6b9"
+    },
+    {
+      "file": "after-marketing-desktop.png",
+      "phase": "after",
+      "surface": "marketing",
+      "route": "/",
+      "state": "Homepage hero and calls to action",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "e52f5f21bbffba15c68cf8e9282785eced3cf2858344fa2e2af4859b9ebca6bc"
+    },
+    {
+      "file": "after-marketing-mobile.png",
+      "phase": "after",
+      "surface": "marketing",
+      "route": "/",
+      "state": "Homepage hero and calls to action",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "d1e6912a0902d84d866b8806a006f78ff12b3540a40ebef0b5876c4b05d71e53"
+    },
+    {
+      "file": "after-marketing-tablet.png",
+      "phase": "after",
+      "surface": "marketing",
+      "route": "/",
+      "state": "Homepage hero and calls to action",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "188e8e8036cf0d895540293acff7b79aa331457a717441643905702b09790144"
+    },
+    {
+      "file": "before-app-desktop.png",
+      "phase": "before",
+      "surface": "app",
+      "route": "/app?tab=encrypt",
+      "state": "Empty Encrypt; no contacts or private key; unsigned capability notice",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "9d2b739f89b0cd77943f27f634d39a925c51e090434ce24bfb31386f0137102e"
+    },
+    {
+      "file": "before-app-mobile.png",
+      "phase": "before",
+      "surface": "app",
+      "route": "/app?tab=encrypt",
+      "state": "Empty Encrypt; no contacts or private key; unsigned capability notice",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "8f3deb0cd284a7ee35239cc03825973b01e70eaf14bdbc734c725a598d7291a7"
+    },
+    {
+      "file": "before-app-tablet.png",
+      "phase": "before",
+      "surface": "app",
+      "route": "/app?tab=encrypt",
+      "state": "Empty Encrypt; no contacts or private key; unsigned capability notice",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "20529d657431da82a2378e88eff05c5e36b99715d4c057596c2629d6b8bbc6b9"
+    },
+    {
+      "file": "before-marketing-desktop.png",
+      "phase": "before",
+      "surface": "marketing",
+      "route": "/",
+      "state": "Homepage hero and calls to action",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "e52f5f21bbffba15c68cf8e9282785eced3cf2858344fa2e2af4859b9ebca6bc"
+    },
+    {
+      "file": "before-marketing-mobile.png",
+      "phase": "before",
+      "surface": "marketing",
+      "route": "/",
+      "state": "Homepage hero and calls to action",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "d1e6912a0902d84d866b8806a006f78ff12b3540a40ebef0b5876c4b05d71e53"
+    },
+    {
+      "file": "before-marketing-tablet.png",
+      "phase": "before",
+      "surface": "marketing",
+      "route": "/",
+      "state": "Homepage hero and calls to action",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "188e8e8036cf0d895540293acff7b79aa331457a717441643905702b09790144"
+    },
+    {
+      "file": "reference-guide-table-mobile.png",
+      "phase": "reference",
+      "surface": "marketing",
+      "route": "/how-it-works",
+      "state": "Analogy table scrolled into view; existing mobile overflow",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "a5c2778d1a3bc9c80d7bba2f6a5f2c0d526e6ab31b1c441efbb48f54f2f5dbb0"
+    },
+    {
+      "file": "reference-how-it-works-desktop.png",
+      "phase": "reference",
+      "surface": "marketing",
+      "route": "/how-it-works",
+      "state": "Guide hero and first chapter",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "8989a049d1bfe4e55a23af0a58a674d413114c7421178cf4c497f16410b11489"
+    },
+    {
+      "file": "reference-invite-desktop.png",
+      "phase": "reference",
+      "surface": "invitation",
+      "route": "/invite",
+      "state": "Missing invitation token; error and manual setup link",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "e122e388128fd556526cb335e04c66c72de8218b672d0f6847d4be3e4a2be59e"
+    },
+    {
+      "file": "reference-key-generation-desktop.png",
+      "phase": "reference",
+      "surface": "app",
+      "route": "/app?tab=keyring",
+      "state": "No private key loaded; empty key-generation form",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "693bc96496050b00a33668983363e4ea61132796396135b771d2e473da77c89a"
+    },
+    {
+      "file": "reference-key-generation-mobile.png",
+      "phase": "reference",
+      "surface": "app",
+      "route": "/app?tab=keyring",
+      "state": "No private key loaded; empty key-generation form",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "bba5a8c99aa611a00b1f9a3326733e5e467cd96b5def610c39a75f6f327987f7"
+    },
+    {
+      "file": "reference-keyring-desktop.png",
+      "phase": "reference",
+      "surface": "app",
+      "route": "/app?tab=keyring",
+      "state": "No private key loaded; choice cards and security disclosure collapsed",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "7bf8748a671732a44622386c7db988abdd0407cf874f28b7db59b0c108cc84af"
+    },
+    {
+      "file": "reference-security-desktop.png",
+      "phase": "reference",
+      "surface": "content",
+      "route": "/security",
+      "state": "Combined Security & Privacy hero and local-operation introduction",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "e006758e3d2806f41ee2cdd4e582da131c5f7055ce5c84328eaa27baf6721c58"
+    }
+  ]
+}
