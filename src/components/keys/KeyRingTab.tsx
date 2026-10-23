@@ -5,8 +5,8 @@ export default function KeyRingTab() {
     <div>
       <div className="tab-header">
         <div>
-          <h2 className="tab-title">My Key Ring</h2>
-          <p className="tab-subtitle">Generate, import, or manage your private key. Everything stays in your browser.</p>
+          <h1 className="tab-title">Your key ring.</h1>
+          <p className="tab-subtitle">Create a new identity or import your existing private key. Keep a backup: lost private keys cannot be recovered.</p>
         </div>
       </div>
       <PrivateKeyPanel />

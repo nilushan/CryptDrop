@@ -87,6 +87,7 @@ export default function ResultState({
 
       {/* Download button */}
       <button
+        className="result-download"
         onClick={onDownload}
         style={{
           display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
@@ -100,7 +101,7 @@ export default function ResultState({
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        Download {resultFile.name}
+        <span>Download {resultFile.name}</span>
       </button>
 
       <div>

@@ -16,8 +16,8 @@ export default function DecryptTab() {
     <div>
       <div className="tab-header">
         <div>
-          <h2 className="tab-title">Unlock a File</h2>
-          <p className="tab-subtitle">Decrypt an encrypted file using your private key.</p>
+          <h1 className="tab-title">Decrypt a file.</h1>
+          <p className="tab-subtitle">Decrypt a PGP file with the private key it was encrypted for.</p>
         </div>
         {privateKey && (
           <div className="key-badge key-badge-ok">
@@ -27,16 +27,15 @@ export default function DecryptTab() {
         )}
       </div>
 
-      <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />
-
       {!privateKey && (
         <NoticeBox variant="info" className="mb-4 animate-fade-in">
-          <p className="text-sm text-indigo-800 font-medium mb-1">Private key required</p>
-          <p className="text-xs text-indigo-700">You need your private key to decrypt files. Set it up in <button onClick={() => $activeTab.set('keyring')} className="link-inline">My Key Ring</button> or use the Wizard.</p>
+          <p className="text-sm text-indigo-900 font-medium mb-1">First, load your private key</p>
+          <p className="text-xs text-indigo-700">You can choose your file now. To unlock it, <button onClick={() => $activeTab.set('keyring')} className="link-inline">import the matching private key</button>. A newly generated key cannot open an existing file.</p>
         </NoticeBox>
       )}
 
       <DecryptFilePanel folderHandle={folderHandle} />
+      <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />
 
       <ActivityHistory />
     </div>

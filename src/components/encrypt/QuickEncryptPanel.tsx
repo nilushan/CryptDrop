@@ -147,9 +147,9 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
       </div>
 
       {!selectedFile ? (
-        <FileDropZone onFile={setSelectedFile} />
+        <FileDropZone onFile={setSelectedFile} autoFocus />
       ) : (
-        <FileSelectedCard file={selectedFile} variant="encrypt" />
+        <FileSelectedCard file={selectedFile} variant="encrypt" onRemove={() => setSelectedFile(null)} />
       )}
 
       <div className="sign-row">

@@ -124,6 +124,7 @@ export default function KeyLookupCard({
       <div className="flex gap-2 mb-3">
         <input
           type="email"
+          aria-label="Email address for public key lookup"
           placeholder={placeholder}
           className="input flex-1"
           value={email}

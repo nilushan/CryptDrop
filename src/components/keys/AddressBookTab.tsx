@@ -5,7 +5,7 @@ export default function AddressBookTab() {
     <div>
       <div className="tab-header">
         <div>
-          <h2 className="tab-title">Address Book</h2>
+          <h1 className="tab-title">Your address book.</h1>
           <p className="tab-subtitle">Search, import, and manage public keys for your contacts.</p>
         </div>
       </div>

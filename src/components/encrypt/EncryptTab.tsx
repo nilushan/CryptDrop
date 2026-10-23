@@ -7,6 +7,8 @@ import QuickEncryptPanel from './QuickEncryptPanel';
 import FolderBar from '../shared/FolderBar';
 import ContactListPicker from '../shared/ContactListPicker';
 import ActivityHistory from '../shared/ActivityHistory';
+import KeyLookupWithInvite from '../shared/KeyLookupWithInvite';
+import type { KeyLookupResult } from '../shared/KeyLookupCard';
 
 export default function EncryptTab() {
   const contacts = useStore($contacts);
@@ -14,18 +16,15 @@ export default function EncryptTab() {
   const armoredPublic = useStore($armoredPublic);
   const userInfo = useStore($userInfo);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [showLookup, setShowLookup] = useState(false);
   const [folderHandle, setFolderHandle] = useState<FileSystemDirectoryHandle | null>(null);
 
-  function handleSelectContact(c: Contact) {
-    setSelectedContact(c);
-  }
-
-  function handleClearSelection() {
-    setSelectedContact(null);
-  }
-
-  function handleNewRecipient() {
-    $activeTab.set('addressbook');
+  function handleKeyFound(result: KeyLookupResult) {
+    setSelectedContact({
+      email: result.email, name: result.name, armoredPublicKey: result.armored,
+      fingerprint: result.fingerprint, lastUpdated: new Date().toISOString(),
+    });
+    setShowLookup(false);
   }
 
   function handleEncryptForMyself() {
@@ -42,66 +41,49 @@ export default function EncryptTab() {
     <div>
       <div className="tab-header">
         <div>
-          <h2 className="tab-title">Encrypt a File</h2>
-          <p className="tab-subtitle">Pick who should be able to open it, then drop your file.</p>
+          <h1 className="tab-title">Encrypt a file.</h1>
+          <p className="tab-subtitle">Encrypt a file for someone. Only their private key can open it.</p>
         </div>
       </div>
 
-      <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />
+      <ol className="workflow-steps" aria-label="Encryption steps">
+        <li aria-current={!selectedContact ? 'step' : undefined}><span>01</span> Choose recipient</li>
+        <li aria-current={selectedContact ? 'step' : undefined}><span>02</span> Encrypt &amp; download</li>
+      </ol>
 
-      {/* Recipient selection */}
-      {!selectedContact && (
-        <div className="animate-fade-in">
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', margin: '0 0 0.25rem' }}>
-                Who are you locking this for?
-              </h3>
-              <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0 }}>
-                Select a contact or add a new recipient.
-              </p>
-            </div>
-            <button onClick={handleNewRecipient} className="btn-ghost" style={{ flexShrink: 0 }}>
-              + New recipient
-            </button>
+      {!selectedContact ? (
+        <div className="card animate-fade-in">
+          <div className="recipient-heading">
+            <h2 className="card-title">Who is this file for?</h2>
+            {contacts.length > 0 && (
+              <button onClick={() => setShowLookup(!showLookup)} className="btn-ghost" aria-expanded={showLookup} aria-controls="encrypt-recipient-lookup">
+                {showLookup ? 'Cancel' : '+ Add recipient'}
+              </button>
+            )}
           </div>
-
-          <ContactListPicker
-            onSelect={handleSelectContact}
-            showSearch
-            showRecent
-          />
-
-          {/* Empty state — no contacts at all */}
-          {contacts.length === 0 && (
-            <div className="empty-state">
-              <div className="empty-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-              </div>
-              <p className="empty-msg">No saved recipients yet.</p>
-              <p className="empty-hint">Add recipients in the Address Book — search by email or import a key file.</p>
-              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button onClick={handleNewRecipient} className="btn-primary mt-3">Open Address Book &rarr;</button>
-                {publicKey && (
-                  <button onClick={handleEncryptForMyself} className="btn-ghost mt-3">
-                    Encrypt for myself
-                  </button>
-                )}
-              </div>
+          <p className="recipient-intro">You need their public key, not your own. Find it by email or import a key they shared with you.</p>
+          {contacts.length > 0 && <ContactListPicker onSelect={setSelectedContact} showSearch showRecent />}
+          {(contacts.length === 0 || showLookup) && (
+            <div className="recipient-lookup" id="encrypt-recipient-lookup">
+              <KeyLookupWithInvite
+                title="" description="" buttonText="Find recipient" showCard={false}
+                onKeyFound={handleKeyFound}
+              />
+              <p className="network-note">Email lookup contacts our directory and a public keyserver. Import a key file to skip the lookup.</p>
             </div>
           )}
+          <div className="recipient-alternatives">
+            <button onClick={() => $activeTab.set('wizard')} className="btn-ghost">New to encryption? Get guided help →</button>
+            {publicKey && <button onClick={handleEncryptForMyself} className="btn-ghost">Encrypt for myself</button>}
+          </div>
         </div>
-      )}
-
-      {/* Quick encrypt panel (progressive disclosure — only shown after selecting) */}
-      {selectedContact && (
+      ) : (
         <QuickEncryptPanel
-          contact={selectedContact}
-          folderHandle={folderHandle}
-          onClose={handleClearSelection}
+          contact={selectedContact} folderHandle={folderHandle}
+          onClose={() => setSelectedContact(null)}
         />
       )}
-
+      <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />
       <ActivityHistory />
     </div>
   );

@@ -2,9 +2,10 @@
 interface Props {
   title: string;
   description?: string;
+  appMode?: boolean;
 }
 
-const { title, description = 'End-to-end encrypted file sharing in your browser' } = Astro.props;
+const { title, description = 'End-to-end encrypted file sharing in your browser', appMode = false } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -17,7 +18,8 @@ const currentPath = Astro.url.pathname;
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class:list={['bg-gray-50 min-h-screen flex flex-col', { 'app-layout': appMode }]}>
+  {appMode && <a class="skip-link" href="#app-workspace">Skip to workspace</a>}
 
   <!-- Header -->
   <header class="site-header">
@@ -35,10 +37,10 @@ const currentPath = Astro.url.pathname;
         </svg>
         <div class="header-logo-text">
           <span class="header-logo-name">CryptDrop</span>
-          <span class="header-logo-tagline">Encrypted file sharing</span>
+          <span class="header-logo-tagline">{appMode ? 'Your private file workspace' : 'Encrypted file sharing'}</span>
         </div>
       </a>
-      <nav class="header-nav">
+      <nav class="header-nav" aria-label="Site navigation">
         <a
           href="/how-it-works"
           class:list={[
@@ -57,9 +59,11 @@ const currentPath = Astro.url.pathname;
         >
           Security
         </a>
-        <a href="/app" class="header-cta">
-          Open App
-        </a>
+        {appMode ? (
+          <span class="workspace-status"><span aria-hidden="true"></span> Browser-based encryption</span>
+        ) : (
+          <a href="/app" class="header-cta">Open App</a>
+        )}
       </nav>
     </div>
   </header>
@@ -69,10 +73,10 @@ const currentPath = Astro.url.pathname;
   </main>
 
   <!-- Footer -->
-  <footer class="text-center py-6 text-xs text-gray-400 border-t border-gray-100">
+  {!appMode && <footer class="text-center py-6 text-xs text-gray-400 border-t border-gray-100">
     All encryption and decryption happens locally in your browser. Files never leave your device.
     <br />Uses the <a href="https://openpgpjs.org/" class="underline hover:text-gray-500">OpenPGP.js</a> library and <a href="https://keys.openpgp.org/" class="underline hover:text-gray-500">keys.openpgp.org</a> keyserver.
-  </footer>
+  </footer>}
 
 </body>
 </html>

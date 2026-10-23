@@ -63,6 +63,7 @@ export default function ContactListPicker({
           <input
             type="text"
             placeholder="Search contacts..."
+            aria-label="Search contacts"
             className="search-input"
             autoComplete="off"
             value={searchQuery}
