@@ -44,6 +44,22 @@ Private keys and file contents are never transmitted. See [cryptdrop.app/securit
 
 ---
 
+## Workspace key status
+
+- **My key ring** has one entry above the workspace tools, visible on desktop and mobile. It is amber when no private key is loaded and becomes a compact green bar when a key is loaded. Green indicates session availability, not a verified backup.
+- Encrypt and Decrypt show compact warning badges in navigation and warning banners on their pages: **amber** allows unsigned encryption but not signing; **rose** means decryption needs a private key. When a key is loaded, these warnings disappear and the navigation descriptions return; the key ring remains the session-status indicator. Decryption still requires the matching key, and signing stays opt-in.
+- Missing keys never disable navigation or file selection. The four mobile tools use a fixed icon grid without horizontal scrolling. Keyboard arrows navigate the tools; the separate key-ring button stays reachable with Tab.
+
+## Private key backup and recovery
+
+- **Remember on this device** saves only a fully passphrase-protected OpenPGP private key in IndexedDB. The passphrase and unlocked key are not persisted. Unprotected or partially protected imports remain usable for the current session, but cannot be remembered. Protect them in a trusted PGP tool and re-import them first.
+- **Browser storage is not a backup.** Clearing site data, private browsing, or losing a device can remove the saved key. CryptDrop cannot recover a lost private key or forgotten passphrase.
+- **Back up your secret** appears only after successful generation on the **Generate a New Key Pair** screen (including guided setup), not in the loaded-key view. It opens a collapsed-by-default password-manager backup guide. It explains how to store the encrypted `.asc` file as an attachment or secure note and retain a recoverable passphrase. Keeping both in one vault is convenient but exposes both if that vault is compromised. A second encrypted copy on a separate drive is recommended.
+- **Verify backup** checks a file retrieved from the backup: it must be protected, match the current key and contain its subkeys, and unlock with the supplied passphrase. The check runs locally without replacing the active key or saving the passphrase. It cannot verify the password manager's durability or sync status. A download or checkbox alone does not count as a verified backup.
+- Older unprotected browser copies are not automatically deleted: users can load them to preserve their only copy, then remove the unsafe saved copy. They are no longer described as encrypted.
+
+These measures protect stored copies, not secrets in an unlocked browser session. Malicious same-origin JavaScript or a compromised device remains a risk. No native keystore, passkey vault, or cloud private-key backup is implemented.
+
 ## Tech stack
 
 | Layer | Technology |

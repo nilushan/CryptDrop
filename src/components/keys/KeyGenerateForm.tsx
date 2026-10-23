@@ -6,10 +6,11 @@ import { showToast } from '../../stores/toast';
 import { evaluatePassphrase, isPassphraseAcceptable } from '../../lib/passphrase-strength';
 import { registerUser } from '../../lib/api';
 import ActionButton from '../shared/ActionButton';
+import KeyBackupGuide from './KeyBackupGuide';
 
 interface Props {
   onBack: () => void;
-  /** Called after successful key generation. If provided, skips the backup confirmation gate. */
+  /** Called after the generated key's backup has been verified. */
   onSuccess?: () => void;
 }
 
@@ -21,7 +22,6 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
   const [generated, setGenerated] = useState(false);
   const [backupConfirmed, setBackupConfirmed] = useState(false);
   const [armoredPrivate, setArmoredPrivate] = useState('');
-  const [generatedName, setGeneratedName] = useState('');
 
   async function handleGenerate() {
     if (!name.trim() || !email.trim()) {
@@ -49,7 +49,6 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
       downloadTextFile(result.armoredPublic, name.trim().replace(/\s/g, '_') + '_PUBLIC.asc');
       showToast('Keys generated! Files downloaded.', 'success');
       setArmoredPrivate(result.armoredPrivate);
-      setGeneratedName(name.trim());
       setPassphrase('');
       setGenerated(true);
 
@@ -72,63 +71,22 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
     }
   }
 
-  function handleRedownload() {
-    if (armoredPrivate) {
-      downloadTextFile(armoredPrivate, generatedName.replace(/\s/g, '_') + '_PRIVATE.asc');
-      showToast('Private key downloaded again', 'info');
-    }
-  }
-
   // Post-generation: backup confirmation gate
   if (generated) {
     return (
       <div className="animate-fade-in">
-        <div style={{
-          background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '0.75rem',
-          padding: '1.5rem', marginBottom: '1rem',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', color: '#92400e' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: 700, margin: 0 }}>Save Your Private Key</h3>
-          </div>
-          <p style={{ fontSize: '0.8125rem', color: '#78350f', lineHeight: 1.5, margin: '0 0 1rem' }}>
-            Your key files have been downloaded. <strong>Store your private key somewhere safe</strong> — a password manager, encrypted drive, or secure backup. If you lose it, you can never decrypt files sent to you. There is no recovery.
-          </p>
-
-          <button onClick={handleRedownload} style={{
-            display: 'flex', alignItems: 'center', gap: '0.375rem', width: '100%',
-            background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '0.5rem',
-            padding: '0.625rem 1rem', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer',
-            justifyContent: 'center', marginBottom: '1rem', transition: 'background 0.15s',
-          }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            Download Private Key Again
-          </button>
-
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={backupConfirmed}
-              onChange={(e) => setBackupConfirmed(e.target.checked)}
-              style={{ marginTop: '0.125rem', accentColor: '#f59e0b' }}
-            />
-            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#92400e', userSelect: 'none' }}>
-              I have saved my private key somewhere safe.
-            </span>
-          </label>
+        <div className="private-key-card mb-4">
+          <h3 className="private-key-section-title">Generate a New Key Pair</h3>
+          <p className="private-key-section-body"><strong>Your key pair is ready.</strong> Your key files have been downloaded. Keep your private key secret.</p>
+          <p className="private-key-section-body">Open <strong>Back up your secret</strong> below to save and verify a recovery copy before finishing.</p>
         </div>
+        <KeyBackupGuide armoredPrivate={armoredPrivate} onVerificationChange={setBackupConfirmed} />
 
         <button
-          onClick={() => onSuccess?.()}
+          onClick={() => { if (backupConfirmed) onSuccess?.(); }}
           disabled={!backupConfirmed}
-          style={{
-            width: '100%', padding: '0.75rem', borderRadius: '0.75rem', border: 'none',
-            fontSize: '0.875rem', fontWeight: 600, cursor: backupConfirmed ? 'pointer' : 'not-allowed',
-            background: backupConfirmed ? '#1c1917' : '#e2e8f0',
-            color: backupConfirmed ? '#fff' : '#94a3b8',
-            transition: 'all 0.2s',
-            boxShadow: backupConfirmed ? '0 4px 12px rgb(15 23 42 / 0.2)' : 'none',
-          }}
+          className="btn-vault-generate w-full"
+          style={{ justifyContent: 'center' }}
         >
           Done — View My Key Ring
         </button>

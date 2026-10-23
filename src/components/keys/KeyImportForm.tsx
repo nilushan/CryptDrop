@@ -32,11 +32,12 @@ export default function KeyImportForm({ onBack, onSuccess }: Props) {
     setImporting(true);
     try {
       const result = await importPrivateKey(armoredKey, passphrase);
-      if (result.isUnprotected) {
-        showToast('Warning: this key has no passphrase protection. Consider adding one for security.', 'warning');
-      }
       setKeys(result.privateKey, result.publicKey, armoredKey, result.armoredPublic, result.userInfo);
-      showToast('Keys imported: ' + result.userInfo, 'success');
+      if (result.isUnprotected) {
+        showToast('Key imported for this session only. Add passphrase protection in a trusted PGP tool before remembering it on this device.', 'warning');
+      } else {
+        showToast('Keys imported: ' + result.userInfo, 'success');
+      }
       setPassphrase('');
       onSuccess?.();
     } catch (e) {

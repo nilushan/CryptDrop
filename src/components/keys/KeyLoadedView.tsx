@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { downloadTextFile } from '../../lib/file-helpers';
-import { saveKey, deleteSavedKey } from '../../lib/key-storage';
+import { saveKey, deleteSavedKey, getSavedKey } from '../../lib/key-storage';
+import { readProtectedPrivateKey } from '../../lib/key-backup';
 import { showToast } from '../../stores/toast';
+import { useKeyProtection } from './useKeyProtection';
 
 interface Props {
   userInfo: string;
@@ -14,12 +16,20 @@ interface Props {
 export default function KeyLoadedView({ userInfo, fingerprint, armoredPrivate, armoredPublic, onReplace }: Props) {
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const protection = useKeyProtection(armoredPrivate);
 
   useEffect(() => {
-    import('../../lib/key-storage').then(({ getSavedKey }) =>
-      getSavedKey().then((saved) => setIsSaved(!!saved && saved.fingerprint === fingerprint))
-    );
-  }, [fingerprint]);
+    let cancelled = false;
+    setIsSaved(false);
+    const canonical = armoredPrivate
+      ? readProtectedPrivateKey(armoredPrivate).then((key) => key.armor()).catch(() => armoredPrivate)
+      : Promise.resolve(null);
+    Promise.all([getSavedKey(), canonical]).then(([saved, armored]) => {
+      if (!cancelled) setIsSaved(!!saved && saved.fingerprint === fingerprint &&
+        (saved.armoredPrivate === armored || saved.armoredPrivate === armoredPrivate));
+    });
+    return () => { cancelled = true; };
+  }, [fingerprint, armoredPrivate]);
 
   function handleDownloadPrivate() {
     if (armoredPrivate) {
@@ -48,9 +58,13 @@ export default function KeyLoadedView({ userInfo, fingerprint, armoredPrivate, a
   }
 
   async function handleForget() {
-    await deleteSavedKey();
-    setIsSaved(false);
-    showToast('Saved key removed from browser storage', 'info');
+    try {
+      await deleteSavedKey();
+      setIsSaved(false);
+      showToast('Saved key removed from browser storage', 'info');
+    } catch {
+      showToast('Could not remove the saved key. Please try again.', 'error');
+    }
   }
 
   return (
@@ -74,17 +88,14 @@ export default function KeyLoadedView({ userInfo, fingerprint, armoredPrivate, a
 
         {/* Warning strip — changes based on saved state */}
         {isSaved ? (
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', gap: '0.5rem',
-            background: '#022c22', border: '1px solid #065f46', borderRadius: '0.5rem',
-            padding: '0.625rem 0.75rem', marginBottom: '1rem',
-            fontSize: '0.75rem', color: '#6ee7b7', lineHeight: 1.4,
-          }}>
+          <div className={protection === 'protected' ? 'private-key-saved-strip' : 'private-key-warning-strip'}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '0.1rem' }}>
               <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            <span>Key saved to browser storage. You'll be asked for your passphrase next time you open CryptDrop. Your key is still encrypted — only your passphrase can unlock it.</span>
+            <span>{protection === 'protected'
+              ? 'Encrypted key remembered on this device. Your passphrase is needed next time. Browser storage is not a backup — keep an independent copy.'
+              : 'An older copy is saved in browser storage, but its protection is not verified. Keep a safe copy before using Forget saved key.'}</span>
           </div>
         ) : (
           <div className="private-key-warning-strip">
@@ -93,18 +104,26 @@ export default function KeyLoadedView({ userInfo, fingerprint, armoredPrivate, a
           </div>
         )}
 
+        {protection === 'unsafe' && (
+          <p role="alert" className="private-key-warning-strip">
+            This key could not be verified as fully passphrase-protected and cannot be remembered on this device.
+            Add a strong passphrase using a trusted PGP tool and re-import it. Keep your existing key safe;
+            do not delete your only copy.
+          </p>
+        )}
+
         <div className="private-key-actions">
           <button onClick={handleDownloadPrivate} className="btn-vault-action">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             Download Private Key
           </button>
           {!isSaved ? (
-            <button onClick={handleRemember} disabled={saving} className="btn-vault-action" style={{ color: '#6ee7b7', borderColor: '#065f46' }}>
+            <button onClick={handleRemember} disabled={saving || protection !== 'protected'} className="btn-vault-action">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" strokeWidth="2"/><polyline points="7,3 7,8 15,8" stroke="currentColor" strokeWidth="2"/></svg>
-              {saving ? 'Saving...' : 'Remember this key'}
+              {saving ? 'Saving...' : 'Remember on this device'}
             </button>
           ) : (
-            <button onClick={handleForget} className="btn-vault-secondary" style={{ color: '#fca5a5', borderColor: '#7f1d1d' }}>
+            <button onClick={handleForget} className="btn-vault-secondary btn-vault-danger">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               Forget saved key
             </button>
@@ -114,7 +133,6 @@ export default function KeyLoadedView({ userInfo, fingerprint, armoredPrivate, a
           </button>
         </div>
       </div>
-
     </div>
   );
 }

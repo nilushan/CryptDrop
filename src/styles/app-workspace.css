@@ -133,8 +133,8 @@
 .app-layout .keys-choice-grid, .app-layout .wizard-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
 .app-layout .card-btn { text-align: left; }
 .app-layout .private-key-card { border-radius: 1rem; }
-.app-layout .private-key-card .drop-zone p, .app-layout .private-key-card .input::placeholder { color: #b9b1aa; }
-.app-layout .private-key-card .drop-zone:hover, .app-layout .private-key-card .drop-zone.dragover { background: #292524; border-color: #f59e0b; }
+.app-layout .private-key-card .drop-zone p, .app-layout .private-key-card .input::placeholder { color: var(--vault-muted); }
+.app-layout .private-key-card .drop-zone:hover, .app-layout .private-key-card .drop-zone.dragover { background: var(--vault-tint); border-color: var(--vault-accent); }
 .app-layout .keys-back-link { color: var(--app-muted); }
 .app-layout .key-badge { max-width: 100%; overflow-wrap: anywhere; }
 .app-layout .result-download { max-width: 100%; }

@@ -458,99 +458,134 @@ const tabs = [
   }
   .local-assurance-bar svg { flex-shrink: 0; color: #16a34a; }
 
+  /* Blue-teal vault palette: private material, distinct from public-key green. */
+  :root {
+    --vault-surface: #edf5f7;
+    --vault-raised: #ffffff;
+    --vault-tint: #dcecef;
+    --vault-border: #b6cfd6;
+    --vault-ink: #173f4c;
+    --vault-muted: #486674;
+    --vault-accent: #0f6173;
+    --vault-accent-hover: #0c4e5e;
+  }
+
   /* ── Keys section labels ── */
   .keys-section-label {
     display: flex; align-items: center; gap: 0.5rem;
     font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
     margin-bottom: 0.75rem;
   }
-  .keys-private-label { color: #92400e; }
-  .keys-private-label svg { color: #d97706; }
+  .keys-private-label { color: var(--vault-ink); }
+  .keys-private-label svg { color: var(--vault-accent); }
   .keys-public-label { color: #065f46; }
   .keys-public-label svg { color: #059669; }
   .keys-section-badge {
     font-size: 0.625rem; font-weight: 600; text-transform: none; letter-spacing: 0.02em;
     padding: 0.15rem 0.5rem; border-radius: 9999px;
   }
-  .keys-private-badge { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .keys-private-badge { background: var(--vault-tint); color: var(--vault-accent); border: 1px solid var(--vault-border); }
   .keys-public-badge { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
 
-  /* ── Private key card (vault aesthetic) ── */
+  /* ── Private key cards ── */
   .private-key-card {
-    background: #1c1917; border: 1px solid #44403c; border-radius: 0.75rem; padding: 1.25rem;
-    color: #e7e5e4;
-  }
-  .private-key-card-empty {
-    background: #292524; border-color: #3c3835;
-    text-align: center; padding: 1.75rem 1.25rem;
+    background: var(--vault-surface); border: 1px solid var(--vault-border); border-radius: 0.75rem; padding: 1.25rem;
+    color: var(--vault-ink); box-shadow: 0 2px 8px rgb(23 63 76 / 0.04);
   }
   .private-key-vault-row { display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1rem; }
   .private-key-vault-icon {
-    width: 44px; height: 44px; background: #292524; border: 1px solid #57534e;
+    width: 44px; height: 44px; background: var(--vault-tint); border: 1px solid var(--vault-border);
     border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; color: #f59e0b;
+    flex-shrink: 0; color: var(--vault-accent);
   }
   .private-key-vault-info { flex: 1; min-width: 0; }
   .private-key-vault-status { flex-shrink: 0; }
-  .private-key-uid { font-size: 0.9375rem; font-weight: 600; color: #f5f5f4; margin: 0 0 0.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .private-key-fp { font-size: 0.6875rem; font-family: ui-monospace, monospace; color: #a8a29e; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .private-key-uid { font-size: 0.9375rem; font-weight: 600; color: var(--vault-ink); margin: 0 0 0.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .private-key-fp { font-size: 0.6875rem; font-family: ui-monospace, monospace; color: var(--vault-muted); margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .vault-loaded-badge {
     display: inline-flex; align-items: center; gap: 0.25rem;
-    background: #14532d; color: #bbf7d0; border: 1px solid #166534;
+    background: #e0f2ee; color: #155d50; border: 1px solid #aad4c8;
     font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     padding: 0.2rem 0.5rem; border-radius: 9999px;
   }
-  .private-key-warning-strip {
+  .private-key-warning-strip, .private-key-saved-strip {
     display: flex; align-items: flex-start; gap: 0.5rem;
-    background: #292524; border: 1px solid #78350f; border-radius: 0.5rem;
+    border: 1px solid; border-radius: 0.5rem;
     padding: 0.625rem 0.75rem; margin-bottom: 1rem;
-    font-size: 0.75rem; color: #fbbf24; line-height: 1.4;
+    font-size: 0.75rem; line-height: 1.5;
   }
-  .private-key-warning-strip strong { color: #fde68a; }
+  .private-key-warning-strip { background: #fffbeb; border-color: #e8cf91; color: #854d0e; }
+  .private-key-warning-strip strong { color: #713f12; }
+  .private-key-saved-strip { background: #e0f2ee; border-color: #aad4c8; color: #155d50; }
   .private-key-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .private-key-empty-icon {
-    width: 52px; height: 52px; background: #292524; border: 1px solid #44403c;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 0.875rem; color: #57534e;
+  .private-key-status {
+    display: flex; align-items: flex-start; gap: 0.625rem;
+    padding: 0.75rem 1rem; border-left: 3px solid #94a3b8;
+    background: #f1f5f9; color: #475569;
   }
-  .private-key-empty-title { font-size: 0.9375rem; font-weight: 600; color: #d6d3d1; margin: 0 0 0.375rem; }
-  .private-key-empty-body { font-size: 0.8125rem; color: #a8a29e; margin: 0; line-height: 1.5; }
-  .private-key-section-title { font-size: 0.875rem; font-weight: 600; color: #f5f5f4; margin: 0 0 0.375rem; }
-  .private-key-section-body { font-size: 0.8125rem; color: #a8a29e; margin: 0 0 0.75rem; line-height: 1.5; }
-  .private-key-section-body strong { color: #fde68a; }
+  .private-key-status > svg { flex-shrink: 0; margin-top: 0.125rem; }
+  .private-key-status-title { font-size: 0.8125rem; font-weight: 600; margin: 0 0 0.25rem; }
+  .private-key-status-body { font-size: 0.75rem; margin: 0; line-height: 1.5; }
+  .private-key-section-title { font-size: 0.875rem; font-weight: 600; color: var(--vault-ink); margin: 0 0 0.375rem; }
+  .private-key-section-body { font-size: 0.8125rem; color: var(--vault-muted); margin: 0 0 0.75rem; line-height: 1.5; }
+  .private-key-section-body strong { color: var(--vault-ink); }
+  .private-key-section-body[role="alert"], .private-key-error { color: #9f3030; }
   .key-gen-local-note {
     display: flex; align-items: center; gap: 0.375rem;
-    font-size: 0.75rem; color: #6ee7b7; background: #022c22; border: 1px solid #065f46;
+    font-size: 0.75rem; color: var(--vault-accent); background: var(--vault-tint); border: 1px solid var(--vault-border);
     border-radius: 0.375rem; padding: 0.375rem 0.625rem;
   }
-  .key-gen-local-note svg { color: #34d399; flex-shrink: 0; }
+  .key-gen-local-note svg { flex-shrink: 0; }
 
   /* ── Private key card buttons ── */
   .btn-vault-action {
     display: inline-flex; align-items: center; gap: 0.375rem;
-    background: #292524; color: #fbbf24; border: 1px solid #57534e;
+    background: var(--vault-raised); color: var(--vault-accent); border: 1px solid var(--vault-border);
     font-size: 0.8125rem; font-weight: 600;
     padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
   }
-  .btn-vault-action:hover { background: #3c3835; border-color: #78350f; }
-  .btn-vault-action:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-vault-action:hover:not(:disabled) { background: var(--vault-tint); border-color: var(--vault-accent); }
+  .btn-vault-action:disabled, .btn-vault-generate:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-vault-secondary {
     display: inline-flex; align-items: center; gap: 0.375rem;
-    background: transparent; color: #a8a29e; border: 1px solid #44403c;
+    background: transparent; color: var(--vault-muted); border: 1px solid var(--vault-border);
     font-size: 0.8125rem; font-weight: 500;
     padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;
     transition: color 0.15s, border-color 0.15s;
   }
-  .btn-vault-secondary:hover { color: #d6d3d1; border-color: #57534e; }
+  .btn-vault-secondary:hover { color: var(--vault-ink); border-color: var(--vault-accent); }
+  .btn-vault-danger { color: #9f3030; border-color: #ddb4b4; }
+  .btn-vault-danger:hover { color: #7f1d1d; border-color: #9f3030; }
   .btn-vault-generate {
     display: inline-flex; align-items: center; gap: 0.375rem;
-    background: #f59e0b; color: #1c1917; border: none;
+    background: var(--vault-accent); color: #fff; border: none;
     font-size: 0.875rem; font-weight: 700;
     padding: 0.625rem 1.25rem; border-radius: 0.5rem; cursor: pointer;
     transition: background 0.15s;
   }
-  .btn-vault-generate:hover { background: #d97706; }
+  .btn-vault-generate:hover:not(:disabled) { background: var(--vault-accent-hover); }
+  :is(.btn-vault-action, .btn-vault-secondary, .btn-vault-generate, .key-backup-toggle, .keys-choice-card, .keys-back-link):focus-visible {
+    outline: 3px solid var(--vault-accent); outline-offset: 3px;
+  }
+
+  /* ── Progressive disclosure for secret backups ── */
+  .key-backup-card { padding: 0; }
+  .key-backup-heading { margin: 0; font-size: 0.875rem; }
+  .key-backup-toggle {
+    display: flex; align-items: center; gap: 0.625rem; width: 100%; min-height: 48px;
+    padding: 1rem 1.25rem 0.5rem; border: 0; border-radius: 0.75rem;
+    background: transparent; color: var(--vault-accent); font: inherit; font-weight: 700;
+    text-align: left; cursor: pointer;
+  }
+  .key-backup-toggle:hover { background: var(--vault-tint); }
+  .key-backup-lock, .key-backup-chevron { flex-shrink: 0; }
+  .key-backup-chevron { margin-left: auto; }
+  .key-backup-toggle[aria-expanded="true"] .key-backup-chevron { transform: rotate(180deg); }
+  .key-backup-summary { margin: 0; padding: 0 1.25rem 1rem; color: var(--vault-muted); font-size: 0.75rem; line-height: 1.5; }
+  .key-backup-card > .private-key-section-body { margin: 0; padding: 0 1.25rem 1rem; }
+  .key-backup-content { padding: 1.25rem; border-top: 1px solid var(--vault-border); }
+  .key-backup-content input[type="checkbox"] { accent-color: var(--vault-accent); }
 
   /* ── Public key card (open, light aesthetic) ── */
   .public-key-card {
@@ -611,46 +646,58 @@ const tabs = [
   }
   .public-contacts-empty svg { flex-shrink: 0; color: #6ee7b7; }
 
-  /* ── Keys tab input overrides (on dark cards) ── */
+  /* ── Keys tab inputs ── */
   .private-key-card .input {
-    background: #292524; color: #e7e5e4; border-color: #57534e;
+    background: var(--vault-raised); color: var(--vault-ink); border-color: var(--vault-border);
   }
-  .private-key-card .input::placeholder { color: #78716c; }
-  .private-key-card .input:focus { box-shadow: 0 0 0 2px #f59e0b; border-color: #f59e0b; }
-  .private-key-card .drop-zone {
-    border-color: #57534e; background: #292524;
-  }
-  .private-key-card .drop-zone:hover { border-color: #f59e0b; background: #1c1917; }
-  .private-key-card .drop-zone p { color: #78716c; }
+  .private-key-card .input::placeholder { color: var(--vault-muted); }
+  .private-key-card .input:focus { box-shadow: 0 0 0 2px var(--vault-accent); border-color: var(--vault-accent); }
+  .private-key-card .input[aria-invalid="true"] { border-color: #9f3030; }
+  .private-key-card .drop-zone { border-color: var(--vault-border); background: var(--vault-raised); }
+  .private-key-card .drop-zone:hover { border-color: var(--vault-accent); background: var(--vault-tint); }
+  .private-key-card .drop-zone p { color: var(--vault-muted); }
 
-  /* ── Keys choice grid ── */
+  /* ── Setup actions: filled primary, outlined secondary ── */
+  .keys-actions-heading { color: var(--vault-ink); font-size: 0.875rem; font-weight: 600; margin: 0 0 0.75rem; }
   .keys-choice-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem;
   }
   .keys-choice-card {
-    background: #1c1917; border: 2px solid #44403c; border-radius: 0.75rem;
-    padding: 1.25rem; text-align: center; cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+    background: var(--vault-raised); color: var(--vault-accent);
+    border: 1px solid var(--vault-accent); border-radius: 0.75rem;
+    padding: 1.25rem; text-align: left; cursor: pointer; min-width: 0;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
   }
-  .keys-choice-card:hover { border-color: #f59e0b; box-shadow: 0 4px 12px rgb(245 158 11 / 0.15); }
+  .keys-choice-card:hover { background: var(--vault-surface); box-shadow: 0 4px 12px rgb(15 97 115 / 0.12); }
+  .keys-choice-card:active { box-shadow: inset 0 0 0 1px currentColor; }
   .keys-choice-icon {
-    width: 48px; height: 48px; border-radius: 0.75rem;
+    width: 40px; height: 40px; border-radius: 0.5rem;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 0.75rem;
+    margin-bottom: 0.25rem; background: var(--vault-tint);
   }
-  .keys-choice-icon-generate { background: #292524; color: #f59e0b; border: 1px solid #57534e; }
-  .keys-choice-icon-import { background: #292524; color: #a8a29e; border: 1px solid #57534e; }
-  .keys-choice-title { font-size: 0.875rem; font-weight: 600; color: #f5f5f4; margin: 0 0 0.25rem; }
-  .keys-choice-desc { font-size: 0.75rem; color: #a8a29e; margin: 0; line-height: 1.4; }
+  .keys-choice-title { font-size: 0.9375rem; font-weight: 700; color: var(--vault-ink); }
+  .keys-choice-desc { font-size: 0.8125rem; color: var(--vault-muted); line-height: 1.5; }
+  .keys-choice-cta {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    width: 100%; margin-top: auto; padding-top: 0.75rem;
+    font-size: 0.8125rem; font-weight: 700;
+  }
+  .keys-choice-cta > span { font-size: 1.125rem; line-height: 1; }
+  .keys-choice-primary { background: var(--vault-accent); color: #fff; border-color: var(--vault-accent); }
+  .keys-choice-primary:hover { background: var(--vault-accent-hover); border-color: var(--vault-accent-hover); }
+  .keys-choice-primary .keys-choice-icon { background: rgb(255 255 255 / 0.14); }
+  .keys-choice-primary .keys-choice-title { color: #fff; }
+  .keys-choice-primary .keys-choice-desc { color: #dceff3; }
 
   /* ── Keys back link ── */
   .keys-back-link {
     display: inline-flex; align-items: center; gap: 0.25rem;
     background: none; border: none; cursor: pointer;
-    font-size: 0.8125rem; color: #a8a29e; padding: 0;
+    font-size: 0.8125rem; color: var(--vault-muted); padding: 0;
     margin-bottom: 0.75rem; transition: color 0.15s;
   }
-  .keys-back-link:hover { color: #f59e0b; }
+  .keys-back-link:hover { color: var(--vault-accent); }
 
   /* ── Public key empty state ── */
   .public-key-card-empty { text-align: left; }
