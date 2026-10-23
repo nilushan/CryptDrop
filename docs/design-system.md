@@ -19,6 +19,8 @@ The baseline follows the issue's agreed direction:
 
 Issue #4 implements the app catalog described by this historical #2 baseline (pending independent review). `src/styles/tokens.css`, `app-components.css` and the bounded `feedback.css` now exist; Layout imports tokens once, the app imports its scoped catalog before workspace overrides, and invitation imports feedback only. #3's FormField/labels are reused. [The exhaustive #4 audit](design-system-evidence/issue-4/audit.md) covers every component, removal/consumer checks, shared patterns and intentional exceptions. [#4 evidence and validation](design-system-evidence/issue-4/README.md) records before/after views, actual browser coverage and remaining pre-existing checks. Statements below about “planned” paths or “currently” missing semantics describe the original audited commit, not the updated implementation.
 
+Issue #5 implements the homepage marketing catalog and shared marketing shell (pending independent review). `src/styles/marketing.css` now owns token-backed static reading/action/card/table roles and marketing-only shell focus/motion/navigation. [MarketingSection](../src/components/marketing/MarketingSection.astro) requires a unique `id` and `heading`, with optional `lead` and `plain|muted|gradient` tone; it renders a named section, h2 and 56rem container. [MarketingCTA](../src/components/marketing/MarketingCTA.astro) requires `href`, accepts primary/secondary variant and text slot, and always renders a native link without hydration. Compose CTA links in `.marketing-cta-group`; table callers must still supply caption, scopes and named/described keyboard-scroll region. One-off hero artwork and static step layout remain local, not app controls. [#5 audit, approved claim reconciliation, intentional exceptions and responsive evidence](design-system-evidence/issue-5/README.md) records the actual implementation and validation. Known false homepage no-backend/no-database absolutes are corrected with supervisor-approved source-backed wording; wider cross-route consistency and third-party comparison assertions remain owner-review inputs.
+
 ### Reading map
 
 1. [Inventory and gaps](#inventory-and-gaps)
@@ -183,7 +185,7 @@ Paths marked **planned** do not exist yet and should be created only when the ow
 | Shared foundations | **Planned** `src/styles/tokens.css`, imported once by Layout: `--cd-color-*`, `--cd-space-*`, radius and motion roles. Layout retains reset, system family and shared focus defaults. Preserve app/vault overrides with documented aliases; do not add a TS copy of color values. |
 | App shell | Existing `src/styles/app-workspace.css`, scoped under `.app-layout`; app navigation markup and initialization stay in their current owners. |
 | App patterns | **Planned** `src/styles/app-components.css`: move consumed page-global app rules out of `src/pages/app/index.astro`, then migrate React inline presentation in bounded groups. Avoid unsafely global `.card`/`.btn-primary` rules affecting marketing. |
-| Marketing patterns | **Planned** `src/styles/marketing.css` and `src/components/marketing/` for repeated static Section/CTA patterns once #5 uses them. Scope classes (for example `.marketing-cta`) so importing a shared layout does not import the app catalog. Keep one-off art/layout locally scoped in Astro. |
+| Marketing patterns | Implemented in #5: `src/styles/marketing.css` and `src/components/marketing/MarketingSection.astro` / `MarketingCTA.astro`, consumed by the homepage. Native links and named sections, no hydration. Shell rules are scoped to `.marketing-layout`; patterns use `marketing-*` names, never app `.btn-*`/`.card`. Layout does not import the app catalog. Keep one-off art/layout locally scoped in Astro. |
 | React behavior/composition | `src/components/shared/` owns existing interactive primitives; `keys/`, `encrypt/`, `decrypt/`, `wizard/`, `invite/` own domain compositions. Astro mounts existing islands with `client:load`; reusable child components need no extra island boundary. |
 | Copy and domain state | Existing stores/lib and component owners remain authoritative. Reuse [key-security.ts](../src/lib/key-security.ts) for existing safeguards/limitations, [key-capabilities.ts](../src/lib/key-capabilities.ts) for availability. Do not duplicate or rewrite rules in CSS or visual wrappers. |
 
@@ -243,17 +245,19 @@ const errorId = `${fieldId}-error`;
 
 Show the existing minimum length/strength requirement beside this field as well. Keep current passphrase evaluation, generation, clearing, download and backup logic unchanged. Name/email have their own visible labels and explanatory context; registration/network wording must be source-reviewed rather than inferred from the visual design.
 
-### Static Astro composition (target class names)
+### Static Astro composition (implemented in #5)
 
 ```astro
-<section class="marketing-section" aria-labelledby="guide-heading">
-  <div class="marketing-container">
-    <h2 id="guide-heading">Understand the workflow</h2>
-    <p class="marketing-lead">Learn how public and private keys are used.</p>
-    <a class="marketing-cta marketing-cta-primary" href="/app">Open CryptDrop</a>
-    <a class="marketing-cta marketing-cta-secondary" href="/how-it-works">Read the guide</a>
+---
+import MarketingSection from '../components/marketing/MarketingSection.astro';
+import MarketingCTA from '../components/marketing/MarketingCTA.astro';
+---
+<MarketingSection id="workflow" heading="Understand the workflow" lead="Learn how public and private keys are used." tone="muted">
+  <div class="marketing-cta-group">
+    <MarketingCTA href="/app">Open CryptDrop</MarketingCTA>
+    <MarketingCTA href="/how-it-works" variant="secondary">Read the guide</MarketingCTA>
   </div>
-</section>
+</MarketingSection>
 ```
 
 No `client:*` directive is needed. Token usage is plain CSS (`color: var(--cd-color-ink)`); React uses `className`, Astro uses `class`. Consume the same CSS properties, not duplicated JavaScript style constants.

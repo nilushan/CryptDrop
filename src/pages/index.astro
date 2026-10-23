@@ -1,340 +1,31 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import MarketingSection from '../components/marketing/MarketingSection.astro';
+import MarketingCTA from '../components/marketing/MarketingCTA.astro';
 ---
 
-<Layout title="CryptDrop — Encrypt Files for Anyone, Right in Your Browser" description="Send files that only the intended recipient can open. No servers, no sign-ups, no uploads. Everything happens in your browser using OpenPGP encryption.">
-
-  <style>
-    /* Hero */
-    .landing-hero {
-      background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 40%, #faf5ff 100%);
-      padding: 5rem 1.5rem 4rem;
-      text-align: center;
-      border-bottom: 1px solid #e5e7eb;
-      position: relative;
-      overflow: hidden;
-    }
-    .landing-hero::before {
-      content: '';
-      position: absolute;
-      top: -40%;
-      left: -20%;
-      width: 60%;
-      height: 120%;
-      background: radial-gradient(ellipse, rgba(99,102,241,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .landing-hero::after {
-      content: '';
-      position: absolute;
-      bottom: -40%;
-      right: -20%;
-      width: 60%;
-      height: 120%;
-      background: radial-gradient(ellipse, rgba(139,92,246,0.05) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 44rem;
-      margin: 0 auto;
-    }
-    .hero-inner h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #1e1b4b;
-      letter-spacing: -0.035em;
-      line-height: 1.15;
-      margin-bottom: 1.25rem;
-    }
-    @media (min-width: 768px) {
-      .hero-inner h1 { font-size: 3.25rem; }
-    }
-    .hero-inner .hero-sub {
-      font-size: 1.125rem;
-      color: #6b7280;
-      line-height: 1.7;
-      max-width: 34rem;
-      margin: 0 auto 2rem;
-    }
-    .hero-cta-group {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: #4f46e5;
-      color: white;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      padding: 0.75rem 1.75rem;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      transition: all 0.15s ease;
-      box-shadow: 0 1px 3px rgb(79 70 229 / 0.3);
-    }
-    .btn-primary:hover { background: #4338ca; box-shadow: 0 4px 12px rgb(79 70 229 / 0.3); }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: white;
-      color: #374151;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      padding: 0.75rem 1.75rem;
-      border-radius: 0.5rem;
-      border: 1px solid #d1d5db;
-      text-decoration: none;
-      transition: all 0.15s ease;
-    }
-    .btn-secondary:hover { border-color: #9ca3af; background: #f9fafb; }
-    .hero-trust {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .hero-trust span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
-    .trust-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #22c55e;
-      display: inline-block;
-    }
-
-    /* Problem/Solution */
-    .ps-section {
-      max-width: 56rem;
-      margin: 0 auto;
-      padding: 4rem 1.5rem;
-    }
-    .ps-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-    .ps-header h2 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #1f2937;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.5rem;
-    }
-    .ps-header p {
-      font-size: 1rem;
-      color: #6b7280;
-      max-width: 32rem;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* Feature grid */
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-    @media (min-width: 640px) {
-      .feature-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (min-width: 900px) {
-      .feature-grid { grid-template-columns: 1fr 1fr 1fr; }
-    }
-    .feature-card {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-    .feature-card:hover {
-      border-color: #c7d2fe;
-      box-shadow: 0 4px 16px rgb(99 102 241 / 0.08);
-    }
-    .feature-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      margin-bottom: 0.875rem;
-    }
-    .feature-card h3 {
-      font-size: 0.9375rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 0.375rem;
-    }
-    .feature-card p {
-      font-size: 0.8125rem;
-      color: #6b7280;
-      line-height: 1.6;
-    }
-
-    /* How it works steps */
-    .how-steps {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
-    }
-    @media (min-width: 640px) {
-      .how-steps { grid-template-columns: 1fr 1fr 1fr; }
-    }
-    .how-step {
-      text-align: center;
-      padding: 1.5rem;
-      position: relative;
-    }
-    @media (min-width: 640px) {
-      .how-step:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        top: 2.25rem;
-        right: -0.25rem;
-        width: 1.5rem;
-        height: 2px;
-        background: #c7d2fe;
-      }
-    }
-    .how-step-num {
-      width: 2.5rem;
-      height: 2.5rem;
-      background: #eef2ff;
-      color: #4f46e5;
-      border-radius: 9999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.875rem;
-      font-weight: 800;
-      margin-bottom: 0.75rem;
-    }
-    .how-step h3 {
-      font-size: 0.9375rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 0.25rem;
-    }
-    .how-step p {
-      font-size: 0.8125rem;
-      color: #6b7280;
-      line-height: 1.6;
-    }
-
-    /* Comparison table */
-    .comparison-section {
-      background: #f9fafb;
-      border-top: 1px solid #e5e7eb;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .comparison-table-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 0.75rem;
-      border: 1px solid #e5e7eb;
-    }
-    .comparison-table {
-      width: 100%;
-      min-width: 500px;
-      border-collapse: collapse;
-      border-spacing: 0;
-      background: white;
-    }
-    .comparison-table th {
-      background: #f9fafb;
-      padding: 0.75rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #6b7280;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
-    }
-    .comparison-table td {
-      padding: 0.625rem 1rem;
-      font-size: 0.8125rem;
-      border-bottom: 1px solid #f3f4f6;
-      color: #374151;
-    }
-    .comparison-table tr:last-child td { border-bottom: none; }
-    .check { color: #16a34a; font-weight: 700; }
-    .cross { color: #dc2626; }
-
-    /* Hero image */
-    .hero-image-wrap {
-      max-width: 56rem;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      position: relative;
-      z-index: 1;
-      margin-top: -2rem;
-    }
-    .hero-image-wrap img {
-      width: 100%;
-      border-radius: 1rem;
-      box-shadow: 0 8px 40px rgb(0 0 0 / 0.12), 0 2px 8px rgb(0 0 0 / 0.06);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-
-    /* Final CTA */
-    .final-cta {
-      background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
-      border-top: 1px solid #e5e7eb;
-      text-align: center;
-      padding: 4rem 1.5rem;
-    }
-    .final-cta h2 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #1e1b4b;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
-    }
-    .final-cta p {
-      font-size: 1rem;
-      color: #6b7280;
-      max-width: 30rem;
-      margin: 0 auto 1.5rem;
-      line-height: 1.7;
-    }
-  </style>
+<Layout title="CryptDrop — Encrypt Files for Anyone, Right in Your Browser" description="Encrypt files in your browser with OpenPGP. No account required. CryptDrop does not upload your file contents.">
 
   <!-- ======================== HERO ======================== -->
-  <div class="landing-hero">
+  <section class="landing-hero" aria-labelledby="home-heading">
     <div class="hero-inner">
-      <h1>Send files that only the right person can open</h1>
+      <h1 id="home-heading">Send files that only the right person can open</h1>
       <p class="hero-sub">
-        CryptDrop encrypts files in your browser using OpenPGP — the same standard trusted by journalists, security professionals, and governments. No servers. No sign-ups. No file uploads.
+        CryptDrop encrypts files in your browser with OpenPGP. No account required. CryptDrop does not upload your file contents.
       </p>
-      <div class="hero-cta-group">
-        <a href="/app" class="btn-primary">Start Encrypting &rarr;</a>
-        <a href="/how-it-works" class="btn-secondary">See How It Works</a>
+      <div class="marketing-cta-group">
+        <MarketingCTA href="/app" variant="primary">Start Encrypting &rarr;</MarketingCTA>
+        <MarketingCTA href="/how-it-works" variant="secondary">See How It Works</MarketingCTA>
       </div>
       <div class="hero-trust">
-        <span><span class="trust-dot"></span> Files never leave your device</span>
-        <span><span class="trust-dot"></span> Open-source encryption</span>
-        <span><span class="trust-dot"></span> No account required</span>
-        <span><span class="trust-dot"></span> Encrypt &amp; decrypt offline</span>
+        <span><span class="trust-dot" aria-hidden="true"></span> File contents stay local</span>
+        <span><span class="trust-dot" aria-hidden="true"></span> Open-source encryption</span>
+        <span><span class="trust-dot" aria-hidden="true"></span> No account required</span>
+        <span><span class="trust-dot" aria-hidden="true"></span> Local file encryption</span>
       </div>
+      <p class="hero-note">Once the app is loaded and the required keys are available, file encryption and decryption run locally. Key discovery and invitations need a network connection. <a href="/security">Review security details and limitations</a>.</p>
     </div>
-  </div>
+  </section>
 
   <!-- ======================== HERO IMAGE ======================== -->
   <div class="hero-image-wrap">
@@ -342,187 +33,205 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <!-- ======================== THE PROBLEM ======================== -->
-  <div class="ps-section" style="padding-bottom: 2rem;">
-    <div class="ps-header">
-      <h2>The problem with sending files today</h2>
-      <p>Every file you share online passes through routers, servers, and services you don't control. Any one of them could read, copy, or leak your data.</p>
-    </div>
+  <MarketingSection id="problem" heading="The problem with sending files today" tone="plain" lead="Every file you share online passes through routers, servers, and services you don't control. Any one of them could read, copy, or leak your data.">
 
-    <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));">
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #fef2f2;">&#x1f4e7;</div>
+    <div class="feature-grid">
+      <div class="marketing-card">
+        <div class="feature-icon feature-icon-red" aria-hidden="true">&#x1f4e7;</div>
         <h3>Email isn't private</h3>
         <p>Email providers can read your attachments. Forwarded messages lose all control. There's no guarantee only your recipient sees the file.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #fff7ed;">&#x2601;&#xfe0f;</div>
+      <div class="marketing-card">
+        <div class="feature-icon feature-icon-orange" aria-hidden="true">&#x2601;&#xfe0f;</div>
         <h3>Cloud links can leak</h3>
         <p>Shared links can be guessed, forwarded, or accessed by platform employees. Revoking access after the fact is damage control, not prevention.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #fefce8;">&#x1f50d;</div>
+      <div class="marketing-card">
+        <div class="feature-icon feature-icon-yellow" aria-hidden="true">&#x1f50d;</div>
         <h3>No way to verify the sender</h3>
         <p>Standard file sharing has no built-in way to prove who actually sent a file or whether it was modified in transit.</p>
       </div>
     </div>
-  </div>
+  </MarketingSection>
 
   <!-- ======================== THE SOLUTION ======================== -->
-  <div style="border-top: 1px solid #e5e7eb;">
-    <div class="ps-section" style="padding-bottom: 2rem;">
-      <div class="ps-header">
-        <h2>CryptDrop solves this</h2>
-        <p>Encrypt any file so that only the person you choose can open it. Sign it so they can verify it came from you. All in your browser.</p>
-      </div>
+  <MarketingSection id="solution" heading="CryptDrop solves this" tone="plain" lead="Encrypt any file so that only the person you choose can open it. Sign it so they can verify it came from you. All in your browser.">
 
       <div class="feature-grid">
-        <div class="feature-card">
-          <div class="feature-icon" style="background: #eef2ff;">&#x1f512;</div>
+        <div class="marketing-card">
+          <div class="feature-icon feature-icon-indigo" aria-hidden="true">&#x1f512;</div>
           <h3>End-to-end encryption</h3>
           <p>Files are encrypted with the recipient's public key. Only their private key can decrypt it — not CryptDrop, not your ISP, not anyone in between.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon" style="background: #f0fdf4;">&#x270d;&#xfe0f;</div>
+        <div class="marketing-card">
+          <div class="feature-icon feature-icon-green" aria-hidden="true">&#x270d;&#xfe0f;</div>
           <h3>Digital signatures</h3>
           <p>Sign files with your private key to prove authenticity. The recipient can verify the file came from you and wasn't tampered with.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon" style="background: #faf5ff;">&#x1f4bb;</div>
+        <div class="marketing-card">
+          <div class="feature-icon feature-icon-purple" aria-hidden="true">&#x1f4bb;</div>
           <h3>100% browser-based</h3>
-          <p>Nothing is uploaded to any server. Encryption and decryption happen entirely on your device using the OpenPGP.js library.</p>
+          <p>Encryption and decryption run locally in your browser with OpenPGP.js. File contents, private keys and passphrases are not uploaded by these workflows. Public-key registration, lookup and invitations use network services. <a href="/security">Details and limitations</a>.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon" style="background: #ecfdf5;">&#x1f310;</div>
+        <div class="marketing-card">
+          <div class="feature-icon feature-icon-teal" aria-hidden="true">&#x1f310;</div>
           <h3>Public key discovery</h3>
-          <p>Find anyone's public key by email using the keys.openpgp.org keyserver. No need to exchange keys manually.</p>
+          <p>Find public keys by email through the CryptDrop registry, with keys.openpgp.org as a fallback. No need to exchange keys manually.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon" style="background: #eff6ff;">&#x1f6e1;&#xfe0f;</div>
-          <h3>Zero-knowledge architecture</h3>
-          <p>CryptDrop has no backend, no database, no analytics. There is literally nothing to breach because we store nothing.</p>
+        <div class="marketing-card">
+          <div class="feature-icon feature-icon-blue" aria-hidden="true">&#x1f6e1;&#xfe0f;</div>
+          <h3>Private keys stay local</h3>
+          <p>File processing stays on your device. Registry and invitation services receive public keys and identity or contact details, not private keys. <a href="/security">Learn what uses network services</a>.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon" style="background: #fefce8;">&#x26a1;</div>
+        <div class="marketing-card">
+          <div class="feature-icon feature-icon-yellow" aria-hidden="true">&#x26a1;</div>
           <h3>No account required</h3>
-          <p>Generate keys, encrypt, and decrypt — all without signing up, logging in, or providing any personal information.</p>
+          <p>Generate keys, encrypt, and decrypt without an account or login. Key generation asks for a name and email and attempts to register your public key and identity with CryptDrop.</p>
         </div>
       </div>
-    </div>
-  </div>
+  </MarketingSection>
 
   <!-- ======================== HOW IT WORKS ======================== -->
-  <div style="border-top: 1px solid #e5e7eb; background: #f9fafb;">
-    <div class="ps-section">
-      <div class="ps-header">
-        <h2>How it works in three steps</h2>
-      </div>
-      <div class="how-steps">
-        <div class="how-step">
-          <div class="how-step-num">1</div>
+  <MarketingSection id="three-steps" heading="How it works in three steps" tone="muted">
+      <ol class="how-steps">
+        <li class="how-step">
+          <div class="how-step-num" aria-hidden="true">1</div>
           <h3>Generate your keys</h3>
           <p>Create a key pair in seconds. Your public key lets others encrypt files for you. Your private key stays on your device, protected by a passphrase.</p>
-        </div>
-        <div class="how-step">
-          <div class="how-step-num">2</div>
-          <h3>Encrypt &amp; sign</h3>
-          <p>Find the recipient's public key by email, drop in your file, and click encrypt. The file is locked so only they can open it, and signed to prove it's from you.</p>
-        </div>
-        <div class="how-step">
-          <div class="how-step-num">3</div>
-          <h3>Decrypt &amp; verify</h3>
-          <p>The recipient loads their private key, drops in the encrypted file, and it's decrypted instantly. The signature is verified automatically.</p>
-        </div>
-      </div>
-      <div style="text-align: center; margin-top: 1.5rem;">
-        <a href="/how-it-works" class="btn-secondary" style="font-size: 0.8125rem; padding: 0.5rem 1.25rem;">
+        </li>
+        <li class="how-step">
+          <div class="how-step-num" aria-hidden="true">2</div>
+          <h3>Encrypt (optionally sign)</h3>
+          <p>Find the recipient's public key by email, drop in your file, and click encrypt. The file is locked so only they can open it. Optionally sign with your private key so the recipient can check the signature.</p>
+        </li>
+        <li class="how-step">
+          <div class="how-step-num" aria-hidden="true">3</div>
+          <h3>Decrypt (optionally verify)</h3>
+          <p>The recipient loads their private key and drops in the encrypted file to decrypt it. If the file is signed, add the sender’s public key to check its signature.</p>
+        </li>
+      </ol>
+      <div class="guide-cta marketing-cta-group">
+        <MarketingCTA href="/how-it-works" variant="secondary">
           Read the full illustrated guide &rarr;
-        </a>
+        </MarketingCTA>
       </div>
-    </div>
-  </div>
+  </MarketingSection>
 
   <!-- ======================== COMPARISON ======================== -->
-  <div class="comparison-section">
-    <div class="ps-section">
-      <div class="ps-header">
-        <h2>How CryptDrop compares</h2>
-      </div>
-      <div class="comparison-table-wrap">
-      <table class="comparison-table">
+  <MarketingSection id="comparison" heading="How CryptDrop compares" tone="muted">
+      <p id="comparison-hint" class="marketing-table-hint">Scroll horizontally to compare all columns on smaller screens. Keyboard: focus the table region, then use the arrow keys.</p>
+      <div class="marketing-table-region" role="region" aria-label="File sharing comparison" aria-describedby="comparison-hint comparison-note" tabindex="0">
+      <table class="marketing-table">
+        <caption>File sharing features by method</caption>
         <thead>
           <tr>
-            <th></th>
-            <th>CryptDrop</th>
-            <th>Email</th>
-            <th>Cloud Storage</th>
-            <th>Messaging Apps</th>
+            <th scope="col">Feature</th>
+            <th scope="col">CryptDrop</th>
+            <th scope="col">Email</th>
+            <th scope="col">Cloud Storage</th>
+            <th scope="col">Messaging Apps</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>End-to-end encrypted</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="check">&#x2713; *</td>
+            <th scope="row">End-to-end encrypted</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="check">Yes *</td>
           </tr>
           <tr>
-            <td>Files stay on your device</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
+            <th scope="row">Files stay on your device</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
           </tr>
           <tr>
-            <td>Sender verification</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
+            <th scope="row">Sender verification</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
           </tr>
           <tr>
-            <td>No account required</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
+            <th scope="row">No account required</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
           </tr>
           <tr>
-            <td>No server storage</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
+            <th scope="row">No file storage on service servers</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
           </tr>
           <tr>
-            <td>Open standard (OpenPGP)</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
+            <th scope="row">Open standard (OpenPGP)</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
           </tr>
           <tr>
-            <td>Encrypt &amp; decrypt offline</td>
-            <td class="check">&#x2713;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
-            <td class="cross">&#x2717;</td>
+            <th scope="row">Local encryption &amp; decryption after loading app and keys</th>
+            <td class="check">Yes</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
+            <td class="cross">No</td>
           </tr>
         </tbody>
       </table>
       </div>
-      <p style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.75rem; text-align: center;">* Some messaging apps offer E2E encryption for messages, but typically not for file transfers, and lack sender verification via cryptographic signatures.</p>
-    </div>
-  </div>
+      <p id="comparison-note" class="marketing-table-note">* Some messaging apps offer E2E encryption for messages, but typically not for file transfers, and lack sender verification via cryptographic signatures.</p>
+  </MarketingSection>
 
   <!-- ======================== FINAL CTA ======================== -->
-  <div class="final-cta">
-    <h2>Your files. Your keys. Nobody in between.</h2>
-    <p>CryptDrop is free, open-source, and runs entirely in your browser. Start sending secrets safely.</p>
-    <div class="hero-cta-group">
-      <a href="/app" class="btn-primary">Start Encrypting &rarr;</a>
-      <a href="/how-it-works" class="btn-secondary">See the Illustrated Guide</a>
+  <MarketingSection id="start" heading="Your files. Your keys. Nobody in between." tone="gradient" lead="CryptDrop is free, open-source, and runs file encryption in your browser. Start sending secrets safely.">
+    <div class="marketing-cta-group">
+      <MarketingCTA href="/app" variant="primary">Start Encrypting &rarr;</MarketingCTA>
+      <MarketingCTA href="/how-it-works" variant="secondary">See the Illustrated Guide</MarketingCTA>
     </div>
-  </div>
+  </MarketingSection>
 
 </Layout>
+
+<style>
+  /* Homepage art and narrative layouts; shared reading/action roles live in marketing.css. */
+  .landing-hero {
+    background: linear-gradient(135deg, var(--cd-color-info-bg), #f5f3ff 40%, #faf5ff);
+    padding: var(--cd-space-9) var(--cd-space-6);
+    text-align: center;
+    border-bottom: 1px solid var(--cd-color-line);
+  }
+  .hero-inner { max-width: 44rem; margin-inline: auto; }
+  .hero-inner h1 { margin: 0 0 var(--cd-space-5); font-size: 2.5rem; font-weight: 800; color: #1e1b4b; letter-spacing: -.035em; line-height: 1.15; }
+  .hero-sub { font-size: 1.125rem; line-height: 1.7; color: var(--cd-color-muted); max-width: 34rem; margin: 0 auto var(--cd-space-7); }
+  .hero-trust { margin-top: var(--cd-space-7); display: flex; justify-content: center; gap: var(--cd-space-4) var(--cd-space-6); flex-wrap: wrap; }
+  .hero-trust > span { display: inline-flex; align-items: center; gap: var(--cd-space-2); font-size: .875rem; color: var(--cd-color-muted); }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cd-color-success-ink); flex-shrink: 0; }
+  .hero-note { max-width: 40rem; font-size: .875rem; line-height: 1.7; color: var(--cd-color-muted); margin: var(--cd-space-6) auto var(--cd-space-4); }
+  .hero-image-wrap { max-width: 56rem; margin: -2rem auto var(--cd-space-9); padding-inline: var(--cd-space-6); position: relative; }
+  .hero-image-wrap img { width: 100%; border-radius: var(--cd-radius-panel); box-shadow: 0 8px 40px rgb(0 0 0 / .12), 0 2px 8px rgb(0 0 0 / .06); border: 1px solid var(--cd-color-line); }
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--cd-space-5); }
+  .feature-icon { width: 2.5rem; height: 2.5rem; border-radius: var(--cd-radius-control); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: var(--cd-space-4); }
+  .feature-icon-red { background: #fef2f2; }
+  .feature-icon-orange { background: #fff7ed; }
+  .feature-icon-yellow { background: #fefce8; }
+  .feature-icon-indigo { background: var(--cd-color-info-bg); }
+  .feature-icon-green { background: var(--cd-color-success-bg); }
+  .feature-icon-purple { background: #faf5ff; }
+  .feature-icon-teal { background: #ecfdf5; }
+  .feature-icon-blue { background: #eff6ff; }
+  .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cd-space-6); list-style: none; margin: 0; padding: 0; }
+  .how-step { text-align: center; padding: var(--cd-space-4); }
+  .how-step-num { width: 2.5rem; height: 2.5rem; background: var(--cd-color-info-bg); color: var(--cd-color-action); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: var(--cd-space-3); }
+  .how-step h3 { font-size: 1rem; line-height: 1.5; margin: 0 0 var(--cd-space-2); }
+  .how-step p { font-size: .875rem; line-height: 1.7; color: var(--cd-color-muted); margin: 0; }
+  .guide-cta { margin-top: var(--cd-space-7); }
+  .check { color: var(--cd-color-success-ink); font-weight: 600; }
+  .cross { color: var(--cd-color-error-ink); }
+  @media (min-width: 768px) { .hero-inner h1 { font-size: 3.25rem; } }
+</style>

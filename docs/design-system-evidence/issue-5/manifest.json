@@ -1,0 +1,516 @@
+{
+  "baseHead": "197845bc59830230553feaf461fb18219b3828c2",
+  "baseURL": "http://127.0.0.1:4321",
+  "captures": [
+    {
+      "file": "before-home-mobile.png",
+      "phase": "before",
+      "route": "/",
+      "state": "home",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 6286
+      },
+      "sha256": "2d146140ef81640b46dccb924f7dcf96f2d358142480fc13f83977c123c6d935"
+    },
+    {
+      "file": "before-guide-mobile.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "guide",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 443,
+        "height": 8085
+      },
+      "sha256": "a712772416497d8d7a8c5bf0daadac3f9b98cb2acdf7d9b4cf8384e7ce39111f"
+    },
+    {
+      "file": "before-security-mobile.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "security",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 10269
+      },
+      "sha256": "169e47bc1954e942ef6263d859f87fb9a7c25f2f429584888768c9f6190f8e0e"
+    },
+    {
+      "file": "before-invite-mobile.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "56bb8479441dbc546c043326dbcb6e22fc58681b0b171ec118c2b267224836dd"
+    },
+    {
+      "file": "before-app-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "app",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1815
+      },
+      "sha256": "a310c6c820ad3fe407a0c140bd064a23ac8a65de2960b32df2abcc72ad1a3353"
+    },
+    {
+      "file": "before-home-tablet.png",
+      "phase": "before",
+      "route": "/",
+      "state": "home",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 4108
+      },
+      "sha256": "0cb9a1a3706742426534b3552c1e4cb8f33c33e9825223adcdb3030d5c164bf1"
+    },
+    {
+      "file": "before-guide-tablet.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "guide",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 5622
+      },
+      "sha256": "1488a9438594c11530eaa56af8aa65dc1d86fa46ddc87e39b0b5e249dae7bc12"
+    },
+    {
+      "file": "before-security-tablet.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "security",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 6528
+      },
+      "sha256": "e51089028a869cb8bb36b21288b6828cc56acfb7c9601904df8b0d2861affb4c"
+    },
+    {
+      "file": "before-invite-tablet.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "4e9a4aadb98f398b3e24c71690d8fe25a6e375638411ddcd00411f3d950aeaed"
+    },
+    {
+      "file": "before-app-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "app",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1556
+      },
+      "sha256": "0e6264a34eeaeaa2070155aa986099c92a4aee3890c8161983ebcf865d34dff0"
+    },
+    {
+      "file": "before-home-desktop.png",
+      "phase": "before",
+      "route": "/",
+      "state": "home",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 3947
+      },
+      "sha256": "53b5e62d4172cb94b884412af7110d2f4345226895147f7bea69c65603e42131"
+    },
+    {
+      "file": "before-guide-desktop.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "guide",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 5660
+      },
+      "sha256": "6380d56b3a42e718db3fcb373d72ce279f27b8ff6c92eabba547fe02d0dd2429"
+    },
+    {
+      "file": "before-security-desktop.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "security",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6251
+      },
+      "sha256": "b696e6a00d9081638f1be439533a034e97727e5bd973c7333d994e9dee13e3a9"
+    },
+    {
+      "file": "before-invite-desktop.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "5410cea7d292d8a34761f638f2793463cdfe2ebc220a68f2b05b39584bc14bb3"
+    },
+    {
+      "file": "before-app-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "app",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1057
+      },
+      "sha256": "429d2e2525faa1fc9869b075a1a79a4e8b605acdfe068ee456e4180aca6d34f3"
+    },
+    {
+      "file": "after-home-mobile.png",
+      "phase": "after",
+      "route": "/",
+      "state": "home",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 6556
+      },
+      "sha256": "55f67872b2e7d1fc7b5a370fca09cde2622cdd4f77e1ca648b9fc540456fa1f8"
+    },
+    {
+      "file": "after-guide-mobile.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "guide",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 443,
+        "height": 8428
+      },
+      "sha256": "59c217282c7a0bef149bd2343acd9d3c88d4e86fd3a555f5e84320b77ab2ebe6"
+    },
+    {
+      "file": "after-security-mobile.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "security",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 10434
+      },
+      "sha256": "e26155e8d2b1be01c33b8163edbe3d6996e93c429201417aed06daf588819c17"
+    },
+    {
+      "file": "after-invite-mobile.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "f08dbf904742bc41ba6f3556bf7a300901c33dfc1fcbcec79cd819a062f19279"
+    },
+    {
+      "file": "after-app-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "app",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1815
+      },
+      "sha256": "a310c6c820ad3fe407a0c140bd064a23ac8a65de2960b32df2abcc72ad1a3353"
+    },
+    {
+      "file": "after-home-tablet.png",
+      "phase": "after",
+      "route": "/",
+      "state": "home",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 4674
+      },
+      "sha256": "9c5bcf2c71e787589c94face2bc2f1a9eb1671d20e05a9887ef85de19246d98a"
+    },
+    {
+      "file": "after-guide-tablet.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "guide",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 5669
+      },
+      "sha256": "071908df06b7c061f4e4e21cda1cd4648c921713183f47170470dc1b8e4fe1ee"
+    },
+    {
+      "file": "after-security-tablet.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "security",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 6576
+      },
+      "sha256": "8bf52454b5fbf5d2a9a929cdd6c81b139992697d543d2333d0bd19ae167aa617"
+    },
+    {
+      "file": "after-invite-tablet.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "bbfe13928efec0fd25b672346b9d959577c426e194b1343a91920e42d2176da2"
+    },
+    {
+      "file": "after-app-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "app",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1556
+      },
+      "sha256": "0e6264a34eeaeaa2070155aa986099c92a4aee3890c8161983ebcf865d34dff0"
+    },
+    {
+      "file": "after-home-desktop.png",
+      "phase": "after",
+      "route": "/",
+      "state": "home",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 4311
+      },
+      "sha256": "8c3c94adcb2dbf1c6493c3e73c3de1f96af6605f54cbab0e0013d94739722a15"
+    },
+    {
+      "file": "after-guide-desktop.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "guide",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 5708
+      },
+      "sha256": "d296e31831c86676469bbbb539244d8bdb5f3fc9ac49c51060a46655022fad94"
+    },
+    {
+      "file": "after-security-desktop.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "security",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6299
+      },
+      "sha256": "9b80e831d4cfacdba77d04a0a5fb30b4f679b8a9ad40c8710b46caf9f5403c54"
+    },
+    {
+      "file": "after-invite-desktop.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "1a7e900539845e14773a5afeb5c0af41fcf2e912f9eb9c1881ff9d3ad91976bd"
+    },
+    {
+      "file": "after-app-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "app",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1057
+      },
+      "sha256": "429d2e2525faa1fc9869b075a1a79a4e8b605acdfe068ee456e4180aca6d34f3"
+    },
+    {
+      "file": "after-home-reflow.png",
+      "phase": "after",
+      "route": "/",
+      "state": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "image": {
+        "width": 320,
+        "height": 7014
+      },
+      "sha256": "d6a651ca92f3165f0880dc797980efc0478d955e216ba1e927a37527a37ef5d7"
+    },
+    {
+      "file": "after-home-table-scrolled.png",
+      "phase": "after",
+      "route": "/",
+      "state": "table-scrolled",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "12262728e6b315915b243a74dd1246db8b4f8efc759a7fe49b6e8bc8d4b93ce1"
+    },
+    {
+      "file": "after-home-text-200.png",
+      "phase": "after",
+      "route": "/",
+      "state": "text-200",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 12807
+      },
+      "sha256": "76087d65fd2bf11e0ffe23eab99cbf51356ea5ed242faad1b6479782503d0e85"
+    },
+    {
+      "file": "after-home-focus.png",
+      "phase": "after",
+      "route": "/",
+      "state": "focus",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "82886fef729adad0615cd2449c87711c8cf59084ac9e4d892fa2ccb7f798d138"
+    }
+  ]
+}

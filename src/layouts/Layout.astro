@@ -1,5 +1,6 @@
 ---
 import '../styles/tokens.css';
+import '../styles/marketing.css';
 
 interface Props {
   title: string;
@@ -20,14 +21,14 @@ const currentPath = Astro.url.pathname;
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
-<body class:list={['bg-gray-50 min-h-screen flex flex-col', { 'app-layout': appMode }]}>
-  {appMode && <a class="skip-link" href="#app-workspace">Skip to workspace</a>}
+<body class:list={['bg-gray-50 min-h-screen flex flex-col', { 'app-layout': appMode, 'marketing-layout': !appMode }]}>
+  {appMode ? <a class="skip-link" href="#app-workspace">Skip to workspace</a> : <a class="marketing-skip-link" href="#main-content">Skip to content</a>}
 
   <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
       <a href="/" class="header-logo">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg aria-hidden="true" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
           <path d="M16 7a5 5 0 00-5 5v3h-1a1.5 1.5 0 00-1.5 1.5v8A1.5 1.5 0 0010 26h12a1.5 1.5 0 001.5-1.5v-8A1.5 1.5 0 0022 15h-1v-3a5 5 0 00-5-5zm-3 8v-3a3 3 0 116 0v3h-6zm4 5.5v2.5a1 1 0 11-2 0v-2.5a1.5 1.5 0 111.98-1.42l.02.17v.01a1.5 1.5 0 010 1.24z" fill="white" fill-opacity="0.95"/>
           <defs>
@@ -45,6 +46,7 @@ const currentPath = Astro.url.pathname;
       <nav class="header-nav" aria-label="Site navigation">
         <a
           href="/how-it-works"
+          aria-current={/^\/how-it-works\/?$/.test(currentPath) ? 'page' : undefined}
           class:list={[
             "header-nav-link",
             (currentPath === "/how-it-works" || currentPath === "/how-it-works/") && "active"
@@ -54,6 +56,7 @@ const currentPath = Astro.url.pathname;
         </a>
         <a
           href="/security"
+          aria-current={/^\/security\/?$/.test(currentPath) ? 'page' : undefined}
           class:list={[
             "header-nav-link",
             (currentPath === "/security" || currentPath === "/security/") && "active"
@@ -70,14 +73,16 @@ const currentPath = Astro.url.pathname;
     </div>
   </header>
 
-  <main class="flex-1">
+  <main id={!appMode ? 'main-content' : undefined} tabindex={!appMode ? -1 : undefined} class="flex-1">
     <slot />
   </main>
 
   <!-- Footer -->
-  {!appMode && <footer class="text-center py-6 text-xs text-gray-400 border-t border-gray-100">
-    All encryption and decryption happens locally in your browser. Files never leave your device.
-    <br />Uses the <a href="https://openpgpjs.org/" class="underline hover:text-gray-500">OpenPGP.js</a> library and <a href="https://keys.openpgp.org/" class="underline hover:text-gray-500">keys.openpgp.org</a> keyserver.
+  {!appMode && <footer class="marketing-footer">
+    <div class="marketing-container">
+      <p>File encryption and decryption run locally in your browser. CryptDrop does not upload your file contents.</p>
+      <p>Uses the <a href="https://openpgpjs.org/">OpenPGP.js</a> library and <a href="https://keys.openpgp.org/">keys.openpgp.org</a> keyserver. <a href="/security">Security and network-service details</a>.</p>
+    </div>
   </footer>}
 
 </body>
@@ -150,10 +155,10 @@ const currentPath = Astro.url.pathname;
     background: #818cf8;
     border-radius: 1px;
   }
-  /* Hide text nav links on small screens — keep only the CTA button */
+  /* App navigation keeps its workspace-specific responsive treatment. */
   @media (max-width: 540px) {
-    .header-nav-link { display: none; }
-    .header-nav { gap: 0; }
+    .app-layout .header-nav-link { display: none; }
+    .app-layout .header-nav { gap: 0; }
   }
   .header-cta {
     font-size: 0.8125rem;
