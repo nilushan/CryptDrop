@@ -68,6 +68,18 @@
 .key-capability-title { display: flex; align-items: center; gap: .375rem; margin: 0; font-size: .75rem; font-weight: 600; line-height: 1.5; }
 .key-capability-title > svg { flex-shrink: 0; }
 .key-capability-action { display: inline-flex; align-items: center; gap: .375rem; min-height: 36px; padding: .375rem 0; border: 0; background: transparent; color: inherit; font-size: .75rem; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.key-security-disclosure { margin-bottom: 1.5rem; border: 1px solid var(--app-line); border-radius: .625rem; background: #fff; }
+.key-security-disclosure > summary { padding: .875rem 1rem; cursor: pointer; color: var(--app-ink); font-size: .8125rem; }
+.key-security-disclosure > summary::marker { color: var(--app-muted); }
+.key-security-heading { font-weight: 600; }
+.key-security-summary { display: block; margin-top: .375rem; color: var(--app-muted); font-size: .75rem; line-height: 1.6; }
+.key-security-content { padding: 1rem; border-top: 1px solid var(--app-line); font-size: .75rem; line-height: 1.7; color: var(--app-muted); }
+.key-security-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1rem; margin-bottom: .75rem; }
+.key-security-columns h3 { margin: 0 0 .5rem; color: var(--app-ink); font-size: .8125rem; font-weight: 600; }
+.key-security-columns ul { list-style: disc; margin: 0; padding-left: 1.125rem; }
+.key-security-columns li + li { margin-top: .5rem; }
+.key-security-note { margin: 0 0 1.25rem; color: var(--app-muted); font-size: .75rem; line-height: 1.7; }
+.key-security-content a, .key-security-note a { color: var(--app-accent); text-decoration: underline; text-underline-offset: 3px; }
 .workspace-body { padding: 2rem clamp(1.5rem, 3.5vw, 4rem) 1.5rem; min-width: 0; }
 .workspace-topline { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--app-line); font-size: .625rem; color: #697589; letter-spacing: .12em; font-weight: 650; }
 .workspace-local { display: flex; align-items: center; gap: .5rem; font-size: .6875rem; letter-spacing: 0; font-weight: 400; }

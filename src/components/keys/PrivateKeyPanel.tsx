@@ -12,6 +12,7 @@ import YourPublicKey from './YourPublicKey';
 import ActionButton from '../shared/ActionButton';
 import KeyChoiceGrid from '../shared/KeyChoiceGrid';
 import { useKeyProtection } from './useKeyProtection';
+import KeySecurityDisclosure from './KeySecurityDisclosure';
 
 type View = 'choice' | 'generate' | 'import' | 'loaded';
 
@@ -78,10 +79,7 @@ export default function PrivateKeyPanel() {
 
   return (
     <div>
-      <div className="local-assurance-bar mb-5">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        <span>All key operations run <strong>locally in your browser</strong>. Your private key is <strong>never transmitted</strong> to any server.</span>
-      </div>
+      <KeySecurityDisclosure />
 
       {view === 'choice' && (
         <div>

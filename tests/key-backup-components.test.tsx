@@ -116,6 +116,15 @@ describe('backup guide', () => {
 const loadedProps = { userInfo: 'Alice', fingerprint: 'ABCD', armoredPrivate: 'protected-key', armoredPublic: 'public-key', onReplace: vi.fn() };
 
 describe('key setup status and actions', () => {
+  it('keeps the security disclosure available before importing a key', async () => {
+    render(<PrivateKeyPanel />);
+    const heading = screen.getByText('How your private key is protected');
+    expect(heading).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: /Import Existing/i }));
+    expect(heading).toBeVisible();
+    expect(screen.getByPlaceholderText('Passphrase (if your key has one)')).toBeInTheDocument();
+  });
+
   it('presents the unloaded state as non-interactive status, separate from setup buttons', async () => {
     render(<PrivateKeyPanel />);
     const status = await screen.findByRole('status', { name: 'Private key status' });

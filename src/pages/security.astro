@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { keySecuritySafeguards, keySecurityLimitations } from '../lib/key-security';
 
 const localItems = [
   {
@@ -10,7 +11,7 @@ const localItems = [
   {
     icon: '&#x1f512;',
     title: 'File encryption & decryption',
-    detail: 'Files are encrypted and decrypted using AES-256 inside your browser tab. Plaintext file data is never written to disk, sent over the network, or stored anywhere outside of temporary browser memory.',
+    detail: 'Files are encrypted and decrypted inside your browser tab. CryptDrop does not upload file contents. Decrypted results are held in browser memory until cleared or saved by you; downloading a result writes a plaintext copy to your chosen location. Browser and operating-system memory handling is outside the app’s control.',
   },
   {
     icon: '&#x270d;&#xfe0f;',
@@ -20,7 +21,7 @@ const localItems = [
   {
     icon: '&#x1f5dd;&#xfe0f;',
     title: 'Private key storage',
-    detail: 'If you choose "Remember this key", the passphrase-encrypted private key is saved to your browser\'s IndexedDB. It never leaves your device. Without your passphrase, the stored key is unreadable.',
+    detail: 'If you choose "Remember on this device", CryptDrop saves a fully passphrase-protected private key in this site’s IndexedDB, not your passphrase or unlocked key. Encryption protects the saved copy, but a stolen copy can be subjected to offline passphrase guessing. Browser storage is not a backup.',
   },
   {
     icon: '&#x1f4c7;',
@@ -286,6 +287,12 @@ const neverSent = [
       line-height: 1.6;
     }
 
+    #private-key-security { scroll-margin-top: 6rem; }
+    .key-security-list { list-style: disc; margin: .75rem 0 0; padding-left: 1.125rem; color: #4b5563; font-size: .8125rem; line-height: 1.7; }
+    .key-security-list li + li { margin-top: .625rem; }
+    .key-security-guidance { margin-top: 1.25rem; color: #4b5563; font-size: .875rem; line-height: 1.7; }
+    .key-security-guidance p + p { margin-top: .75rem; }
+
     /* Dividers */
     .sec-divider {
       border-top: 1px solid #e5e7eb;
@@ -326,6 +333,32 @@ const neverSent = [
     </div>
   </div>
 
+  <section class="sec-divider" id="private-key-security" aria-labelledby="private-key-security-title">
+    <div class="sec-section">
+      <div class="sec-header">
+        <span class="sec-badge sec-badge-indigo">Understand the limits</span>
+        <h2 id="private-key-security-title">Private keys: protections and limits</h2>
+        <p>Local processing reduces what you share with servers. It does not make a browser a hardware vault. These safeguards describe the current implementation, not a security certification or a guarantee against compromise.</p>
+      </div>
+      <div class="hardening-grid">
+        <div class="hardening-card">
+          <h3>Safeguards in place</h3>
+          <ul class="key-security-list">{keySecuritySafeguards.map((item) => <li>{item}</li>)}</ul>
+        </div>
+        <div class="hardening-card">
+          <h3>Browser limitations</h3>
+          <ul class="key-security-list">{keySecurityLimitations.map((item) => <li>{item}</li>)}</ul>
+        </div>
+      </div>
+      <div class="key-security-guidance">
+        <p><strong>Saved is different from loaded.</strong> A remembered key is encrypted at rest. Loading it makes decrypted key material available to the app in memory for signing and decryption. Removing it from app state or closing the page is not a guarantee that every memory copy has been securely erased. The decrypted-file expiry timer does not unload your private key.</p>
+        <p><strong>Older saved keys.</strong> Earlier versions may have saved unprotected keys. Those copies are not automatically deleted or made safe by an update. If warned about an older saved key, preserve a protected recovery copy first, then remove the unsafe browser copy. Do not delete your only copy.</p>
+        <p><strong>For higher-risk use.</strong> Use a trusted, updated device and browser with minimal extensions. For especially sensitive keys, consider a trusted offline PGP tool or a hardware-backed workflow that does not expose an exportable private key to a web application. CryptDrop does not currently provide hardware-token integration.</p>
+        <p><strong>Trust in delivered code.</strong> You also trust the code served by this site and its dependencies. Security headers reduce some risks but cannot make compromised application code safe. Using an audited cryptographic library does not mean the entire application has been independently audited.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ======================== SECTION 2: WHAT REACHES THE CLOUD ======================== -->
   <div class="sec-bg-amber sec-divider">
     <div class="sec-section">
@@ -362,7 +395,7 @@ const neverSent = [
           Never Sent
         </span>
         <h2>What is never transmitted</h2>
-        <p>The following data never leaves your browser under any circumstances. There is no mechanism in CryptDrop to send this data, and the Content Security Policy restricts outbound connections to only keys.openpgp.org and the CryptDrop backend.</p>
+        <p>CryptDrop’s implemented workflows do not upload the following data. This describes normal application behavior, not a guarantee against malicious extensions, compromised code, or an infected device. See the <a href="#private-key-security" style="text-decoration: underline;">private-key protections and limits</a> above.</p>
       </div>
 
       <div class="never-list">
@@ -391,19 +424,19 @@ const neverSent = [
       <div class="hardening-grid">
         <div class="hardening-card">
           <h3>Content Security Policy</h3>
-          <p>A strict CSP header blocks all outbound connections except to keys.openpgp.org. Inline scripts are locked to specific SHA-256 hashes. This prevents cross-site scripting (XSS) attacks from exfiltrating your data.</p>
+          <p>The configured CSP restricts scripts to this origin and explicitly hashed inline scripts, and restricts fetch connections to this origin and keys.openpgp.org. It reduces some injection and data-exfiltration risks; it does not protect secrets from all compromised same-origin code or privileged extensions.</p>
         </div>
         <div class="hardening-card">
           <h3>Modern cryptography</h3>
-          <p>Keys use Curve25519 (Ed25519 for signing, X25519 for encryption) via OpenPGP.js 6.x. Symmetric encryption uses AES-256. These are the same algorithms recommended by NIST and used by Signal.</p>
+          <p>New keys use Curve25519 via OpenPGP.js 6.x, which implements OpenPGP encryption and signatures. Cryptographic algorithms are only one part of security; passphrases, key handling, application code, and device integrity also matter.</p>
         </div>
         <div class="hardening-card">
           <h3>Passphrase protection</h3>
-          <p>Private keys are encrypted with your passphrase before storage. Passphrases must be at least 12 characters and meet a minimum strength score. They are never stored — only held in memory during key operations, then cleared.</p>
+          <p>New key generation requires a passphrase of at least 12 characters and a minimum strength score. Imported keys retain their existing protection. Remember on this device rejects unprotected or partially protected keys. Passphrases are not persisted by the app; clearing a form does not guarantee secure memory erasure.</p>
         </div>
         <div class="hardening-card">
           <h3>Decrypted file auto-clear</h3>
-          <p>After decryption, plaintext file data is held in memory only long enough for you to download it. A 5-minute timer automatically clears the decrypted content from browser memory.</p>
+          <p>A five-minute timer removes the decrypted result from app state. Browser scheduling can delay timers, and dropping a reference does not guarantee secure memory erasure. Downloaded copies remain on disk, and this timer does not unload your private key.</p>
         </div>
         <div class="hardening-card">
           <h3>Filename sanitization</h3>
@@ -415,11 +448,11 @@ const neverSent = [
         </div>
         <div class="hardening-card">
           <h3>Security headers</h3>
-          <p>HSTS with 2-year preload, X-Frame-Options: DENY, Cross-Origin-Opener-Policy, and Referrer-Policy: no-referrer. These prevent clickjacking, cross-origin attacks, and referrer leakage.</p>
+          <p>The deployment configuration includes HSTS, framing restrictions, Cross-Origin-Opener-Policy, and Referrer-Policy: no-referrer. When served correctly, these reduce transport, framing, opener, and referrer risks. They do not isolate one CryptDrop tab’s IndexedDB storage from another.</p>
         </div>
         <div class="hardening-card">
           <h3>No tracking or analytics</h3>
-          <p>CryptDrop has no analytics scripts, no tracking pixels, no cookies, and no third-party resources. The site loads only its own assets and connects only to keys.openpgp.org when you explicitly request it.</p>
+          <p>The app does not include analytics scripts or tracking pixels. Network workflows include the CryptDrop API and keys.openpgp.org, as described above; generating keys also attempts to register your public key and identity with the API.</p>
         </div>
       </div>
     </div>

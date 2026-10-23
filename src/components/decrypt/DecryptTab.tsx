@@ -5,6 +5,7 @@ import FolderBar from '../shared/FolderBar';
 import DecryptFilePanel from '../shared/DecryptFilePanel';
 import ActivityHistory from '../shared/ActivityHistory';
 import KeyCapabilityNotice from '../shared/KeyCapabilityNotice';
+import { privateKeySecurityHref } from '../../lib/key-security';
 
 export default function DecryptTab() {
   const privateKey = useStore($privateKey);
@@ -27,6 +28,10 @@ export default function DecryptTab() {
       </div>
 
       <KeyCapabilityNotice tool="decrypt" />
+      <p className="key-security-note">
+        Decryption happens on your device. While loaded, your private key is held in browser memory.{' '}
+        <a href={privateKeySecurityHref} target="_blank" rel="noopener noreferrer">Security &amp; limitations (opens in a new tab)</a>
+      </p>
 
       <DecryptFilePanel folderHandle={folderHandle} />
       <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />

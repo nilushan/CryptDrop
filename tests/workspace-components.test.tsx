@@ -6,6 +6,8 @@ import FolderBar from '../src/components/shared/FolderBar';
 import EncryptTab from '../src/components/encrypt/EncryptTab';
 import DecryptTab from '../src/components/decrypt/DecryptTab';
 import KeyStatusPill from '../src/components/shared/KeyStatusPill';
+import KeySecurityDisclosure from '../src/components/keys/KeySecurityDisclosure';
+import { privateKeySecurityHref } from '../src/lib/key-security';
 import { $privateKey, $userInfo, clearKeys } from '../src/stores/keys';
 import type { PrivateKey } from 'openpgp';
 import { $contacts } from '../src/stores/contacts';
@@ -20,6 +22,40 @@ vi.mock('../src/components/shared/KeyLookupWithInvite', () => ({
 }));
 
 afterEach(() => { cleanup(); $contacts.set([]); $activeTab.set('encrypt'); clearKeys(); });
+
+describe('private-key security guidance', () => {
+  it('offers a collapsed, expandable explanation with safeguards and limitations', () => {
+    render(<KeySecurityDisclosure />);
+    const heading = screen.getByText('How your private key is protected');
+    const details = heading.closest('details')!;
+    expect(details).not.toHaveAttribute('open');
+    expect(screen.getByText(/Remembering it saves a passphrase-encrypted copy/)).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Browser limitations', hidden: true })).not.toBeVisible();
+    fireEvent.click(heading.closest('summary')!);
+    expect(details).toHaveAttribute('open');
+    expect(screen.getByRole('heading', { name: 'Safeguards in place' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Browser limitations' })).toBeVisible();
+    expect(screen.getByText(/same origin share IndexedDB/)).toBeVisible();
+    expect(screen.getByText(/no hardware-backed key isolation/)).toBeVisible();
+    const link = screen.getByRole('link', { name: /Security details/ });
+    expect(link).toHaveAttribute('href', privateKeySecurityHref);
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('keeps decrypt guidance available before and after loading or clearing a key', () => {
+    render(<DecryptTab />);
+    const link = screen.getByRole('link', { name: /Security & limitations/ });
+    expect(link).toHaveAttribute('href', privateKeySecurityHref);
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(link.closest('p')).toHaveTextContent('your private key is held in browser memory');
+    act(() => $privateKey.set({} as PrivateKey));
+    expect(link).toBeVisible();
+    act(() => clearKeys());
+    expect(link).toBeVisible();
+  });
+});
 
 describe('key status and capabilities', () => {
   it('uses a single named key-ring control with independent session and selection states', () => {
