@@ -1,0 +1,170 @@
+{
+  "baseHead": "5700aeca284c3ff04008cd8426dff5333c73a640",
+  "captures": [
+    {
+      "file": "after-keyring-320.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; synthetic filled, strength Strong",
+      "viewport": {
+        "width": 320,
+        "height": 812
+      },
+      "image": {
+        "width": 316,
+        "height": 2000
+      },
+      "sha256": "d661046c6ed0caf57604ab78e91b1b6901e08050aecc07bc7d5701cda32dadce"
+    },
+    {
+      "file": "after-keyring-empty-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; empty",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 993
+      },
+      "sha256": "597c190280ead99cb14b8f26831f30d4f9196ea614cbb07418267bc9f106fd51"
+    },
+    {
+      "file": "after-keyring-empty-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; empty",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1846
+      },
+      "sha256": "62e8006ab275cab94cc9848307fc4ae0d067464e15e48a0a41c5ccece2526a4d"
+    },
+    {
+      "file": "after-keyring-empty-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; empty",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1571
+      },
+      "sha256": "378f863cd4f0ed688d4938684e2c2dc448923c2a61d0dae1154d80fdc4f77626"
+    },
+    {
+      "file": "after-keyring-filled-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; synthetic filled, strength Strong",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1023
+      },
+      "sha256": "f661f60f3132dd2af822ace712b6f24ace0f94ec1777d2b4dd2b623088b62443"
+    },
+    {
+      "file": "after-keyring-filled-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; synthetic filled, strength Strong",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1875
+      },
+      "sha256": "5c345ad918100427a3dbc990d93f52df374f8aa9d02a9d6d994745785bae59f8"
+    },
+    {
+      "file": "after-keyring-filled-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; synthetic filled, strength Strong",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1601
+      },
+      "sha256": "e3f7c635647de5c07c30de2b82b2cb1495919fc1ec62d9ea0fd851b70581746b"
+    },
+    {
+      "file": "after-keyring-text-200.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; synthetic filled, strength Strong; root text size 200%",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 382,
+        "height": 2000
+      },
+      "sha256": "3fe796d53996a9d00b1064ec21755b824b505083c19c6cc88bb52d6bbfd20236"
+    },
+    {
+      "file": "before-keyring-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; empty",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 897
+      },
+      "sha256": "fbe1c52afce8d16a5798be85cbbaa5aaeb032e0ebdeb65647f49371bf29c7ca1"
+    },
+    {
+      "file": "before-keyring-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; empty",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1609
+      },
+      "sha256": "66ab412fc13f632b2e6f010f3a19208f47f7f063b1b5b8fb56604d4a00c77e7b"
+    },
+    {
+      "file": "before-keyring-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "Generate a New Key Pair; empty",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1357
+      },
+      "sha256": "6336995626e3b21fede8097ec7d4fb753f1d91d7983dd7564307f4a9c2c0029c"
+    }
+  ]
+}

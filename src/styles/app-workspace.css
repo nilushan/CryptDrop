@@ -148,6 +148,10 @@
 .app-layout .private-key-card .drop-zone p, .app-layout .private-key-card .input::placeholder { color: var(--vault-muted); }
 .app-layout .private-key-card .drop-zone:hover, .app-layout .private-key-card .drop-zone.dragover { background: var(--vault-tint); border-color: var(--vault-accent); }
 .app-layout .keys-back-link { color: var(--app-muted); }
+.app-layout .form-field { min-width: 0; }
+.app-layout .form-field-label { display: block; margin-bottom: .375rem; color: var(--app-ink); font-size: .875rem; font-weight: 500; }
+.app-layout .form-field-help { margin: .5rem 0 0; color: var(--app-muted); font-size: .875rem; line-height: 1.6; }
+.app-layout .key-gen-identity-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .75rem; }
 .app-layout .key-badge { max-width: 100%; overflow-wrap: anywhere; }
 .app-layout .result-download { max-width: 100%; }
 .app-layout .result-download span { min-width: 0; overflow-wrap: anywhere; text-align: left; }

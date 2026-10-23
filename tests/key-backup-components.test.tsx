@@ -216,9 +216,9 @@ describe('key generation backup gate', () => {
     render(<PrivateKeyPanel />);
     fireEvent.click(screen.getByRole('button', { name: /Generate a New Key Pair/i }));
     expect(screen.queryByRole('button', { name: 'Back up your secret' })).not.toBeInTheDocument();
-    fireEvent.change(screen.getByPlaceholderText('Your name'), { target: { value: 'Alice' } });
-    fireEvent.change(screen.getByPlaceholderText('your@email.com'), { target: { value: 'alice@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Strong passphrase/), { target: { value: 'Correct Horse Battery Staple!42' } });
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Alice' } });
+    fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'alice@example.com' } });
+    fireEvent.change(screen.getByLabelText('Passphrase'), { target: { value: 'Correct Horse Battery Staple!42' } });
     fireEvent.click(screen.getByRole('button', { name: 'Generate Keys & Download' }));
     const done = await screen.findByRole('button', { name: 'Done — View My Key Ring' });
     expect(done).toBeDisabled();

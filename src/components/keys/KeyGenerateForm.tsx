@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { generateKeyPair, parseUserId } from '../../lib/openpgp-helpers';
 import { downloadTextFile } from '../../lib/file-helpers';
 import { setKeys } from '../../stores/keys';
@@ -6,6 +6,7 @@ import { showToast } from '../../stores/toast';
 import { evaluatePassphrase, isPassphraseAcceptable } from '../../lib/passphrase-strength';
 import { registerUser } from '../../lib/api';
 import ActionButton from '../shared/ActionButton';
+import FormField from '../shared/FormField';
 import KeyBackupGuide from './KeyBackupGuide';
 
 interface Props {
@@ -15,6 +16,10 @@ interface Props {
 }
 
 export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
+  const formId = useId();
+  const nameId = `${formId}-name`;
+  const emailId = `${formId}-email`;
+  const passphraseId = `${formId}-passphrase`;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [passphrase, setPassphrase] = useState('');
@@ -110,11 +115,19 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
         </div>
 
         <div className="mt-4">
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <input type="text" placeholder="Your name" className="input" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
-            <input type="email" placeholder="your@email.com" className="input" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <div className="key-gen-identity-fields mb-3">
+            <FormField id={nameId} label="Name">
+              <input id={nameId} type="text" placeholder="Your name" className="input w-full" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
+            </FormField>
+            <FormField id={emailId} label="Email address">
+              <input id={emailId} type="email" placeholder="your@email.com" className="input w-full" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </FormField>
           </div>
-          <input type="password" placeholder="Strong passphrase — protects your private key (min 12 chars)" className="input w-full" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} />
+          <FormField id={passphraseId} label="Passphrase" help={
+            <>Use at least 12 characters, rated Fair or better. Remember your passphrase and store it safely. You need it to unlock your private key. CryptDrop cannot recover or reset it.</>
+          }>
+            <input id={passphraseId} type="password" placeholder="Strong passphrase" className="input w-full" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} aria-describedby={`${passphraseId}-help${passphrase ? ` ${passphraseId}-strength` : ''}`} />
+          </FormField>
           {passphrase && (() => {
             const strength = evaluatePassphrase(passphrase);
             return (
@@ -128,7 +141,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
                     }} />
                   ))}
                 </div>
-                <p style={{ fontSize: '0.6875rem', color: strength.color, margin: 0, fontWeight: 500 }}>
+                <p id={`${passphraseId}-strength`} aria-live="polite" style={{ fontSize: '0.6875rem', color: strength.color, margin: 0, fontWeight: 500 }}>
                   {strength.label}{strength.level === 'weak' && passphrase.length < 12 ? ' — needs at least 12 characters' : ''}
                 </p>
               </div>
