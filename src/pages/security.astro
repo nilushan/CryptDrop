@@ -8,7 +8,7 @@ const localItems = [
   {
     icon: '&#x1f510;',
     title: 'Key generation',
-    detail: 'Your private and public keys are generated using Curve25519 via OpenPGP.js, entirely in your browser. The private key is protected with your passphrase before it ever touches storage.',
+    detail: 'Your private and public keys are generated using Curve25519 via OpenPGP.js in your browser. Your private key is protected with your passphrase before storage. Generation also automatically attempts to register your public key and identity with the CryptDrop API; see the network details below.',
   },
   {
     icon: '&#x1f512;',
@@ -18,7 +18,7 @@ const localItems = [
   {
     icon: '&#x270d;&#xfe0f;',
     title: 'Digital signatures',
-    detail: 'When you sign a file, your private key creates the signature locally. When you verify a signature, the check happens locally too. No server is involved.',
+    detail: 'Your private key creates signatures locally, and signature verification also runs locally. Obtaining a sender’s public key by email lookup is a separate network request.',
   },
   {
     icon: '&#x1f5dd;&#xfe0f;',
@@ -28,12 +28,12 @@ const localItems = [
   {
     icon: '&#x1f4c7;',
     title: 'Contact address book',
-    detail: 'Saved contacts (names, emails, public keys) are stored in your browser\'s localStorage. This data stays on your device and is never synced or uploaded.',
+    detail: 'Saved contacts (names, emails, public keys) are stored in your browser’s localStorage. CryptDrop does not upload or sync the address book as a collection. Looking up a contact or sending an invitation can send selected names or email addresses to network services. localStorage is not encrypted by the app.',
   },
   {
     icon: '&#x1f4dc;',
     title: 'Activity history',
-    detail: 'The history of your encrypt/decrypt operations is stored in localStorage. It includes filenames, sizes, and recipient emails — but never file contents. You can clear it at any time, or enable auto-clear on tab close.',
+    detail: 'Encrypt/decrypt history is stored in localStorage, not encrypted by the app. It includes filenames, sizes, timestamps, a signed flag, and recipient or sender details, but not file contents. The history collection is not uploaded. An optional instructions email sends a filename separately. You can clear history or enable auto-clear on page exit; browser events are not guaranteed to run.',
   },
 ];
 
@@ -43,42 +43,63 @@ const cloudItems = [
     title: 'Public key lookup',
     what: 'The email address you search for',
     where: 'CryptDrop registry, then keys.openpgp.org',
-    detail: 'When you look up a recipient by email, CryptDrop first checks its own registry (GET /api/lookup/:email). If not found there, it falls back to the keys.openpgp.org public keyserver. Only the email address is sent — no files, no private keys, no other data.',
+    detail: 'Email lookup sends the searched address to the CryptDrop API (GET /api/lookup/:email). The backend checks its registry, then queries keys.openpgp.org if needed. If the API fails, the browser can query that keyserver directly. No file contents or private keys are included.',
   },
   {
     icon: '&#x1f4e4;',
     title: 'Public key publishing',
-    what: 'Your public key (not your private key)',
+    what: 'Your public key, including its identity information',
     where: 'keys.openpgp.org',
-    detail: 'If you choose to publish your public key, the armored public key text is uploaded to keys.openpgp.org so others can find you. Your private key is never included. The keyserver sends a verification email to confirm ownership.',
+    detail: 'If you choose to publish your public key, the armored public key text is uploaded to keys.openpgp.org so others can find you. Your private key is never included. The app may then request address verification from the keyserver; email delivery is not guaranteed.',
   },
   {
     icon: '&#x2709;&#xfe0f;',
     title: 'Email verification',
     what: 'A verification token and your email address',
     where: 'keys.openpgp.org',
-    detail: 'After publishing to the keyserver, CryptDrop sends a verification request so it can email you a confirmation link. Only the token and email address are sent.',
+    detail: 'After uploading a public key, CryptDrop can send the returned verification token and unpublished email addresses to the keyserver (POST /vks/v1/request-verify) to request confirmation emails. This is separate from the CryptDrop registry.',
   },
   {
     icon: '&#x1f4dd;',
     title: 'Key registration',
-    what: 'Your name, email, public key, and fingerprint',
+    what: 'Your name, email, public key, fingerprint, and invitation token if present',
     where: 'CryptDrop registry (POST /api/register)',
-    detail: 'When you generate a new key pair, your name, email address, public key, and key fingerprint are registered with the CryptDrop backend. This lets others find your key by email via the registry. Your private key and passphrase are never sent.',
+    detail: 'Generating a key pair automatically attempts registration with the CryptDrop API. This is nonblocking and best-effort, not an opt-in publishing step or a guarantee of registration. The backend stores successful registrations so others can find your key by email. Your private key and passphrase are not included.',
   },
   {
     icon: '&#x1f4e7;',
     title: 'Invitation emails',
     what: 'Sender name, sender email, recipient email',
     where: 'CryptDrop backend (POST /api/invite)',
-    detail: 'When you invite someone to use CryptDrop, their email address and your name are sent to the CryptDrop backend, which sends them an invitation email via Resend. No files or keys are involved.',
+    detail: 'Sending an invitation sends the sender’s name and email and the recipient’s email to the API. The backend stores an invitation record and attempts to send an invitation link via Resend. No file contents or keys are included; email delivery is not guaranteed.',
+  },
+  {
+    icon: '&#x1f517;',
+    title: 'Opening an invitation',
+    what: 'The invitation token from the link',
+    where: 'CryptDrop API (GET /api/invite/:token)',
+    detail: 'Opening an invitation link sends its token to the API for validation. The response can include the sender’s name and email, recipient email, and invitation status. The token is also passed into guided setup for registration. Treat invitation links as sensitive.',
+  },
+  {
+    icon: '&#x1f4ec;',
+    title: 'Invitation acceptance notifications',
+    what: 'Inviter email, registering person’s name and email',
+    where: 'CryptDrop backend to Resend',
+    detail: 'Registration can mark invitations accepted using the invitation token or matching email address. The backend then attempts to notify the inviter via Resend, including the registering person’s name and email. This is not a guarantee that an email arrives.',
   },
   {
     icon: '&#x1f514;',
     title: 'Decrypt instructions email',
-    what: 'Recipient email, your name, encrypted filename',
+    what: 'Recipient email, loaded sender user ID (which can include name and email), and the selected file’s original filename',
     where: 'CryptDrop backend (POST /api/notify)',
-    detail: 'Optionally, after encrypting a file you can send the recipient an email with instructions for decrypting it. Only their email address, your name, and the filename are sent — never the file itself.',
+    detail: 'If you choose to send decrypt instructions after encryption, the API receives the recipient’s email, the loaded sender user ID (which can include name and email), the original filename, and the notification type. If no sender identity is loaded, “Someone” is sent instead. The backend passes these email details to Resend to attempt delivery; the sender user ID appears in the recipient’s email subject and body. A filename can reveal sensitive information even though file contents are not sent.',
+  },
+  {
+    icon: '&#x1f4e8;',
+    title: 'Sharing a public key by email',
+    what: 'Your public key and public identity in a draft email',
+    where: 'Your email application (mailto link)',
+    detail: 'The public-key email action opens your email application with a draft containing your public key and identity. Sending it is handled by your email application and provider, not by CryptDrop’s API. No private key is included.',
   },
 ];
 
@@ -88,8 +109,8 @@ const neverSent = [
   'Unencrypted file contents',
   'Encrypted file contents',
   'Decrypted file contents',
-  'Your activity history',
-  'Your contact list',
+  'Your activity history as a collection',
+  'Your contact list as a collection',
 ];
 ---
 
@@ -185,17 +206,40 @@ const neverSent = [
       line-height: 1.7;
     }
     .key-security-guidance p + p { margin-top: var(--cd-space-5); }
+    .privacy-jump-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--cd-space-2) var(--cd-space-5);
+      max-width: 40rem;
+      margin: var(--cd-space-6) auto 0;
+      color: var(--cd-color-on-action);
+      font-size: 1rem;
+    }
+    .privacy-jump-links a { display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: underline; text-underline-offset: .2em; }
+    .privacy-jump-links a:focus-visible { outline-color: var(--cd-color-on-action); }
+    .privacy-storage { margin-top: var(--cd-space-6); }
+    .privacy-storage h3 { color: var(--cd-color-warning-ink); }
+    .privacy-storage ul { padding-left: var(--cd-space-5); color: var(--cd-color-muted); font-size: 1rem; line-height: 1.7; }
+    .privacy-storage li + li { margin-top: var(--cd-space-3); }
+    .privacy-qualification { max-width: 40rem; margin: var(--cd-space-6) auto 0; color: var(--cd-color-muted); font-size: 1rem; line-height: 1.7; }
     @media (min-width: 768px) { .security-hero h1 { font-size: 2.75rem; } }
   </style>
 
   <!-- ======================== HERO ======================== -->
   <header class="security-hero">
     <h1>Security & Privacy</h1>
-    <p>CryptDrop is designed so that your sensitive data never has to leave your device. Here's exactly what stays local and what reaches the network.</p>
+    <p>File contents, private keys, and passphrases are processed locally. Public identity, key discovery, and email workflows use network services. Read the data flows separately from the security safeguards.</p>
+    <nav class="privacy-jump-links" aria-label="Security and privacy topics">
+      <a href="#local-processing">On your device</a>
+      <a href="#network-requests">Network services &amp; data</a>
+      <a href="#never-transmitted">Not uploaded</a>
+      <a href="#private-key-security">Private-key protections &amp; limits</a>
+    </nav>
   </header>
 
   <!-- ======================== SECTION 1: LOCAL ONLY ======================== -->
-  <MarketingSection id="local-processing" heading="What stays on your device" lead="These operations happen entirely in your browser. No data is sent to CryptDrop or any other server. Even if someone intercepted your network traffic, they would see none of this.">
+  <MarketingSection id="local-processing" heading="What stays on your device" lead="File processing and private-key operations run locally. Local storage is different from sending data over the network, and not all stored data is encrypted. Some actions also send public identity or selected metadata, as described below.">
       <div class="security-grid">
         {localItems.map((item) => (
           <div class="marketing-card local-card">
@@ -237,7 +281,7 @@ const neverSent = [
     <div class="marketing-container">
       <header class="marketing-section-header">
         <h2 id="network-requests-heading">What reaches the cloud</h2>
-        <p class="marketing-lead">CryptDrop makes network requests to two destinations: the <a href="https://keys.openpgp.org">keys.openpgp.org</a> public keyserver, and the CryptDrop backend API (for key registry, invitations, and email notifications). Files and private keys never leave your browser.</p>
+        <p class="marketing-lead">The browser uses the CryptDrop API and the <a href="https://keys.openpgp.org">keys.openpgp.org</a> public keyserver for the workflows below. The backend uses Resend for email. These are application payloads, not an exhaustive inventory of HTTP metadata: loading the site and making requests also involves network information such as IP addresses. CryptDrop does not upload file contents, private keys, or passphrases in these workflows.</p>
       </header>
 
       {cloudItems.map((item) => (
@@ -252,6 +296,15 @@ const neverSent = [
           <p>{item.detail}</p>
         </div>
       ))}
+      <div class="marketing-card privacy-storage">
+        <h3>Data stored by the backend</h3>
+        <ul>
+          <li><strong>Registry:</strong> Cloudflare D1 stores registered names, emails, public keys, fingerprints, and creation/update timestamps.</li>
+          <li><strong>Invitations:</strong> D1 stores the token, sender name and email, recipient email, status, and creation/acceptance timestamps.</li>
+          <li><strong>Rate limiting:</strong> D1 stores an action and an identifier derived from the request’s IP headers (or “unknown”), with a request count and window start. This identifier is not hashed by the middleware.</li>
+        </ul>
+        <p>This is an implementation summary, not a retention or deletion policy. An expired invitation link does not mean its database record has been deleted.</p>
+      </div>
     </div>
   </section>
 
@@ -271,6 +324,7 @@ const neverSent = [
           </li>
         ))}
       </ul>
+      <p class="privacy-qualification">Names, email addresses, public keys, and filenames are different from file contents. Selected details can be sent by the <a href="#network-requests">network workflows above</a>, even though contact and history collections are not uploaded.</p>
     </div>
   </section>
 

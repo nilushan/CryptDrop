@@ -117,7 +117,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
 
         <div className="key-gen-local-note">
           <svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          Generated entirely in your browser. Never sent to any server.
+          <span>Keys are generated in your browser. Your private key and passphrase stay local. Generation automatically attempts to register your name, email, public key, and fingerprint with the CryptDrop API. <a href="/security#network-requests">See network services and data details</a>.</span>
         </div>
 
         <div className="mt-4">

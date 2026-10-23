@@ -101,7 +101,8 @@
 .guide-facts dt { font-size: .75rem; font-weight: 650; margin-bottom: .3rem; }
 .guide-facts dd { font-size: .75rem; line-height: 1.75; color: var(--app-muted); margin: 0; }
 .workspace-guide > a { display: block; border-top: 1px solid var(--app-line); padding-top: 1rem; font-size: .75rem; color: var(--app-accent); line-height: 1.7; }
-.workspace-footer { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--app-line); padding-top: 1.25rem; font-size: .75rem; color: var(--app-muted); }
+.workspace-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; border-top: 1px solid var(--app-line); padding-top: 1.25rem; font-size: .875rem; color: var(--app-muted); }
+.workspace-footer a { display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: underline; text-underline-offset: .2em; }
 .app-layout .card, .app-layout .encrypt-panel { border: 1px solid var(--app-line); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 3px 12px rgb(24 36 59 / .025); }
 .app-layout .card-title { color: var(--app-ink); font-size: .9375rem; letter-spacing: -.02em; }
 .app-layout .btn-primary { min-height: 44px; padding: .75rem 1.25rem; border-radius: .625rem; }

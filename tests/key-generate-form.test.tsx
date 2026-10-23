@@ -82,6 +82,19 @@ describe('KeyGenerateForm labels and guidance', () => {
   });
 });
 
+describe('KeyGenerateForm privacy notice', () => {
+  it('discloses automatic public identity registration separately from local secrets in both flow instances', () => {
+    render(<><section aria-label="Keyring"><KeyGenerateForm onBack={vi.fn()} /></section><section aria-label="Setup"><KeyGenerateForm onBack={vi.fn()} /></section></>);
+    for (const flow of ['Keyring', 'Setup']) {
+      const region = screen.getByRole('region', { name: flow });
+      expect(within(region).getByText(/Your private key and passphrase stay local/)).toHaveTextContent('Generation automatically attempts to register your name, email, public key, and fingerprint with the CryptDrop API.');
+      expect(within(region).getByRole('link', { name: 'See network services and data details' })).toHaveAttribute('href', '/security#network-requests');
+      expect(region).not.toHaveTextContent('Never sent to any server');
+    }
+    expect(registerUser).not.toHaveBeenCalled();
+  });
+});
+
 describe('KeyGenerateForm existing behavior', () => {
   it.each([
     ['', 'alice@example.com', 'valid passphrase 42', 'Please enter your name and email'],

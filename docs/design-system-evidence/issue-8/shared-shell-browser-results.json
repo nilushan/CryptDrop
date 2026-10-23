@@ -1,0 +1,400 @@
+{
+  "checks": [
+    {
+      "name": "shell / 320",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /how-it-works 320",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /security 320",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /invite 320",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /app?tab=encrypt 320",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "homepage semantics/reflow 320",
+      "details": {
+        "doc": 320,
+        "viewport": 320,
+        "table": 672
+      }
+    },
+    {
+      "name": "header keyboard order 320",
+      "details": "logo, guide, security, app reached with white 3px focus"
+    },
+    {
+      "name": "keyboard focus 320",
+      "details": [
+        "Start Encrypting →",
+        "See How It Works",
+        "Review security details and limitations",
+        "Details and limitations",
+        "Learn what uses network services",
+        "Read the full illustrated guide →",
+        "File sharing features by method   Feature CryptDrop Email Cloud Storage Messagin",
+        "Start Encrypting →",
+        "See the Illustrated Guide",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security & privacy",
+        "What data uses network services?"
+      ]
+    },
+    {
+      "name": "local table keyboard scrolling 320",
+      "details": "named region focused; ArrowRight scrolls when overflowing"
+    },
+    {
+      "name": "shell / 375",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /how-it-works 375",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /security 375",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /invite 375",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /app?tab=encrypt 375",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "homepage semantics/reflow 375",
+      "details": {
+        "doc": 375,
+        "viewport": 375,
+        "table": 672
+      }
+    },
+    {
+      "name": "header keyboard order 375",
+      "details": "logo, guide, security, app reached with white 3px focus"
+    },
+    {
+      "name": "keyboard focus 375",
+      "details": [
+        "Start Encrypting →",
+        "See How It Works",
+        "Review security details and limitations",
+        "Details and limitations",
+        "Learn what uses network services",
+        "Read the full illustrated guide →",
+        "File sharing features by method   Feature CryptDrop Email Cloud Storage Messagin",
+        "Start Encrypting →",
+        "See the Illustrated Guide",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security & privacy",
+        "What data uses network services?"
+      ]
+    },
+    {
+      "name": "local table keyboard scrolling 375",
+      "details": "named region focused; ArrowRight scrolls when overflowing"
+    },
+    {
+      "name": "shell / 768",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /how-it-works 768",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /security 768",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /invite 768",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /app?tab=encrypt 768",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "homepage semantics/reflow 768",
+      "details": {
+        "doc": 768,
+        "viewport": 768,
+        "table": 718
+      }
+    },
+    {
+      "name": "header keyboard order 768",
+      "details": "logo, guide, security, app reached with white 3px focus"
+    },
+    {
+      "name": "keyboard focus 768",
+      "details": [
+        "Start Encrypting →",
+        "See How It Works",
+        "Review security details and limitations",
+        "Details and limitations",
+        "Learn what uses network services",
+        "Read the full illustrated guide →",
+        "File sharing features by method   Feature CryptDrop Email Cloud Storage Messagin",
+        "Start Encrypting →",
+        "See the Illustrated Guide",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security & privacy",
+        "What data uses network services?"
+      ]
+    },
+    {
+      "name": "local table keyboard scrolling 768",
+      "details": "named region focused; ArrowRight scrolls when overflowing"
+    },
+    {
+      "name": "200% root text resize at 768",
+      "details": "no document overflow; local table scroller retained"
+    },
+    {
+      "name": "text-spacing override at 768",
+      "details": "no document overflow with 1.5 line/.12em letter/.16em word/2em paragraph spacing"
+    },
+    {
+      "name": "shell / 1280",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /how-it-works 1280",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /security 1280",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /invite 1280",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "shell /app?tab=encrypt 1280",
+      "details": "mode/footer preserved; marketing information links and CTA visible with 44px targets; route state correct"
+    },
+    {
+      "name": "homepage semantics/reflow 1280",
+      "details": {
+        "doc": 1280,
+        "viewport": 1280,
+        "table": 846
+      }
+    },
+    {
+      "name": "header keyboard order 1280",
+      "details": "logo, guide, security, app reached with white 3px focus"
+    },
+    {
+      "name": "keyboard focus 1280",
+      "details": [
+        "Start Encrypting →",
+        "See How It Works",
+        "Review security details and limitations",
+        "Details and limitations",
+        "Learn what uses network services",
+        "Read the full illustrated guide →",
+        "File sharing features by method   Feature CryptDrop Email Cloud Storage Messagin",
+        "Start Encrypting →",
+        "See the Illustrated Guide",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security & privacy",
+        "What data uses network services?"
+      ]
+    },
+    {
+      "name": "local table keyboard scrolling 1280",
+      "details": "named region focused; ArrowRight scrolls when overflowing"
+    },
+    {
+      "name": "CTA navigation",
+      "details": "primary /app, secondary /how-it-works, disclosure /security clicked successfully"
+    },
+    {
+      "name": "reduced motion",
+      "details": "marketing CTA transition disabled"
+    }
+  ],
+  "contrast": [
+    {
+      "selector": ".hero-inner h1",
+      "color": "rgb(30, 27, 75)",
+      "background": "#eef2ff",
+      "ratio": 14.297053475992255,
+      "min": 3
+    },
+    {
+      "selector": ".hero-sub",
+      "color": "rgb(75, 85, 99)",
+      "background": "#eef2ff",
+      "ratio": 6.758556369012658,
+      "min": 4.5
+    },
+    {
+      "selector": ".hero-note",
+      "color": "rgb(75, 85, 99)",
+      "background": "#eef2ff",
+      "ratio": 6.758556369012658,
+      "min": 4.5
+    },
+    {
+      "selector": ".hero-trust > span",
+      "color": "rgb(75, 85, 99)",
+      "background": "#eef2ff",
+      "ratio": 6.758556369012658,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-card p",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-lead",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f9fafb",
+      "ratio": 7.231762080351423,
+      "min": 4.5
+    },
+    {
+      "selector": ".how-step p",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f9fafb",
+      "ratio": 7.231762080351423,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-table-note",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f9fafb",
+      "ratio": 7.231762080351423,
+      "min": 4.5
+    },
+    {
+      "selector": ".check",
+      "color": "rgb(22, 101, 52)",
+      "background": "#ffffff",
+      "ratio": 7.130310076434003,
+      "min": 4.5
+    },
+    {
+      "selector": ".cross",
+      "color": "rgb(159, 18, 57)",
+      "background": "#ffffff",
+      "ratio": 8.015910591562179,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-footer",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f9fafb",
+      "ratio": 7.231762080351423,
+      "min": 4.5
+    },
+    {
+      "selector": ".header-nav-link",
+      "color": "rgb(224, 231, 255)",
+      "background": "#3730a3",
+      "ratio": 8.061996606324048,
+      "min": 4.5
+    },
+    {
+      "selector": ".header-logo-tagline",
+      "color": "rgb(199, 210, 254)",
+      "background": "#3730a3",
+      "ratio": 6.659215219426889,
+      "min": 4.5
+    },
+    {
+      "selector": ".header-cta",
+      "color": "rgb(30, 27, 75)",
+      "background": "#ffffff",
+      "ratio": 15.986881422434319,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-primary",
+      "color": "rgb(255, 255, 255)",
+      "background": "#4f46e5",
+      "ratio": 6.287528596095884,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-secondary",
+      "color": "rgb(31, 41, 55)",
+      "background": "#ffffff",
+      "ratio": 14.67911847763172,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-primary hover",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(67, 56, 202)",
+      "ratio": 7.9031114800249425,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-secondary hover",
+      "color": "rgb(31, 41, 55)",
+      "background": "rgb(238, 242, 255)",
+      "ratio": 13.12752226713959,
+      "min": 4.5
+    },
+    {
+      "selector": ".header-cta hover",
+      "color": "rgb(30, 27, 75)",
+      "background": "rgb(238, 242, 255)",
+      "ratio": 14.297053475992255,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-secondary boundary",
+      "color": "rgb(107, 114, 128)",
+      "background": "rgb(255,255,255)",
+      "ratio": 4.834490081424352,
+      "min": 3
+    },
+    {
+      "selector": ".marketing-table-region boundary",
+      "color": "rgb(107, 114, 128)",
+      "background": "rgb(255,255,255)",
+      "ratio": 4.834490081424352,
+      "min": 3
+    },
+    {
+      "selector": "table focus on page",
+      "color": "rgb(79, 70, 229)",
+      "background": "rgb(249,250,251)",
+      "ratio": 6.016625091423448,
+      "min": 3
+    },
+    {
+      "selector": "header focus on lightest gradient endpoint",
+      "color": "rgb(255,255,255)",
+      "background": "rgb(55,48,163)",
+      "ratio": 9.933329874512658,
+      "min": 3
+    }
+  ],
+  "pageErrors": []
+}
