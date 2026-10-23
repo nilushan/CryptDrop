@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import sharp from 'sharp';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, URL as NodeURL } from 'node:url';
@@ -32,7 +33,7 @@ describe('homepage static marketing patterns', () => {
     }
     expect(home.querySelectorAll('ol.how-steps > li')).toHaveLength(3);
     expect(home.querySelector('img')?.getAttribute('alt')).toContain('private key');
-    expect(home.querySelector('img')?.getAttribute('src')).toBe('/images/hero-exposed-vs-encrypted.png');
+    expect(home.querySelector('img')?.getAttribute('src')).toMatch(/^\/_astro\/hero-exposed-vs-encrypted\..+\.webp$/);
     expect(home.querySelectorAll('astro-island')).toHaveLength(0);
   });
 
@@ -85,6 +86,46 @@ describe('homepage static marketing patterns', () => {
     expect(app.querySelector('.marketing-footer')).toBeNull();
     expect(app.querySelector('.marketing-skip-link')).toBeNull();
     expect(read('security').getElementById('private-key-security')).not.toBeNull();
+  });
+});
+
+describe('optimized marketing images', () => {
+  it('ships responsive WebP assets with real dimensions, without copying original PNGs', async () => {
+    expect(existsSync(join(output, 'images'))).toBe(false);
+    const images = [...home.querySelectorAll('main img'), ...guide.querySelectorAll('main img')];
+    expect(images).toHaveLength(13);
+    for (const img of images) {
+      const src = img.getAttribute('src')!;
+      const name = src.split('/').at(-1)!.split('.')[0];
+      const original = join(root, 'src/assets/images', name.startsWith('hero-') ? '' : 'story', `${name}.png`);
+      const originalMetadata = await sharp(original).metadata();
+      expect(Number(img.getAttribute('width'))).toBeGreaterThan(0);
+      expect(Number(img.getAttribute('height'))).toBeGreaterThan(0);
+      expect(img.getAttribute('sizes')).toContain('calc(100vw - 3rem)');
+      expect(img.getAttribute('decoding')).toBe('async');
+      const candidates = img.getAttribute('srcset')!.split(',').map(value => value.trim().split(/\s+/));
+      expect(candidates).toHaveLength(4);
+      for (const [url, descriptor] of [[src, `${img.getAttribute('width')}w`], ...candidates]) {
+        expect(url).toMatch(/^\/_astro\/.+\.webp$/);
+        const asset = join(output, url.slice(1));
+        const metadata = await sharp(asset).metadata();
+        expect(metadata.format).toBe('webp');
+        expect(metadata.width).toBe(Number(descriptor.slice(0, -1)));
+        expect(metadata.width).toBeLessThanOrEqual(originalMetadata.width!);
+        expect(metadata.width! / metadata.height!).toBeCloseTo(originalMetadata.width! / originalMetadata.height!, 2);
+        expect(statSync(asset).size).toBeLessThan(statSync(original).size / 4);
+      }
+    }
+  });
+
+  it('prioritizes the homepage hero and lazily loads below-the-fold guide illustrations', () => {
+    const hero = home.querySelector('main img')!;
+    expect(hero.getAttribute('loading')).toBe('eager');
+    expect(hero.getAttribute('fetchpriority')).toBe('high');
+    const illustrations = [...guide.querySelectorAll('main img')];
+    expect(illustrations[0].getAttribute('loading')).toBe('eager');
+    for (const img of illustrations.slice(1)) expect(img.getAttribute('loading')).toBe('lazy');
+    expect(illustrations[0].getAttribute('sizes')).toContain('(min-width: 48rem) calc((100vw - 5rem) / 2)');
   });
 });
 
@@ -144,7 +185,7 @@ describe('how-it-works marketing guide', () => {
     ]);
     const originals = ['01-public-keys','02-public-padlock-directory','03-bob-finds-alice-padlock','04-bob-signs-document','05-bob-locks-box','06-box-in-transit','07-malicious-attempt-fails','08-alice-opens-box','09-alice-verifies-seal'];
     steps.forEach((el,i) => {
-      expect(el.querySelector('img')?.getAttribute('src')).toBe(`/images/story/${originals[i]}.png`);
+      expect(el.querySelector('img')?.getAttribute('src')).toMatch(new RegExp(`^/_astro/${originals[i]}\\..+\\.webp$`));
       expect(el.querySelector('.step-label')?.textContent).toContain(`Step ${i+1}`);
       expect(el.querySelector('.step-number')?.getAttribute('aria-hidden')).toBe('true');
       expect(el.querySelector('.guide-prose > p:last-child')?.textContent?.length).toBeGreaterThan(100);

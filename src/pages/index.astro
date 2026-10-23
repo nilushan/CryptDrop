@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import heroImage from '../assets/images/hero-exposed-vs-encrypted.png';
 import MarketingSection from '../components/marketing/MarketingSection.astro';
 import MarketingCTA from '../components/marketing/MarketingCTA.astro';
 ---
@@ -29,7 +31,9 @@ import MarketingCTA from '../components/marketing/MarketingCTA.astro';
 
   <!-- ======================== HERO IMAGE ======================== -->
   <div class="hero-image-wrap">
-    <img src="/images/hero-exposed-vs-encrypted.png" alt="Left: credit card details exposed and readable by everyone — hackers, servers, email providers. Right: the same data encrypted into unreadable gibberish, only decrypted by the intended recipient with their private key." loading="eager" />
+    <Image src={heroImage} alt="Left: credit card details exposed and readable by everyone — hackers, servers, email providers. Right: the same data encrypted into unreadable gibberish, only decrypted by the intended recipient with their private key."
+      width={848} widths={[400, 800, 1200, 1696]} sizes="(min-width: 56rem) 53rem, calc(100vw - 3rem)"
+      format="webp" quality={80} loading="eager" fetchpriority="high" decoding="async" />
   </div>
 
   <!-- ======================== THE PROBLEM ======================== -->
@@ -214,7 +218,7 @@ import MarketingCTA from '../components/marketing/MarketingCTA.astro';
   .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cd-color-success-ink); flex-shrink: 0; }
   .hero-note { max-width: 40rem; font-size: .875rem; line-height: 1.7; color: var(--cd-color-muted); margin: var(--cd-space-6) auto var(--cd-space-4); }
   .hero-image-wrap { max-width: 56rem; margin: -2rem auto var(--cd-space-9); padding-inline: var(--cd-space-6); position: relative; }
-  .hero-image-wrap img { width: 100%; border-radius: var(--cd-radius-panel); box-shadow: 0 8px 40px rgb(0 0 0 / .12), 0 2px 8px rgb(0 0 0 / .06); border: 1px solid var(--cd-color-line); }
+  .hero-image-wrap img { width: 100%; height: auto; border-radius: var(--cd-radius-panel); box-shadow: 0 8px 40px rgb(0 0 0 / .12), 0 2px 8px rgb(0 0 0 / .06); border: 1px solid var(--cd-color-line); }
   .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--cd-space-5); }
   .feature-icon { width: 2.5rem; height: 2.5rem; border-radius: var(--cd-radius-control); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: var(--cd-space-4); }
   .feature-icon-red { background: #fef2f2; }
