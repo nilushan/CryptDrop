@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { $privateKey, $userInfo } from '../../stores/keys';
-import { $activeTab } from '../../stores/activeTab';
 import FolderBar from '../shared/FolderBar';
 import DecryptFilePanel from '../shared/DecryptFilePanel';
 import ActivityHistory from '../shared/ActivityHistory';
-import NoticeBox from '../shared/NoticeBox';
+import KeyCapabilityNotice from '../shared/KeyCapabilityNotice';
 
 export default function DecryptTab() {
   const privateKey = useStore($privateKey);
@@ -27,12 +26,7 @@ export default function DecryptTab() {
         )}
       </div>
 
-      {!privateKey && (
-        <NoticeBox variant="info" className="mb-4 animate-fade-in">
-          <p className="text-sm text-indigo-900 font-medium mb-1">First, load your private key</p>
-          <p className="text-xs text-indigo-700">You can choose your file now. To unlock it, <button onClick={() => $activeTab.set('keyring')} className="link-inline">import the matching private key</button>. A newly generated key cannot open an existing file.</p>
-        </NoticeBox>
-      )}
+      <KeyCapabilityNotice tool="decrypt" />
 
       <DecryptFilePanel folderHandle={folderHandle} />
       <FolderBar folderHandle={folderHandle} onFolderChange={setFolderHandle} />

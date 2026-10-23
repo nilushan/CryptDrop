@@ -4,6 +4,7 @@ import { $contacts, saveContact, type Contact } from '../../stores/contacts';
 import { $activeTab } from '../../stores/activeTab';
 import { $publicKey, $armoredPublic, $userInfo } from '../../stores/keys';
 import QuickEncryptPanel from './QuickEncryptPanel';
+import KeyCapabilityNotice from '../shared/KeyCapabilityNotice';
 import FolderBar from '../shared/FolderBar';
 import ContactListPicker from '../shared/ContactListPicker';
 import ActivityHistory from '../shared/ActivityHistory';
@@ -45,6 +46,8 @@ export default function EncryptTab() {
           <p className="tab-subtitle">Encrypt a file for someone. Only their private key can open it.</p>
         </div>
       </div>
+
+      <KeyCapabilityNotice tool="encrypt" />
 
       <ol className="workflow-steps" aria-label="Encryption steps">
         <li aria-current={!selectedContact ? 'step' : undefined}><span>01</span> Choose recipient</li>

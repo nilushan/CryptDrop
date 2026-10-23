@@ -7,36 +7,46 @@ import DecryptTab from '../../components/decrypt/DecryptTab';
 import WizardTab from '../../components/wizard/WizardTab';
 import Toast from '../../components/shared/Toast';
 import KeyStatusPill from '../../components/shared/KeyStatusPill';
+import { getKeyCapability, keyCapabilityIconPaths } from '../../lib/key-capabilities';
 import '../../styles/app-workspace.css';
 
 const tabs = [
-  { id: 'encrypt', label: 'Encrypt file', hint: 'Protect before sharing', path: 'M7 11V7a5 5 0 0110 0v4 M5 11h14v10H5z' },
-  { id: 'decrypt', label: 'Decrypt file', hint: 'Open a file sent to you', path: 'M7 11V7a5 5 0 019.9-1 M5 11h14v10H5z' },
-  { id: 'keyring', label: 'My key ring', hint: 'Your personal keys', path: 'M14 10a5 5 0 10-4 4l3 3h3v3h4v-4l-6-6z' },
-  { id: 'addressbook', label: 'Address book', hint: 'People you share with', path: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2 M13 7a4 4 0 11-8 0 4 4 0 018 0 M18 8h4 M18 12h4 M20 16h2' },
-  { id: 'wizard', label: 'Guided setup', hint: 'A little help getting started', path: 'M9 5H5v16h14V5h-4 M9 3h6v4H9z M8 12h8 M8 16h5' },
-];
+  { id: 'encrypt', label: 'Encrypt file', mobileLabel: 'Encrypt', hint: 'Protect before sharing', path: 'M7 11V7a5 5 0 0110 0v4 M5 11h14v10H5z' },
+  { id: 'decrypt', label: 'Decrypt file', mobileLabel: 'Decrypt', hint: 'Open a file sent to you', path: 'M7 11V7a5 5 0 019.9-1 M5 11h14v10H5z' },
+  { id: 'addressbook', label: 'Address book', mobileLabel: 'Contacts', hint: 'People you share with', path: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2 M13 7a4 4 0 11-8 0 4 4 0 018 0 M18 8h4 M18 12h4 M20 16h2' },
+  { id: 'wizard', label: 'Guided setup', mobileLabel: 'Setup', hint: 'A little help getting started', path: 'M9 5H5v16h14V5h-4 M9 3h6v4H9z M8 12h8 M8 16h5' },
+].map((tab) => ({ ...tab, capability: tab.id === 'encrypt' || tab.id === 'decrypt' ? getKeyCapability(tab.id, false) : null }));
 ---
 
 <Layout title="CryptDrop — Your private file workspace" appMode>
   <div class="app-shell">
 
   <aside class="app-sidebar" aria-label="Workspace sidebar">
+    <div class="sidebar-keys">
+      <p class="sidebar-label">My keys</p>
+      <KeyStatusPill client:load />
+      <p class="session-note">Your private key is needed to decrypt or sign, not to encrypt for others.</p>
+    </div>
     <p class="sidebar-label">Workspace</p>
     <div class="workspace-tabs" role="tablist" aria-label="File tools" aria-orientation="vertical">
       {tabs.map((tab, index) => (
         <button type="button" class:list={['app-tab', { active: index === 0 }]} data-tab={tab.id}
-          id={`nav-${tab.id}`} role="tab" aria-controls={`tab-${tab.id}`}
+          id={`nav-${tab.id}`} role="tab" aria-controls={`tab-${tab.id}`} data-capability={tab.capability?.state}
+          data-label={tab.label} aria-label={`${tab.label}. ${tab.capability?.navHint ?? tab.hint}`}
           aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={tab.path} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          <span><span class="nav-label">{tab.label}</span><span class="nav-hint">{tab.hint}</span></span>
+          <span class="nav-copy">
+            <span class="nav-label"><span class="nav-label-desktop">{tab.label}</span><span class="nav-label-mobile">{tab.mobileLabel}</span></span>
+            <span class="nav-hint" hidden={!!tab.capability && tab.capability.state !== 'available'}>{tab.hint}</span>
+            {tab.capability && (
+              <span class="nav-status-badge" aria-hidden="true" hidden={tab.capability.state === 'available'}>
+                <svg class="nav-status-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d={keyCapabilityIconPaths[tab.capability.state]} stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span class="nav-status-label">{tab.capability.mobileHint}</span>
+              </span>
+            )}
+          </span>
         </button>
       ))}
-    </div>
-    <div class="sidebar-session">
-      <p class="sidebar-label">This session</p>
-      <KeyStatusPill client:load />
-      <p class="session-note">Your unlocked key stays in this session. Keep a backup somewhere safe.</p>
     </div>
     <a class="sidebar-help" href="/how-it-works">A quick guide to encryption <span aria-hidden="true">↗</span></a>
   </aside>
@@ -58,7 +68,7 @@ const tabs = [
     </div>
 
     <!-- ======================== KEY RING TAB (React Island) ======================== -->
-    <div id="tab-keyring" class="tab-panel fade-in hidden" role="tabpanel" aria-labelledby="nav-keyring" tabindex="0" hidden>
+    <div id="tab-keyring" class="tab-panel fade-in hidden" role="region" aria-labelledby="nav-keyring" tabindex="0" hidden>
       <KeyRingTab client:load />
     </div>
 

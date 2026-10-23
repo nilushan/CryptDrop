@@ -1,4 +1,6 @@
 import { $activeTab, type TabId } from '../stores/activeTab';
+import { $privateKey } from '../stores/keys';
+import { getKeyCapability, keyCapabilityIconPaths } from './key-capabilities';
 
 const tabIds: TabId[] = ['encrypt', 'decrypt', 'keyring', 'addressbook', 'wizard'];
 
@@ -20,7 +22,12 @@ export function initAppNavigation() {
   readUrl();
   window.addEventListener('popstate', readUrl, { signal });
 
+  // The key ring is a separate, always-tabbable button above the file-tool tabs.
+  // Keep the last tool reachable by Tab while its panel is not selected.
+  let lastToolTab = buttons[0]?.dataset.tab;
   const unsubscribe = $activeTab.subscribe((tab) => {
+    const selectedTool = buttons.find((button) => button.dataset.tab === tab);
+    if (selectedTool) lastToolTab = tab;
     const previousPanel = document.activeElement?.closest('.tab-panel');
     for (const id of tabIds) {
       const panel = document.getElementById(`tab-${id}`);
@@ -32,7 +39,7 @@ export function initAppNavigation() {
       const selected = button.dataset.tab === tab;
       button.classList.toggle('active', selected);
       button.setAttribute('aria-selected', String(selected));
-      button.tabIndex = selected ? 0 : -1;
+      button.tabIndex = selected || (!selectedTool && button.dataset.tab === lastToolTab) ? 0 : -1;
     }
     // A cross-island action must not leave focus inside the panel it just hid.
     if (previousPanel && previousPanel.id !== `tab-${tab}`) {
@@ -41,6 +48,25 @@ export function initAppNavigation() {
     const url = new URL(window.location.href);
     url.searchParams.set('tab', tab);
     window.history.replaceState(window.history.state, '', url);
+  });
+
+  const unsubscribeKey = $privateKey.subscribe((key) => {
+    for (const button of buttons) {
+      const tool = button.dataset.tab;
+      if (tool !== 'encrypt' && tool !== 'decrypt') continue;
+      const capability = getKeyCapability(tool, !!key);
+      button.dataset.capability = capability.state;
+      const available = capability.state === 'available';
+      const badge = button.querySelector<HTMLElement>('.nav-status-badge');
+      const hint = button.querySelector<HTMLElement>('.nav-hint');
+      if (badge) badge.hidden = available;
+      if (hint) hint.hidden = !available;
+      const label = button.querySelector('.nav-status-label');
+      const icon = button.querySelector('.nav-status-icon path');
+      if (label) label.textContent = capability.mobileHint;
+      icon?.setAttribute('d', keyCapabilityIconPaths[capability.state]);
+      button.setAttribute('aria-label', `${button.dataset.label ?? tool}. ${capability.navHint}`);
+    }
   });
 
   buttons.forEach((button, index) => {
@@ -58,5 +84,5 @@ export function initAppNavigation() {
     }, { signal });
   });
 
-  return () => { controller.abort(); unsubscribe(); };
+  return () => { controller.abort(); unsubscribe(); unsubscribeKey(); };
 }

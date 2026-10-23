@@ -5,49 +5,28 @@ import { $activeTab } from '../../stores/activeTab';
 export default function KeyStatusPill() {
   const privateKey = useStore($privateKey);
   const userInfo = useStore($userInfo);
+  const activeTab = useStore($activeTab);
   const loaded = !!privateKey;
-
-  // Parse name and email from userInfo like "Alice Smith <alice@example.com>"
-  let displayName = '';
-  let displayEmail = '';
-  if (userInfo) {
-    const match = userInfo.match(/^(.+?)\s*<(.+)>$/);
-    if (match) {
-      displayName = match[1].trim();
-      displayEmail = match[2].trim();
-    } else {
-      displayName = userInfo;
-    }
-  }
-
-  function handleClick() {
-    $activeTab.set('keyring');
-  }
-
-  if (!loaded) {
-    return (
-      <button onClick={handleClick} className="key-status-bar key-status-empty">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        <span>No private key loaded<br /><strong>Set up your keys →</strong></span>
-      </button>
-    );
-  }
+  const description = loaded
+    ? `Private key loaded${userInfo ? ` for ${userInfo}` : ''}. Available in this session; this does not confirm a backup.`
+    : 'No private key loaded. Encryption is available without signing. Load a matching key to decrypt.';
 
   return (
-    <button onClick={handleClick} className="key-status-bar key-status-loaded">
-      <div className="key-status-avatar">
-        {displayName.charAt(0).toUpperCase() || displayEmail.charAt(0).toUpperCase() || 'K'}
-      </div>
-      <div className="key-status-info">
-        <span className="key-status-name">{displayName || displayEmail}</span>
-        {displayEmail && displayName && (
-          <span className="key-status-email">{displayEmail}</span>
-        )}
-      </div>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-        <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+    <button type="button" id="nav-keyring" onClick={() => $activeTab.set('keyring')}
+      className={`key-status-bar ${loaded ? 'key-status-loaded' : 'key-status-empty'}`}
+      aria-controls="tab-keyring" aria-current={activeTab === 'keyring' ? 'page' : undefined}
+      aria-label={`My key ring. ${description}`} title={description}>
+      <svg className="key-status-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M14 10a5 5 0 10-4 4l3 3h3v3h4v-4l-6-6z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
+      <span className="key-status-copy">
+        <span className="key-status-label">My key ring</span>
+        <span className="key-status-state">
+          <span aria-hidden="true">{loaded ? '✓' : '!'}</span>
+          {loaded ? 'Loaded' : 'No private key loaded'}
+        </span>
+      </span>
+      <span className="key-status-arrow" aria-hidden="true">›</span>
     </button>
   );
 }

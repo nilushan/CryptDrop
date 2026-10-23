@@ -38,7 +38,7 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
   const [result, setResult] = useState<EncryptResult | null>(null);
 
   async function handleEncrypt() {
-    if (!selectedFile) return;
+    if (!selectedFile || (signEnabled && !privateKey)) return;
     setEncrypting(true);
     try {
       const recipientKey = await openpgp.readKey({ armoredKey: contact.armoredPublicKey });
@@ -158,12 +158,15 @@ export default function QuickEncryptPanel({ contact, folderHandle, onClose }: Pr
           id="quick-sign-react"
           className="rounded border-gray-300"
           checked={signEnabled}
+          disabled={!privateKey && !signEnabled}
+          aria-describedby={!privateKey ? 'quick-sign-unavailable' : undefined}
           onChange={(e) => setSignEnabled(e.target.checked)}
         />
         <label htmlFor="quick-sign-react" className="text-xs text-gray-500 cursor-pointer">
           Prove it came from me <span className="text-gray-400">(optional — lets the recipient verify you sent this)</span>
         </label>
       </div>
+      {!privateKey && <p id="quick-sign-unavailable" className="text-xs mb-3">Signing is unavailable until you load your private key. You can still encrypt without a signature.</p>}
       {signEnabled && (
         <div className="mb-3">
           {privateKey ? (
