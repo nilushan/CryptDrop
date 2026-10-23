@@ -1,8 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useId } from 'react';
 import { useStore } from '@nanostores/react';
 import { $contacts, type Contact } from '../../stores/contacts';
 import { $activeTab } from '../../stores/activeTab';
 import ContactAvatar from './ContactAvatar';
+import FormField from './FormField';
 
 interface Props {
   /** Called when a contact is selected */
@@ -24,6 +25,7 @@ export default function ContactListPicker({
   label,
   className,
 }: Props) {
+  const searchId = useId();
   const contacts = useStore($contacts);
   const [searchQuery, setSearchQuery] = useState('');
   const activeTab = useStore($activeTab);
@@ -58,42 +60,38 @@ export default function ContactListPicker({
       )}
 
       {showSearch && (
-        <div className="search-wrap" style={{ marginBottom: '0.75rem' }}>
-          <svg className="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <input
-            type="text"
-            placeholder="Search contacts..."
-            aria-label="Search contacts"
-            className="search-input"
-            autoComplete="off"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <FormField id={searchId} label="Search contacts">
+          <div className="search-wrap">
+            <svg aria-hidden="true" className="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+            <input
+              id={searchId}
+              type="text"
+              placeholder="Search contacts..."
+              className="search-input"
+              autoComplete="off"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </FormField>
       )}
 
       {filtered.length > 0 && (
-        <div style={{
-          border: '1px solid #e2e8f0', borderRadius: '0.75rem',
-          overflow: 'hidden',
-        }}>
-          {filtered.map((c, i) => (
+        <div className="contact-picker-list">
+          {filtered.map((c) => (
             <button
               key={c.email}
               type="button"
               onClick={() => onSelect(c)}
               className="encrypt-contact-row"
-              style={{
-                borderBottom: i < filtered.length - 1 ? '1px solid #f1f5f9' : 'none',
-              }}
             >
               <ContactAvatar name={c.name || c.email} />
-              <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-                <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div className="contact-picker-info">
+                <p className="contact-picker-name">
                   {c.name || c.email}
                 </p>
                 {c.name && (
-                  <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p className="contact-picker-email">
                     {c.email}
                   </p>
                 )}
@@ -107,7 +105,7 @@ export default function ContactListPicker({
       )}
 
       {showSearch && searchQuery && filtered.length === 0 && (
-        <div className="empty-state" style={{ padding: '1.5rem' }}>
+        <div className="empty-state" role="status">
           <p className="empty-msg">No recipients match "{searchQuery}".</p>
         </div>
       )}

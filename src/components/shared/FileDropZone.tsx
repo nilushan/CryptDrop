@@ -65,7 +65,7 @@ export default function FileDropZone({
         onChange={handleChange}
       />
       {size === 'lg' && (
-        <svg className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <svg aria-hidden="true" className="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
       )}
       <p className="text-sm text-gray-500">{placeholder}</p>
       {size === 'lg' && <span className="drop-browse" aria-hidden="true">Browse files</span>}

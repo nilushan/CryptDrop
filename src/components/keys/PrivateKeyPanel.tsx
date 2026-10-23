@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { useStore } from '@nanostores/react';
 import { $privateKey, $publicKey, $userInfo, $armoredPrivate, $armoredPublic, setKeys } from '../../stores/keys';
 import { $activeTab } from '../../stores/activeTab';
@@ -13,10 +13,12 @@ import ActionButton from '../shared/ActionButton';
 import KeyChoiceGrid from '../shared/KeyChoiceGrid';
 import { useKeyProtection } from './useKeyProtection';
 import KeySecurityDisclosure from './KeySecurityDisclosure';
+import FormField from '../shared/FormField';
 
 type View = 'choice' | 'generate' | 'import' | 'loaded';
 
 export default function PrivateKeyPanel() {
+  const restoreId = useId();
   const privateKey = useStore($privateKey);
   const publicKey = useStore($publicKey);
   const userInfo = useStore($userInfo);
@@ -86,11 +88,11 @@ export default function PrivateKeyPanel() {
           {/* Saved key restore card */}
           {savedKey && (
             <div className="private-key-card animate-fade-in mb-4">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <div className="private-key-vault-row">
                 <div className="private-key-vault-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" strokeWidth="2"/><polyline points="7,3 7,8 15,8" stroke="currentColor" strokeWidth="2"/></svg>
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" strokeWidth="2"/><polyline points="7,3 7,8 15,8" stroke="currentColor" strokeWidth="2"/></svg>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="private-key-vault-info">
                   <p className="private-key-uid">
                     {savedKey.userInfo}
                   </p>
@@ -109,20 +111,15 @@ export default function PrivateKeyPanel() {
                   : 'Enter your passphrase to unlock this key. Browser storage is not a backup.'}
               </p>
 
-              <input
-                type="password"
-                placeholder="Passphrase"
-                value={restorePassphrase}
-                onChange={(e) => { setRestorePassphrase(e.target.value); setRestoreError(''); }}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleRestore(); }}
-                className="input w-full mb-3"
-                aria-label="Saved key passphrase"
-                aria-invalid={!!restoreError}
-              />
-
-              {restoreError && (
-                <p className="private-key-error text-xs mb-3" role="alert">{restoreError}</p>
-              )}
+              <div className="mb-3">
+                <FormField id={restoreId} label="Saved key passphrase" help="Use the passphrase for this saved key to unlock it." error={restoreError}>
+                  <input id={restoreId} type="password" autoComplete="off" value={restorePassphrase}
+                    onChange={(e) => { setRestorePassphrase(e.target.value); setRestoreError(''); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleRestore(); }} className="input w-full"
+                    aria-describedby={`${restoreId}-help${restoreError ? ` ${restoreId}-error` : ''}`}
+                    aria-invalid={!!restoreError} />
+                </FormField>
+              </div>
 
               <ActionButton
                 onClick={handleRestore}
@@ -131,7 +128,7 @@ export default function PrivateKeyPanel() {
                 loadingText="Unlocking..."
                 className="btn-vault-generate"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
                 {savedProtection === 'unsafe' ? 'Load Older Saved Key' : 'Unlock Saved Key'}
               </ActionButton>
             </div>

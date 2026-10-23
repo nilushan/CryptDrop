@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { showToast } from '../../stores/toast';
 import { lookupKeyByEmail, parseUserId } from '../../lib/openpgp-helpers';
 import { saveContact } from '../../stores/contacts';
 import type { PublicKey } from 'openpgp';
 import * as openpgp from 'openpgp';
 import FileDropZone from './FileDropZone';
+import FormField from './FormField';
+import ActionButton from './ActionButton';
+import NoticeBox from './NoticeBox';
 
 export interface KeyLookupResult {
   key: PublicKey;
@@ -47,17 +50,23 @@ export default function KeyLookupCard({
   className,
   showCard = true,
 }: Props) {
+  const emailId = useId();
   const [email, setEmail] = useState('');
   const [searching, setSearching] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'warning'; text: string; sub?: string } | null>(null);
+  const [status, setStatus] = useState<{ type: 'success' | 'warning' | 'error'; text: string; sub?: string } | null>(null);
 
   async function handleLookup() {
-    if (!email.trim()) { showToast('Enter an email address', 'warning'); return; }
+    if (!email.trim()) {
+      setStatus({ type: 'warning', text: 'Enter an email address' });
+      showToast('Enter an email address', 'warning');
+      return;
+    }
     setSearching(true);
     setStatus(null);
     try {
       const result = await lookupKeyByEmail(email.trim());
       if (!result) {
+        setStatus({ type: 'warning', text: 'Not found on keyserver' });
         onNotFound?.(email.trim());
         showToast('Not found on keyserver', 'warning');
         return;
@@ -87,6 +96,7 @@ export default function KeyLookupCard({
       onKeyFound(lookupResult);
       setEmail('');
     } catch (e) {
+      setStatus({ type: 'error', text: 'Lookup failed: ' + (e as Error).message });
       showToast('Lookup failed: ' + (e as Error).message, 'error');
     } finally {
       setSearching(false);
@@ -112,29 +122,25 @@ export default function KeyLookupCard({
       setStatus({ type: 'success', text: 'Key imported: ' + (parsed.name || parsed.uid), sub: 'Fingerprint: ' + parsed.fingerprint });
       onKeyFound(lookupResult);
     } catch (err) {
+      setStatus({ type: 'error', text: 'Import failed: ' + (err as Error).message });
       showToast('Import failed: ' + (err as Error).message, 'error');
     }
   }
 
   const content = (
     <>
-      {title && <h3 className="card-title" style={showCard ? undefined : { color: '#065f46' }}>{title}</h3>}
+      {title && <h3 className="card-title">{title}</h3>}
       {description && <p className="text-xs text-gray-500 mb-4">{description}</p>}
 
-      <div className="flex gap-2 mb-3">
-        <input
-          type="email"
-          aria-label="Email address for public key lookup"
-          placeholder={placeholder}
-          className="input flex-1"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleLookup(); }}
-        />
-        <button onClick={handleLookup} disabled={searching} className="btn-primary whitespace-nowrap">
-          {searching ? 'Searching...' : buttonText}
-        </button>
-      </div>
+      <FormField id={emailId} label="Email address for public key lookup" help="Email lookup uses online services: our directory and a public keyserver. Import a key file below to skip the lookup.">
+        <div className="field-action-row">
+          <input id={emailId} type="email" placeholder={placeholder} className="input w-full"
+            value={email} onChange={(e) => setEmail(e.target.value)}
+            aria-describedby={`${emailId}-help`}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !searching) handleLookup(); }} />
+          <ActionButton onClick={handleLookup} loading={searching} loadingText="Searching…" className="btn-primary">{buttonText}</ActionButton>
+        </div>
+      </FormField>
 
       <div className="divider">or</div>
 
@@ -146,10 +152,10 @@ export default function KeyLookupCard({
       />
 
       {status && (
-        <div className={`mt-3 ${status.type === 'success' ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'} rounded-md p-3`}>
-          <p className={`text-sm font-medium ${status.type === 'success' ? 'text-green-800' : 'text-amber-800'}`}>{status.text}</p>
-          {status.sub && <p className="text-xs text-green-600 font-mono mt-1">{status.sub}</p>}
-        </div>
+        <NoticeBox variant={status.type === 'warning' ? 'warn' : status.type} role={status.type === 'error' ? 'alert' : 'status'} className="mt-3">
+          <p className="text-sm font-medium">{status.text}</p>
+          {status.sub && <p className="text-xs font-mono mt-1">{status.sub}</p>}
+        </NoticeBox>
       )}
     </>
   );

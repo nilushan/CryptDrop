@@ -7,6 +7,7 @@ import { evaluatePassphrase, isPassphraseAcceptable } from '../../lib/passphrase
 import { registerUser } from '../../lib/api';
 import ActionButton from '../shared/ActionButton';
 import FormField from '../shared/FormField';
+import NoticeBox from '../shared/NoticeBox';
 import KeyBackupGuide from './KeyBackupGuide';
 
 interface Props {
@@ -20,6 +21,11 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
   const nameId = `${formId}-name`;
   const emailId = `${formId}-email`;
   const passphraseId = `${formId}-passphrase`;
+  const [error, setError] = useState('');
+  function reportError(message: string, type: 'warning' | 'error') {
+    setError(message);
+    showToast(message, type);
+  }
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [passphrase, setPassphrase] = useState('');
@@ -29,20 +35,21 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
   const [armoredPrivate, setArmoredPrivate] = useState('');
 
   async function handleGenerate() {
+    setError('');
     if (!name.trim() || !email.trim()) {
-      showToast('Please enter your name and email', 'warning');
+      reportError('Please enter your name and email', 'warning');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      showToast('Please enter a valid email address', 'warning');
+      reportError('Please enter a valid email address', 'warning');
       return;
     }
     if (!passphrase) {
-      showToast('Please set a passphrase to protect your private key', 'warning');
+      reportError('Please set a passphrase to protect your private key', 'warning');
       return;
     }
     if (!isPassphraseAcceptable(passphrase)) {
-      showToast('Passphrase must be at least 12 characters and rated "Fair" or better', 'warning');
+      reportError('Passphrase must be at least 12 characters and rated "Fair" or better', 'warning');
       return;
     }
 
@@ -70,7 +77,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
         // Registration is best-effort — don't block key generation
       });
     } catch (e) {
-      showToast('Key generation failed: ' + (e as Error).message, 'error');
+      reportError('Key generation failed: ' + (e as Error).message, 'error');
     } finally {
       setGenerating(false);
     }
@@ -91,7 +98,6 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
           onClick={() => { if (backupConfirmed) onSuccess?.(); }}
           disabled={!backupConfirmed}
           className="btn-vault-generate w-full"
-          style={{ justifyContent: 'center' }}
         >
           Done — View My Key Ring
         </button>
@@ -102,7 +108,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
   return (
     <div>
       <button onClick={onBack} className="keys-back-link">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         Back to options
       </button>
       <div className="private-key-card mb-4">
@@ -110,7 +116,7 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
         <p className="private-key-section-body">Creates a Curve25519 key pair. Your <strong>private key file downloads immediately</strong> — you must save it securely yourself. CryptDrop cannot recover it.</p>
 
         <div className="key-gen-local-note">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          <svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
           Generated entirely in your browser. Never sent to any server.
         </div>
 
@@ -131,25 +137,19 @@ export default function KeyGenerateForm({ onBack, onSuccess }: Props) {
           {passphrase && (() => {
             const strength = evaluatePassphrase(passphrase);
             return (
-              <div style={{ marginTop: '0.375rem', marginBottom: '0.75rem' }}>
-                <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '0.25rem' }}>
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} style={{
-                      flex: 1, height: 3, borderRadius: 2,
-                      background: i <= strength.score ? strength.color : '#e2e8f0',
-                      transition: 'background 0.2s',
-                    }} />
-                  ))}
+              <div className="passphrase-strength" data-level={strength.level}>
+                <div className="passphrase-strength-bars" aria-hidden="true">
+                  {[1, 2, 3].map((i) => <div key={i} data-filled={i <= strength.score} />)}
                 </div>
-                <p id={`${passphraseId}-strength`} aria-live="polite" style={{ fontSize: '0.6875rem', color: strength.color, margin: 0, fontWeight: 500 }}>
+                <p id={`${passphraseId}-strength`} aria-live="polite">
                   {strength.label}{strength.level === 'weak' && passphrase.length < 12 ? ' — needs at least 12 characters' : ''}
                 </p>
               </div>
             );
           })()}
-          {!passphrase && <div style={{ marginBottom: '0.75rem' }} />}
+          {error && <NoticeBox variant="error" role="alert" className="mt-3 mb-3">{error}</NoticeBox>}
           <ActionButton onClick={handleGenerate} loading={generating} loadingText="Generating..." className="btn-vault-generate">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
             Generate Keys & Download
           </ActionButton>
         </div>

@@ -15,6 +15,10 @@ The baseline follows the issue's agreed direction:
 - Extract styling in small surface-specific steps. No framework migration, theme switcher, new icon library, component package, or speculative design-system runtime.
 - Do not change encryption, recovery policy, registration, key persistence, or security/privacy wording under the guise of visual cleanup. Content discrepancies below are review inputs, not approved replacement claims.
 
+### Follow-up implementation record
+
+Issue #4 implements the app catalog described by this historical #2 baseline (pending independent review). `src/styles/tokens.css`, `app-components.css` and the bounded `feedback.css` now exist; Layout imports tokens once, the app imports its scoped catalog before workspace overrides, and invitation imports feedback only. #3's FormField/labels are reused. [The exhaustive #4 audit](design-system-evidence/issue-4/audit.md) covers every component, removal/consumer checks, shared patterns and intentional exceptions. [#4 evidence and validation](design-system-evidence/issue-4/README.md) records before/after views, actual browser coverage and remaining pre-existing checks. Statements below about “planned” paths or “currently” missing semantics describe the original audited commit, not the updated implementation.
+
 ### Reading map
 
 1. [Inventory and gaps](#inventory-and-gaps)

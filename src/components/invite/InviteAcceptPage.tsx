@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { validateInviteToken } from '../../lib/api';
+import NoticeBox from '../shared/NoticeBox';
 import type { InviteValidation } from '../../lib/api';
 
 export default function InviteAcceptPage() {
@@ -31,7 +32,8 @@ export default function InviteAcceptPage() {
     return (
       <div className="invite-page-container">
         <div className="invite-card">
-          <div className="invite-loading">Validating invitation...</div>
+          <h1>Accept invitation</h1>
+          <p className="invite-loading" role="status">Validating invitation…</p>
         </div>
       </div>
     );
@@ -41,14 +43,15 @@ export default function InviteAcceptPage() {
     return (
       <div className="invite-page-container">
         <div className="invite-card">
-          <div className="invite-error">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#ef4444" strokeWidth="2"/><path d="M15 9l-6 6M9 9l6 6" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/></svg>
+          <h1>Accept invitation</h1>
+          <NoticeBox variant="error" role="alert" className="invite-error">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
             <h2>{error}</h2>
             <p>
               You can still set up CryptDrop manually.{' '}
               <a href="/app?tab=keyring">Go to the app</a>
             </p>
-          </div>
+          </NoticeBox>
         </div>
       </div>
     );
@@ -57,10 +60,11 @@ export default function InviteAcceptPage() {
   return (
     <div className="invite-page-container">
       <div className="invite-card">
-        <div className="invite-welcome">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style={{ margin: '0 0 1rem' }}>
-            <rect x="3" y="11" width="18" height="11" rx="2" stroke="#1c1917" strokeWidth="1.5"/>
-            <path d="M7 11V7a5 5 0 0110 0v4" stroke="#1c1917" strokeWidth="1.5" strokeLinecap="round"/>
+          <h1>Accept invitation</h1>
+        <div className="invite-welcome" role="status">
+          <svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" className="invite-lock">
+            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
           <h2>
             <strong>{invite?.senderName}</strong> wants to send you encrypted files

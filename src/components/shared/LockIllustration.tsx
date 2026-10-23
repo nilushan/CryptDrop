@@ -16,7 +16,7 @@ export default function LockIllustration({ ownerName, animationType }: Props) {
 
   return (
     <div className={`lock-illustration lock-${animationType}`}>
-      <svg viewBox="0 0 240 150" className="lock-svg">
+      <svg aria-hidden="true" viewBox="0 0 240 150" className="lock-svg">
         {/* Padlock body */}
         <rect x="55" y="55" width="90" height="80" rx="12" className="lock-body" />
         {/* Keyhole */}

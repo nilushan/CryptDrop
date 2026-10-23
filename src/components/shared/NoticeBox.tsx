@@ -1,12 +1,13 @@
 interface Props {
-  variant: 'info' | 'warn' | 'success';
+  variant: 'info' | 'warn' | 'success' | 'error';
+  role?: 'status' | 'alert';
   className?: string;
   children: React.ReactNode;
 }
 
-export default function NoticeBox({ variant, className = '', children }: Props) {
+export default function NoticeBox({ variant, role, className = '', children }: Props) {
   return (
-    <div className={`notice-box notice-${variant} ${className}`}>
+    <div role={role} className={`notice-box notice-${variant} ${className}`}>
       {children}
     </div>
   );

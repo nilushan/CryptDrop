@@ -36,6 +36,7 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
   const privateKey = useStore($privateKey);
   const userInfo = useStore($userInfo);
 
+  const [error, setError] = useState('');
   const [encryptedFile, setEncryptedFile] = useState<File | null>(null);
   const [senderKey, setSenderKey] = useState<PublicKey | null>(null);
   const [showLookup, setShowLookup] = useState(false);
@@ -71,11 +72,13 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
 
   function handleFileSelect(file: File) {
     setEncryptedFile(file);
+    setError('');
   }
 
   async function handleDecrypt() {
     if (!privateKey || !encryptedFile) return;
     setDecrypting(true);
+    setError('');
     setResult(null);
     try {
       const fileData = new Uint8Array(await encryptedFile.arrayBuffer());
@@ -105,6 +108,7 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
 
       showToast('File decrypted!', 'success');
     } catch (e) {
+      setError('Decryption failed: ' + (e as Error).message);
       showToast('Decryption failed: ' + (e as Error).message, 'error');
     } finally {
       setDecrypting(false);
@@ -131,6 +135,7 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
     setResult(null);
     setExpirySeconds(null);
     setShowLookup(false);
+    setError('');
   }
 
   async function handleSelectSenderContact(contact: Contact) {
@@ -140,6 +145,7 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
       setSenderEmail(contact.email);
       showToast('Sender key loaded', 'success');
     } catch {
+      setError('Could not load key for ' + contact.email);
       showToast('Could not load key for ' + contact.email, 'error');
     }
   }
@@ -168,12 +174,8 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
           {resultActions}
         </ResultState>
         {expirySeconds !== null && (
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-            fontSize: '0.75rem', color: expirySeconds < 60 ? '#dc2626' : '#64748b',
-            marginTop: '0.75rem', transition: 'color 0.3s',
-          }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+          <div className="result-expiry" data-urgent={expirySeconds < 60}>
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
               <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
@@ -202,15 +204,15 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
       {/* Verify sender */}
       {senderKey ? (
         <NoticeBox variant="success" className="mb-3 animate-fade-in">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: '#16a34a', flexShrink: 0 }}>
+          <div className="sender-key-loaded">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#166534' }}>Sender verification key loaded</span>
+            <span className="text-sm font-medium">Sender verification key loaded</span>
             <button
               onClick={() => setSenderKey(null)}
-              style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#6ee7b7', cursor: 'pointer', padding: '0.125rem', fontSize: '0.75rem' }}
+              type="button" className="btn-ghost-sm" aria-label="Clear sender verification key"
             >
               clear
             </button>
@@ -218,12 +220,12 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
         </NoticeBox>
       ) : (
         <div className="card mb-4">
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
+          <div className="recipient-heading">
             <div>
-              <h3 className="card-title" style={{ margin: '0 0 0.25rem' }}>Verify Sender <span className="text-gray-400 font-normal">(optional)</span></h3>
-              <p className="text-xs text-gray-500" style={{ margin: 0 }}>If the file was signed, load the sender's public key to verify their identity.</p>
+              <h3 className="card-title">Verify Sender <span className="text-gray-400 font-normal">(optional)</span></h3>
+              <p className="text-xs text-gray-500">If the file was signed, load the sender's public key to verify their identity.</p>
             </div>
-            <button onClick={() => setShowLookup((v) => !v)} className="btn-ghost" style={{ flexShrink: 0 }}>
+            <button onClick={() => setShowLookup((v) => !v)} className="btn-ghost">
               {showLookup ? 'Cancel' : '+ New sender'}
             </button>
           </div>
@@ -244,13 +246,15 @@ export default function DecryptFilePanel({ folderHandle = null, resultActions }:
         </div>
       )}
 
+      {(!privateKey || !encryptedFile) && <p className="form-field-help mb-3">{!privateKey ? 'Load the matching private key to unlock this file.' : 'Choose an encrypted file to enable unlocking.'}</p>}
+      {error && <NoticeBox variant="error" role="alert" className="mb-3">{error}</NoticeBox>}
       <ActionButton
         onClick={handleDecrypt}
         disabled={!privateKey || !encryptedFile}
         loading={decrypting}
         loadingText="Unlocking..."
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M7 11V7a5 5 0 019.9-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
         Unlock File
       </ActionButton>
     </div>

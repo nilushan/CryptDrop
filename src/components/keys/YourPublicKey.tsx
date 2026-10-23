@@ -3,6 +3,8 @@ import { useStore } from '@nanostores/react';
 import { $publicKey, $armoredPublic, $userInfo } from '../../stores/keys';
 import { downloadTextFile } from '../../lib/file-helpers';
 import { showToast } from '../../stores/toast';
+import ActionButton from '../shared/ActionButton';
+import NoticeBox from '../shared/NoticeBox';
 
 export default function YourPublicKey() {
   const publicKey = useStore($publicKey);
@@ -10,6 +12,7 @@ export default function YourPublicKey() {
   const userInfo = useStore($userInfo);
   const [publishStatus, setPublishStatus] = useState<{ type: 'info' | 'warn'; text: string } | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [copyError, setCopyError] = useState('');
 
   function handleDownload() {
     if (armoredPublic) downloadTextFile(armoredPublic, 'public_key.asc');
@@ -17,9 +20,13 @@ export default function YourPublicKey() {
 
   function handleCopy() {
     if (!armoredPublic) { showToast('No public key loaded', 'warning'); return; }
+    setCopyError('');
     navigator.clipboard.writeText(armoredPublic).then(
       () => showToast('Public key copied to clipboard', 'success'),
-      () => showToast('Could not copy — please copy manually', 'error'),
+      () => {
+        setCopyError('Could not copy the public key. Try again or use Download.');
+        showToast('Could not copy — please copy manually', 'error');
+      },
     );
   }
 
@@ -97,9 +104,9 @@ export default function YourPublicKey() {
   if (!publicKey) return null;
 
   return (
-    <div style={{ marginTop: '1.5rem' }}>
+    <div className="mt-6">
       <div className="keys-section-label keys-public-label">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+        <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
         Your Public Key
         <span className="keys-section-badge keys-public-badge">Safe to share freely</span>
       </div>
@@ -108,35 +115,36 @@ export default function YourPublicKey() {
         <div className="public-key-intro">
           <p className="public-key-desc">Your public key is your open padlock — anyone can use it to encrypt files for you. Share it widely.</p>
           <p className="public-key-source-note">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+            <svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
             Publishing to <strong>keys.openpgp.org</strong> lets anyone find you automatically when they search by email.
           </p>
         </div>
         <div className="public-key-actions">
           <button onClick={handleDownload} className="btn-public-action">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             Download
           </button>
           <button onClick={handleCopy} className="btn-public-action">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/></svg>
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/></svg>
             Copy
           </button>
           <button onClick={handleShareEmail} className="btn-public-action">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/></svg>
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/></svg>
             Email
           </button>
-          <button onClick={handlePublish} disabled={publishing} className="btn-public-publish">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" strokeWidth="2"/></svg>
-            {publishing ? 'Publishing…' : 'Publish'}
-          </button>
+          <ActionButton onClick={handlePublish} loading={publishing} loadingText="Publishing…" className="btn-public-publish">
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" strokeWidth="2"/></svg>
+            Publish
+          </ActionButton>
         </div>
+        {copyError && <NoticeBox variant="error" role="alert" className="mt-3">{copyError}</NoticeBox>}
         {publishStatus && (
-          <div className={`mt-3 notice-box ${publishStatus.type === 'info' ? 'notice-info' : 'notice-warn'}`}>
+          <NoticeBox role="status" variant={publishStatus.type} className="mt-3">
             <p className={publishStatus.type === 'info' ? 'text-sm text-indigo-800' : 'text-sm text-amber-800'}>
               {publishStatus.type === 'info' && <strong>Key uploaded! </strong>}
               {publishStatus.text}
             </p>
-          </div>
+          </NoticeBox>
         )}
       </div>
     </div>

@@ -1,0 +1,21 @@
+{
+  "notes": [
+    "Desktop Down/End/Home and mobile Right tabs select one panel; cross-panel load-key action transfers focus; key absence gates unlock, not file selection.",
+    "Generation: no document overflow at 320px",
+    "Real local Curve25519 generation, automatic private/public downloads, wrong and correct backup-passphrase checks, Done gate, Remember → reload → wrong/correct restore → Forget all exercised with synthetic identity. No network service contacted.",
+    "Shared key import: wrong passphrase produces durable associated error, successful retry returns loaded key; private key only read locally.",
+    "Populated contacts: no document overflow at 320px",
+    "Contacts public-file import and full fingerprint/actions, fixture refresh, missing-key invitation send; direct unsigned encryption and guided signed encryption use the same file/result controls. Wizard step focus checked.",
+    "Decryption result: no document overflow at 320px",
+    "Signed decrypt with sender key reports verified and downloaded bytes equal source; unsigned decrypt succeeds without a verified label; history list/clear tested.",
+    "Wizard decrypt: no document overflow at 320px",
+    "Loaded key 200% text: no document overflow at 768px",
+    "Invitation synthetic: no document overflow at 320px",
+    "Invitation expired: no document overflow at 320px",
+    "Invitation accepted: no document overflow at 320px",
+    "Invitation failure: no document overflow at 320px",
+    "Invitation valid/expired/used/API failure fixtures, setup-token forwarding and 320px reflow checked. Text resizing is CSS root 200% emulation, not native zoom.",
+    "Review follow-up: direct encrypt/decrypt and guided encrypt expose native level-three result headings with aria-live=polite; only seven affected result screenshots refreshed."
+  ],
+  "errors": []
+}

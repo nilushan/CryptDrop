@@ -122,7 +122,7 @@ describe('key setup status and actions', () => {
     expect(heading).toBeVisible();
     fireEvent.click(screen.getByRole('button', { name: /Import Existing/i }));
     expect(heading).toBeVisible();
-    expect(screen.getByPlaceholderText('Passphrase (if your key has one)')).toBeInTheDocument();
+    expect(screen.getByLabelText('Key passphrase (if protected)')).toBeInTheDocument();
   });
 
   it('presents the unloaded state as non-interactive status, separate from setup buttons', async () => {

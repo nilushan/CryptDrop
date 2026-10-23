@@ -1,0 +1,34 @@
+/* Shared roles; app and marketing retain their own layout and visual treatments. */
+:root {
+  --cd-color-page: #f9fafb;
+  --cd-color-surface: #fff;
+  --cd-color-ink: #1f2937;
+  --cd-color-muted: #4b5563;
+  --cd-color-action: #4f46e5;
+  --cd-color-action-hover: #4338ca;
+  --cd-color-on-action: #fff;
+  --cd-color-info-bg: #eef2ff;
+  --cd-color-info-ink: #3730a3;
+  --cd-color-success-bg: #f0fdf4;
+  --cd-color-success-ink: #166534;
+  --cd-color-warning-bg: #fffbeb;
+  --cd-color-warning-ink: #854d0e;
+  --cd-color-error-bg: #fff1f2;
+  --cd-color-error-ink: #9f1239;
+  --cd-color-line: #e1e6ee;
+  --cd-color-control-border: #6b7280;
+  --cd-color-focus: #4f46e5;
+  --cd-space-1: .25rem;
+  --cd-space-2: .5rem;
+  --cd-space-3: .75rem;
+  --cd-space-4: 1rem;
+  --cd-space-5: 1.25rem;
+  --cd-space-6: 1.5rem;
+  --cd-space-7: 2rem;
+  --cd-space-8: 3rem;
+  --cd-space-9: 4rem;
+  --cd-radius-control: .5rem;
+  --cd-radius-card: .75rem;
+  --cd-radius-panel: 1rem;
+  --cd-motion-fast: 150ms;
+}

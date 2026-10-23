@@ -72,7 +72,6 @@ export default function EncryptTab() {
                 title="" description="" buttonText="Find recipient" showCard={false}
                 onKeyFound={handleKeyFound}
               />
-              <p className="network-note">Email lookup contacts our directory and a public keyserver. Import a key file to skip the lookup.</p>
             </div>
           )}
           <div className="recipient-alternatives">

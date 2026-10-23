@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { downloadTextFile } from '../../lib/file-helpers';
 import { readProtectedPrivateKey, verifyPrivateKeyBackup } from '../../lib/key-backup';
 import { useKeyProtection } from './useKeyProtection';
+import ActionButton from '../shared/ActionButton';
 
 interface Props {
   armoredPrivate: string;
@@ -96,7 +97,7 @@ function BackupCheck({ armoredPrivate, onVerificationChange }: Props) {
         </p>
         {protection === 'protected' && (
         <>
-          <ol className="private-key-section-body" style={{ paddingLeft: '1.25rem', lineHeight: 1.7 }}>
+          <ol className="private-key-section-body backup-instructions">
             <li>Create a secure item named “CryptDrop private key” in your password manager.</li>
             <li>Download the encrypted key below and attach the .asc file. If attachments are unavailable,
               save the entire file text, including its BEGIN and END lines, as a secure note.</li>
@@ -112,25 +113,25 @@ function BackupCheck({ armoredPrivate, onVerificationChange }: Props) {
             Consider a second encrypted copy on a separate drive. Keep access to your password manager recoverable too.
             After testing your backup, remove unnecessary copies from Downloads on shared devices.
           </p>
-          <fieldset disabled={checking} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+          <fieldset disabled={checking} className="backup-fields">
             <legend className="private-key-section-title">Test your saved backup</legend>
-            <label className="private-key-section-body" style={{ display: 'block', marginBottom: '0.75rem' }}>
+            <label className="private-key-section-body backup-confirmation">
               <input type="checkbox" checked={storedSafely} onChange={(e) => { setStoredSafely(e.target.checked); resetCheck(); }} />{' '}
               I saved the key and a way to recover its passphrase outside this browser.
             </label>
             <label htmlFor={`${id}-file`} className="private-key-section-body">Private key file retrieved from your backup</label>
-            <input id={`${id}-file`} type="file" accept=".asc,.txt,text/plain,application/pgp-keys" className="input w-full mb-3"
+            <input id={`${id}-file`} type="file" aria-describedby={`${id}-backup-help${error ? ` ${id}-backup-error` : ''}`} accept=".asc,.txt,text/plain,application/pgp-keys" className="input w-full mb-3"
               onChange={(e) => { setFile(e.target.files?.[0] ?? null); setPassphrase(''); resetCheck(); }} />
             <label htmlFor={`${id}-passphrase`} className="private-key-section-body">Backup passphrase</label>
-            <input id={`${id}-passphrase`} type="password" autoComplete="off" className="input w-full mb-3"
+            <input id={`${id}-passphrase`} type="password" autoComplete="off" className="input w-full mb-3" aria-describedby={`${id}-backup-help${error ? ` ${id}-backup-error` : ''}`}
               value={passphrase} onChange={(e) => { setPassphrase(e.target.value); resetCheck(); }} />
-            <button type="button" className="btn-vault-action" disabled={!file || !passphrase || !storedSafely || checking} onClick={checkBackup}>
-              {checking ? 'Checking backup…' : 'Verify backup'}
-            </button>
+            <ActionButton className="btn-vault-action" disabled={!file || !passphrase || !storedSafely} loading={checking} loadingText="Checking backup…" onClick={checkBackup}>
+              Verify backup
+            </ActionButton>
           </fieldset>
-          <p className="private-key-section-body">This check stays in your browser and does not replace your loaded key.
+          <p id={`${id}-backup-help`} className="private-key-section-body">Choose your retrieved backup file, enter its passphrase, and confirm that you stored it outside this browser to enable verification. This check stays in your browser and does not replace your loaded key.
             It verifies the selected file, not whether your password manager has synced or will remain available.</p>
-          {error && <p role="alert" className="private-key-section-body">{error}</p>}
+          {error && <p id={`${id}-backup-error`} role="alert" className="private-key-section-body">{error}</p>}
           {verified && <p role="status" className="private-key-section-body"><strong>Backup verified.</strong> This file matches your key and its subkeys, and its passphrase unlocks it.</p>}
         </>
         )}

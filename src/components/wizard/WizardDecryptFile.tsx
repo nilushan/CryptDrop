@@ -6,7 +6,7 @@ export default function WizardDecryptFile() {
     <div className="fade-in">
       <DecryptFilePanel
         resultActions={
-          <button onClick={() => $activeTab.set('decrypt')} className="btn-sm btn-ghost-sm" style={{ marginLeft: '0.5rem' }}>
+          <button onClick={() => $activeTab.set('decrypt')} className="btn-sm btn-ghost-sm">
             Go to Decrypt tab
           </button>
         }

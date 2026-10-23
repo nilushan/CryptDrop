@@ -1,23 +1,14 @@
 import { useStore } from '@nanostores/react';
-import { $toast, type ToastType } from '../../stores/toast';
-
-const COLORS: Record<ToastType, string> = {
-  info: 'bg-gray-800 text-white',
-  success: 'bg-green-600 text-white',
-  error: 'bg-red-600 text-white',
-  warning: 'bg-amber-600 text-white',
-};
+import { $toast } from '../../stores/toast';
 
 export default function Toast() {
   const toast = useStore($toast);
 
-  if (!toast) return null;
-
+  // Keep the live region mounted so a new message is an announced update.
+  // Form/operation owners also retain errors beside the relevant controls.
   return (
-    <div className="fixed z-50" style={{ bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)' }}>
-      <div className={`px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium ${COLORS[toast.type]}`}>
-        {toast.msg}
-      </div>
+    <div className="toast-region" role="status" aria-live="polite" aria-atomic="true">
+      {toast && <div className={`toast-message toast-${toast.type}`}>{toast.msg}</div>}
     </div>
   );
 }

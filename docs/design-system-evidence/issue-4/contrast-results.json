@@ -1,0 +1,142 @@
+{
+  "values": [
+    {
+      "label": "Primary",
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(79, 70, 229)",
+      "border": "rgb(255, 255, 255)",
+      "input": false,
+      "ratio": 6.29
+    },
+    {
+      "label": "Public",
+      "fg": "rgb(4, 120, 87)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(4, 120, 87)",
+      "input": false,
+      "ratio": 5.48
+    },
+    {
+      "label": "Publish",
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(4, 120, 87)",
+      "border": "rgb(255, 255, 255)",
+      "input": false,
+      "ratio": 5.48
+    },
+    {
+      "label": "Generate",
+      "fg": "rgb(255, 255, 255)",
+      "bg": "rgb(15, 97, 115)",
+      "border": "rgb(255, 255, 255)",
+      "input": false,
+      "ratio": 7.05
+    },
+    {
+      "label": "Ghost",
+      "fg": "rgb(93, 106, 126)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(93, 106, 126)",
+      "input": false,
+      "ratio": 5.49
+    },
+    {
+      "label": "Information",
+      "fg": "rgb(55, 48, 163)",
+      "bg": "rgb(238, 242, 255)",
+      "border": "rgb(55, 48, 163)",
+      "input": false,
+      "ratio": 8.88
+    },
+    {
+      "label": "Success",
+      "fg": "rgb(22, 101, 52)",
+      "bg": "rgb(240, 253, 244)",
+      "border": "rgb(22, 101, 52)",
+      "input": false,
+      "ratio": 6.81
+    },
+    {
+      "label": "Warning",
+      "fg": "rgb(133, 77, 14)",
+      "bg": "rgb(255, 251, 235)",
+      "border": "rgb(133, 77, 14)",
+      "input": false,
+      "ratio": 6.61
+    },
+    {
+      "label": "Error",
+      "fg": "rgb(159, 18, 57)",
+      "bg": "rgb(255, 241, 242)",
+      "border": "rgb(159, 18, 57)",
+      "input": false,
+      "ratio": 7.3
+    },
+    {
+      "label": "Weak",
+      "fg": "rgb(159, 18, 57)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(229, 231, 235)",
+      "input": false,
+      "ratio": 8.02
+    },
+    {
+      "label": "Fair",
+      "fg": "rgb(133, 77, 14)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(229, 231, 235)",
+      "input": false,
+      "ratio": 6.85
+    },
+    {
+      "label": "Strong",
+      "fg": "rgb(22, 101, 52)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(229, 231, 235)",
+      "input": false,
+      "ratio": 7.13
+    },
+    {
+      "label": "input",
+      "fg": "rgb(23, 63, 76)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(15, 97, 115)",
+      "input": true,
+      "ratio": 11.34,
+      "borderRatio": 7.05
+    },
+    {
+      "label": "Vault help",
+      "fg": "rgb(72, 102, 116)",
+      "bg": "rgb(237, 245, 247)",
+      "border": "rgb(229, 231, 235)",
+      "input": false,
+      "ratio": 5.54
+    },
+    {
+      "label": "input",
+      "fg": "rgb(0, 0, 0)",
+      "bg": "rgb(255, 255, 255)",
+      "border": "rgb(107, 114, 128)",
+      "input": true,
+      "ratio": 21,
+      "borderRatio": 4.83
+    },
+    {
+      "label": "Drop area",
+      "fg": "rgb(24, 36, 59)",
+      "bg": "rgb(249, 250, 252)",
+      "border": "rgb(107, 114, 128)",
+      "input": true,
+      "ratio": 14.85,
+      "borderRatio": 4.63
+    }
+  ],
+  "focus": {
+    "outline": "rgb(79, 70, 229)",
+    "width": "3px",
+    "offset": "4px"
+  },
+  "reducedMotion": "none",
+  "invitationFocus": "3px"
+}

@@ -3,6 +3,8 @@ import { showToast } from '../../stores/toast';
 import { sendInvitation } from '../../lib/api';
 import { useStore } from '@nanostores/react';
 import { $userInfo } from '../../stores/keys';
+import ActionButton from './ActionButton';
+import NoticeBox from './NoticeBox';
 
 interface Props {
   /** Email to pre-fill in the mailto link (optional) */
@@ -22,6 +24,7 @@ export default function InviteBox({
   className,
 }: Props) {
   const userInfo = useStore($userInfo);
+  const [status, setStatus] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -35,11 +38,13 @@ export default function InviteBox({
     if (!email) return;
     const sender = parseSenderInfo();
     if (!sender) {
+      setStatus('Set up your own keys first to send invitations');
       showToast('Set up your own keys first to send invitations', 'warning');
       return;
     }
 
     setSending(true);
+    setStatus('');
     try {
       await sendInvitation({
         senderEmail: sender.email,
@@ -51,6 +56,7 @@ export default function InviteBox({
     } catch (e) {
       // Fall back to mailto if API is unavailable
       handleFallbackEmail();
+      setStatus('Opened email client as fallback');
       showToast('Opened email client as fallback', 'info');
     } finally {
       setSending(false);
@@ -67,27 +73,29 @@ export default function InviteBox({
 
   function handleCopyInvite() {
     const text = `Hi! I want to send you an encrypted file.\n\n1. Go to: ${window.location.origin}/app\n2. Go to Keys tab and generate your keys\n3. Publish your public key to the keyserver\n4. Let me know when done — I'll search for your email!`;
-    navigator.clipboard.writeText(text).then(() => showToast('Copied!', 'success'));
+    setStatus('');
+    navigator.clipboard.writeText(text).then(
+      () => showToast('Copied!', 'success'),
+      () => {
+        setStatus('Could not copy instructions. Please try again.');
+        showToast('Could not copy instructions', 'error');
+      },
+    );
   }
 
   return (
-    <div className={`notice-box notice-warn ${className ?? ''}`}>
+    <NoticeBox variant="warn" className={className}>
       <h4 className="text-sm font-semibold text-amber-900 mb-2">{title}</h4>
       <p className="text-xs text-amber-800 mb-3">{description}</p>
-      <div className="flex gap-2">
+      <div className="action-row">
         {email && !sent && (
-          <button
-            onClick={handleSendInvite}
-            disabled={sending}
-            className="btn-sm"
-            style={{ background: '#d97706', opacity: sending ? 0.7 : 1 }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ marginRight: 4 }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/></svg>
-            {sending ? 'Sending...' : 'Send Invitation'}
-          </button>
+          <ActionButton onClick={handleSendInvite} loading={sending} loadingText="Sending…" className="btn-sm">
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/></svg>
+            Send Invitation
+          </ActionButton>
         )}
         {sent && (
-          <span className="text-xs text-green-700 font-medium" style={{ padding: '0.375rem 0.75rem' }}>
+          <span role="status" className="text-sm font-medium">
             Invitation sent! They'll get an email with a setup link.
           </span>
         )}
@@ -95,6 +103,7 @@ export default function InviteBox({
           Copy Instructions
         </button>
       </div>
-    </div>
+      {status && <p role="status" className="text-sm mt-3">{status}</p>}
+    </NoticeBox>
   );
 }
