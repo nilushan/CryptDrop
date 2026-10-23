@@ -1,0 +1,355 @@
+{
+  "checks": [
+    {
+      "name": "complete sections and reflow 320",
+      "details": "one h1, six named h2 sections, 4 safeguards/6 limits, 6 local/6 network/7 never-upload/8 measure items; no document overflow"
+    },
+    {
+      "name": "header keyboard navigation 320",
+      "details": "skip, logo, guide, security, app reached in order; 44px header targets and 3px focus"
+    },
+    {
+      "name": "bypass and security keyboard traversal 320",
+      "details": [
+        "keys.openpgp.org",
+        "private-key protections and limits",
+        "Open CryptDrop →",
+        "View CryptDrop source on GitHub",
+        "See How It Works"
+      ]
+    },
+    {
+      "name": "private-key anchor 320",
+      "details": "click scrolls to preserved private-key section, clear of sticky header"
+    },
+    {
+      "name": "noncolor disclosures and responsive layout 320",
+      "details": {
+        "safeguard": "solid",
+        "limit": "dashed",
+        "columns": 1
+      }
+    },
+    {
+      "name": "complete sections and reflow 375",
+      "details": "one h1, six named h2 sections, 4 safeguards/6 limits, 6 local/6 network/7 never-upload/8 measure items; no document overflow"
+    },
+    {
+      "name": "header keyboard navigation 375",
+      "details": "skip, logo, guide, security, app reached in order; 44px header targets and 3px focus"
+    },
+    {
+      "name": "bypass and security keyboard traversal 375",
+      "details": [
+        "keys.openpgp.org",
+        "private-key protections and limits",
+        "Open CryptDrop →",
+        "View CryptDrop source on GitHub",
+        "See How It Works"
+      ]
+    },
+    {
+      "name": "private-key anchor 375",
+      "details": "click scrolls to preserved private-key section, clear of sticky header"
+    },
+    {
+      "name": "noncolor disclosures and responsive layout 375",
+      "details": {
+        "safeguard": "solid",
+        "limit": "dashed",
+        "columns": 1
+      }
+    },
+    {
+      "name": "complete sections and reflow 768",
+      "details": "one h1, six named h2 sections, 4 safeguards/6 limits, 6 local/6 network/7 never-upload/8 measure items; no document overflow"
+    },
+    {
+      "name": "header keyboard navigation 768",
+      "details": "skip, logo, guide, security, app reached in order; 44px header targets and 3px focus"
+    },
+    {
+      "name": "bypass and security keyboard traversal 768",
+      "details": [
+        "keys.openpgp.org",
+        "private-key protections and limits",
+        "Open CryptDrop →",
+        "View CryptDrop source on GitHub",
+        "See How It Works"
+      ]
+    },
+    {
+      "name": "private-key anchor 768",
+      "details": "click scrolls to preserved private-key section, clear of sticky header"
+    },
+    {
+      "name": "noncolor disclosures and responsive layout 768",
+      "details": {
+        "safeguard": "solid",
+        "limit": "dashed",
+        "columns": 2
+      }
+    },
+    {
+      "name": "200% root text at 768",
+      "details": "no document or paragraph/list/heading overflow; not native browser zoom"
+    },
+    {
+      "name": "text spacing at 768",
+      "details": "line/letter/word/paragraph overrides retain document reflow"
+    },
+    {
+      "name": "complete sections and reflow 1280",
+      "details": "one h1, six named h2 sections, 4 safeguards/6 limits, 6 local/6 network/7 never-upload/8 measure items; no document overflow"
+    },
+    {
+      "name": "header keyboard navigation 1280",
+      "details": "skip, logo, guide, security, app reached in order; 44px header targets and 3px focus"
+    },
+    {
+      "name": "bypass and security keyboard traversal 1280",
+      "details": [
+        "keys.openpgp.org",
+        "private-key protections and limits",
+        "Open CryptDrop →",
+        "View CryptDrop source on GitHub",
+        "See How It Works"
+      ]
+    },
+    {
+      "name": "private-key anchor 1280",
+      "details": "click scrolls to preserved private-key section, clear of sticky header"
+    },
+    {
+      "name": "noncolor disclosures and responsive layout 1280",
+      "details": {
+        "safeguard": "solid",
+        "limit": "dashed",
+        "columns": 2
+      }
+    },
+    {
+      "name": "contrast",
+      "details": "26 representative rendered text/boundary/focus pairs meet thresholds, conservative hero/gradient endpoint"
+    },
+    {
+      "name": "reduced motion",
+      "details": "CTA transition disabled; no automatic page animation"
+    },
+    {
+      "name": "actual local navigation clicks",
+      "details": "app CTA, guide CTA and logo navigate to /app, /how-it-works and /"
+    }
+  ],
+  "contrast": [
+    {
+      "selector": ".security-hero h1",
+      "property": "color",
+      "color": "rgb(255, 255, 255)",
+      "background": "#312e81",
+      "ratio": 11.423054611243986,
+      "min": 3
+    },
+    {
+      "selector": ".security-hero p",
+      "property": "color",
+      "color": "rgb(199, 210, 254)",
+      "background": "#312e81",
+      "ratio": 7.6579133161298,
+      "min": 4.5
+    },
+    {
+      "selector": "#local-processing h2",
+      "property": "color",
+      "color": "rgb(31, 41, 55)",
+      "background": "#f0fdf4",
+      "ratio": 14.023098606219799,
+      "min": 3
+    },
+    {
+      "selector": "#local-processing .marketing-lead",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f0fdf4",
+      "ratio": 7.219633718359746,
+      "min": 4.5
+    },
+    {
+      "selector": ".local-card h3",
+      "property": "color",
+      "color": "rgb(22, 101, 52)",
+      "background": "#ffffff",
+      "ratio": 7.130310076434003,
+      "min": 4.5
+    },
+    {
+      "selector": ".local-card p",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": "#private-key-security .marketing-lead",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": ".security-safeguards h3",
+      "property": "color",
+      "color": "rgb(22, 101, 52)",
+      "background": "#ffffff",
+      "ratio": 7.130310076434003,
+      "min": 4.5
+    },
+    {
+      "selector": ".security-safeguards li",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": ".security-limitations h3",
+      "property": "color",
+      "color": "rgb(133, 77, 14)",
+      "background": "#fffbeb",
+      "ratio": 6.60658223464378,
+      "min": 4.5
+    },
+    {
+      "selector": ".security-limitations li",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#fffbeb",
+      "ratio": 7.287653070101234,
+      "min": 4.5
+    },
+    {
+      "selector": ".key-security-guidance",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": "#network-requests .marketing-lead",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#fffbeb",
+      "ratio": 7.287653070101234,
+      "min": 4.5
+    },
+    {
+      "selector": "#network-requests a",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#fffbeb",
+      "ratio": 7.287653070101234,
+      "min": 4.5
+    },
+    {
+      "selector": ".cloud-meta",
+      "property": "color",
+      "color": "rgb(133, 77, 14)",
+      "background": "#ffffff",
+      "ratio": 6.8511000196797465,
+      "min": 4.5
+    },
+    {
+      "selector": "#never-transmitted .marketing-lead",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#fff1f2",
+      "ratio": 6.879474023000653,
+      "min": 4.5
+    },
+    {
+      "selector": ".never-item",
+      "property": "color",
+      "color": "rgb(159, 18, 57)",
+      "background": "#ffffff",
+      "ratio": 8.015910591562179,
+      "min": 4.5
+    },
+    {
+      "selector": "#security-measures .marketing-lead",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#eef2ff",
+      "ratio": 6.758556369012658,
+      "min": 4.5
+    },
+    {
+      "selector": ".hardening-card h3",
+      "property": "color",
+      "color": "rgb(55, 48, 163)",
+      "background": "#ffffff",
+      "ratio": 9.933329874512658,
+      "min": 4.5
+    },
+    {
+      "selector": ".hardening-card p",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": "#review-source .marketing-lead",
+      "property": "color",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-primary",
+      "property": "color",
+      "color": "rgb(255, 255, 255)",
+      "background": "#4f46e5",
+      "ratio": 6.287528596095884,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta-secondary",
+      "property": "color",
+      "color": "rgb(31, 41, 55)",
+      "background": "#ffffff",
+      "ratio": 14.67911847763172,
+      "min": 4.5
+    },
+    {
+      "selector": ".security-limitations",
+      "property": "borderTopColor",
+      "color": "rgb(133, 77, 14)",
+      "background": "#fffbeb",
+      "ratio": 6.60658223464378,
+      "min": 3
+    },
+    {
+      "selector": ".marketing-cta-secondary",
+      "property": "borderTopColor",
+      "color": "rgb(107, 114, 128)",
+      "background": "#ffffff",
+      "ratio": 4.834490081424352,
+      "min": 3
+    },
+    {
+      "selector": ".marketing-cta-primary",
+      "property": "outlineColor",
+      "color": "rgb(79, 70, 229)",
+      "background": "#ffffff",
+      "ratio": 6.287528596095884,
+      "min": 3
+    }
+  ],
+  "pageErrors": []
+}

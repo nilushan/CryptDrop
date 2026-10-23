@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, URL as NodeURL } from 'node:url';
+import { keySecuritySafeguards, keySecurityLimitations } from '../src/lib/key-security';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const root = fileURLToPath(new NodeURL('../', import.meta.url));
@@ -11,12 +12,14 @@ const output = mkdtempSync(join(tmpdir(), 'cryptdrop-marketing-test-'));
 const read = (route: string) => new DOMParser().parseFromString(readFileSync(join(output, route, 'index.html'), 'utf8'), 'text/html');
 let home: Document;
 let guide: Document;
+let security: Document;
 
 beforeAll(() => {
   // Test real Astro output, not a hand-maintained HTML fixture or regex over source.
   execFileSync(process.execPath, ['node_modules/astro/astro.js', 'build', '--outDir', output], { cwd: root, stdio: 'pipe' });
   home = read('');
   guide = read('how-it-works');
+  security = read('security');
 }, 30000);
 afterAll(() => rmSync(output, { recursive: true, force: true }));
 
@@ -182,6 +185,86 @@ describe('issue-6 guide review evidence', () => {
     for(const state of ['reflow','text-200','focus','table-scrolled']) expect(captures.some(c=>c.phase==='after' && c.state===state)).toBe(true);
     for(const c of captures) {
       expect(c.route).toBe('/how-it-works');
+      const png=readFileSync(join(dir,c.file));
+      expect(png.subarray(0,8).toString('hex')).toBe('89504e470d0a1a0a');
+      expect(png.readUInt32BE(16)).toBe(c.image.width);
+      expect(png.readUInt32BE(20)).toBe(c.image.height);
+      expect(createHash('sha256').update(png).digest('hex')).toBe(c.sha256);
+    }
+  });
+});
+
+
+describe('security content marketing patterns', () => {
+  it('retains metadata, the combined route, private-key anchors and named content sections', () => {
+    expect(security.title).toBe('Security & Privacy — CryptDrop');
+    expect(security.querySelector('meta[name="description"]')?.getAttribute('content')).toBe('How CryptDrop protects your data. What stays local, what reaches the cloud, and the security measures built into every layer.');
+    expect(security.querySelectorAll('h1')).toHaveLength(1);
+    expect(security.querySelector('h1')?.textContent).toBe('Security & Privacy');
+    expect([...security.querySelectorAll('main section')].map(el=>el.id)).toEqual(['local-processing','private-key-security','network-requests','never-transmitted','security-measures','review-source']);
+    expect(security.getElementById('private-key-security-title')?.tagName).toBe('H2');
+    for(const section of security.querySelectorAll('main section')) {
+      expect(section.classList.contains('marketing-section')).toBe(true);
+      expect(security.getElementById(section.getAttribute('aria-labelledby')!)?.tagName).toBe('H2');
+    }
+    expect(security.querySelectorAll('h2')).toHaveLength(6);
+    expect(security.querySelector('[aria-current="page"]')?.getAttribute('href')).toBe('/security');
+    expect(security.querySelectorAll('astro-island, main [style]')).toHaveLength(0);
+  });
+
+  it('renders every shared safeguard and limitation verbatim, with separate headings and decorative noncolor cues', () => {
+    for(const [selector,heading,items] of [
+      ['.security-safeguards','Safeguards in place',keySecuritySafeguards],
+      ['.security-limitations','Browser limitations',keySecurityLimitations],
+    ] as const) {
+      const card=security.querySelector(selector)!;
+      expect(card.querySelector('h3')?.textContent).toBe(heading);
+      expect([...card.querySelectorAll('ul > li')].map(el=>el.textContent)).toEqual(items);
+      expect(card.querySelector('h3 svg')?.getAttribute('aria-hidden')).toBe('true');
+    }
+    expect(security.querySelector('.security-safeguards path')?.getAttribute('d')).not.toBe(security.querySelector('.security-limitations path')?.getAttribute('d'));
+    const guidance=security.querySelector('.key-security-guidance')!;
+    expect(guidance.querySelectorAll('p')).toHaveLength(4);
+    for(const caveat of ['not a guarantee that every memory copy has been securely erased','expiry timer does not unload your private key','not automatically deleted or made safe by an update','Do not delete your only copy','does not currently provide hardware-token integration','does not mean the entire application has been independently audited']) expect(guidance.textContent).toContain(caveat);
+    expect(security.querySelector('#private-key-security .marketing-lead')?.textContent).toContain('not a security certification or a guarantee against compromise');
+  });
+
+  it('keeps all local, network and never-upload categories available for the separate privacy review', () => {
+    expect(security.querySelectorAll('.local-card')).toHaveLength(6);
+    expect(security.querySelectorAll('.cloud-card')).toHaveLength(6);
+    expect([...security.querySelectorAll('.never-list > li')].map(el=>el.textContent?.trim())).toEqual(['Your private key','Your passphrase','Unencrypted file contents','Encrypted file contents','Decrypted file contents','Your activity history','Your contact list']);
+    for(const icon of security.querySelectorAll('main svg, .local-card-icon, .cloud-card-icon')) expect(icon.getAttribute('aria-hidden')).toBe('true');
+    expect(security.querySelector('#never-transmitted a')?.getAttribute('href')).toBe('#private-key-security');
+    expect(security.querySelector('#network-requests a')?.getAttribute('href')).toBe('https://keys.openpgp.org');
+  });
+
+  it('retains all security measures and the approved warning-only lookup limitation without identity guarantees', () => {
+    const cards=[...security.querySelectorAll('.hardening-card')];
+    expect(cards.map(el=>el.querySelector('h3')?.textContent)).toEqual(['Content Security Policy','Modern cryptography','Passphrase protection','Decrypted file auto-clear','Filename sanitization','Public-key lookup warnings','Security headers','No tracking or analytics']);
+    const text=cards[5].textContent!;
+    for(const phrase of ['first user ID','can show an email-mismatch warning','A missing user ID may not trigger a warning','does not reject a mismatched key, prove its owner’s identity, or rule out a malicious key','Verify the fingerprint through a trusted channel']) expect(text).toContain(phrase);
+    expect(security.querySelector('main')?.textContent).not.toMatch(/This prevents the keyserver|verifies that the returned key actually contains a matching email/);
+    for(const caveat of ['does not protect secrets from all compromised same-origin code','Imported keys retain their existing protection','dropping a reference does not guarantee secure memory erasure','this timer does not unload your private key','do not isolate one CryptDrop tab’s IndexedDB storage from another']) expect(security.querySelector('#security-measures')?.textContent).toContain(caveat);
+  });
+
+  it('uses native shared CTAs with clear purposes and preserved destinations', () => {
+    const links=[...security.querySelectorAll('#review-source .marketing-cta')];
+    expect(links.map(el=>el.getAttribute('href'))).toEqual(['/app','https://github.com/nilushan/CryptDrop','/how-it-works']);
+    expect(links.map(el=>el.textContent)).toEqual(['Open CryptDrop →','View CryptDrop source on GitHub','See How It Works']);
+    for(const link of links) expect(link.tagName).toBe('A');
+    expect(links[1].hasAttribute('target')).toBe(false);
+  });
+});
+
+describe('issue-7 security review evidence', () => {
+  it('retains before/after responsive views and disclosure/focus/reflow evidence with intact hashes', () => {
+    const dir=join(root,'docs/design-system-evidence/issue-7');
+    const { captures }=JSON.parse(readFileSync(join(dir,'manifest.json'),'utf8')) as { captures: Capture[] };
+    expect(captures).toHaveLength(11);
+    for(const phase of ['before','after']) for(const width of [375,768,1280]) expect(captures.filter(c=>c.phase===phase && c.viewport.width===width && ['mobile','tablet','desktop'].includes(c.state))).toHaveLength(1);
+    for(const state of ['reflow','text-200','focus','disclosure-mobile','disclosure-desktop']) expect(captures.some(c=>c.phase==='after' && c.state===state)).toBe(true);
+    for(const c of captures) {
+      expect(c.route).toBe('/security');
       const png=readFileSync(join(dir,c.file));
       expect(png.subarray(0,8).toString('hex')).toBe('89504e470d0a1a0a');
       expect(png.readUInt32BE(16)).toBe(c.image.width);

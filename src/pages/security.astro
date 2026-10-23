@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import MarketingSection from '../components/marketing/MarketingSection.astro';
+import MarketingCTA from '../components/marketing/MarketingCTA.astro';
 import { keySecuritySafeguards, keySecurityLimitations } from '../lib/key-security';
 
 const localItems = [
@@ -96,257 +98,128 @@ const neverSent = [
   <style>
     .security-hero {
       background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-      padding: 4rem 1.5rem 3rem;
+      padding: var(--cd-space-9) var(--cd-space-6) var(--cd-space-8);
       text-align: center;
-      border-bottom: 1px solid #312e81;
     }
     .security-hero h1 {
       font-size: 2.25rem;
+      line-height: 1.2;
       font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
+      color: var(--cd-color-on-action);
+      letter-spacing: -.03em;
+      margin: 0 auto var(--cd-space-4);
       max-width: 36rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    @media (min-width: 768px) {
-      .security-hero h1 { font-size: 2.75rem; }
     }
     .security-hero p {
       font-size: 1.125rem;
-      color: #a5b4fc;
+      color: #c7d2fe;
       max-width: 36rem;
       margin: 0 auto;
       line-height: 1.7;
     }
-
-    .sec-section {
-      max-width: 56rem;
-      margin: 0 auto;
-      padding: 3rem 1.5rem;
-    }
-    .sec-header {
-      margin-bottom: 2rem;
-    }
-    .sec-header h2 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #1f2937;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.5rem;
-    }
-    .sec-header p {
-      font-size: 0.9375rem;
-      color: #6b7280;
-      line-height: 1.7;
-      max-width: 40rem;
-    }
-
-    .sec-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      margin-bottom: 0.75rem;
-    }
-    .sec-badge-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
-    .sec-badge-amber { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
-    .sec-badge-red { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-    .sec-badge-indigo { background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; }
-
-    /* Local items grid */
-    .local-grid {
+    .security-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+      gap: var(--cd-space-4);
+      overflow-wrap: anywhere;
     }
-    @media (min-width: 640px) {
-      .local-grid { grid-template-columns: 1fr 1fr; }
-    }
-    .local-card {
-      background: #fff;
-      border: 1px solid #bbf7d0;
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-    }
-    .local-card-icon {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-    .local-card h3 {
-      font-size: 0.9375rem;
-      font-weight: 700;
-      color: #166534;
-      margin-bottom: 0.375rem;
-    }
-    .local-card p {
-      font-size: 0.8125rem;
-      color: #4b5563;
-      line-height: 1.6;
-    }
-
-    /* Cloud items */
-    .cloud-card {
-      background: #fff;
-      border: 1px solid #fde68a;
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .cloud-card:last-child { margin-bottom: 0; }
-    .cloud-card-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
+    :global(#local-processing) { background: var(--cd-color-success-bg); }
+    .security-network { background: var(--cd-color-warning-bg); }
+    .security-never { background: var(--cd-color-error-bg); }
+    :global(#security-measures) { background: var(--cd-color-info-bg); }
+    .local-card { border-color: #bbf7d0; }
+    .local-card h3 { color: var(--cd-color-success-ink); }
+    .local-card-icon { font-size: 1.5rem; margin-bottom: var(--cd-space-2); }
+    .cloud-card { border-color: #fde68a; }
+    .cloud-card + .cloud-card { margin-top: var(--cd-space-4); }
+    .cloud-card-header { display: flex; align-items: flex-start; gap: var(--cd-space-3); margin-bottom: var(--cd-space-3); }
     .cloud-card-icon {
-      font-size: 1.25rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 1.5rem;
       flex-shrink: 0;
-    }
-    .cloud-card h3 {
-      font-size: 0.9375rem;
-      font-weight: 700;
-      color: #92400e;
-      margin-bottom: 0.125rem;
-    }
-    .cloud-card .cloud-meta {
-      font-size: 0.75rem;
-      color: #b45309;
-    }
-    .cloud-card p {
-      font-size: 0.8125rem;
-      color: #4b5563;
-      line-height: 1.6;
-    }
-
-    /* Never sent list */
-    .never-list {
+      width: 2.75rem;
+      height: 2.75rem;
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
+      place-items: center;
+      background: var(--cd-color-warning-bg);
+      border-radius: var(--cd-radius-control);
     }
-    @media (min-width: 640px) {
-      .never-list { grid-template-columns: 1fr 1fr; }
-    }
+    .cloud-card h3, .cloud-card .cloud-meta { color: var(--cd-color-warning-ink); }
+    .cloud-card-header > div:last-child { min-width: 0; overflow-wrap: anywhere; }
+    .never-list { list-style: none; padding: 0; margin: 0; gap: var(--cd-space-2); }
     .never-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: #fff;
+      gap: var(--cd-space-2);
+      background: var(--cd-color-surface);
       border: 1px solid #fecaca;
-      border-radius: 0.5rem;
-      padding: 0.625rem 1rem;
-      font-size: 0.8125rem;
+      border-radius: var(--cd-radius-control);
+      padding: var(--cd-space-3) var(--cd-space-4);
+      font-size: .875rem;
+      line-height: 1.7;
       font-weight: 500;
-      color: #991b1b;
+      color: var(--cd-color-error-ink);
     }
-    .never-item svg {
-      flex-shrink: 0;
-      color: #dc2626;
+    .never-item svg { flex-shrink: 0; }
+    .hardening-card { border-color: #c7d2fe; }
+    .hardening-card h3 { color: var(--cd-color-info-ink); }
+    .security-safeguards { border-top: 4px solid var(--cd-color-success-ink); }
+    .security-safeguards h3 { color: var(--cd-color-success-ink); }
+    .security-limitations { border: 2px dashed var(--cd-color-warning-ink); background: var(--cd-color-warning-bg); }
+    .security-limitations h3 { color: var(--cd-color-warning-ink); }
+    .security-disclosure-title { display: flex; align-items: center; gap: var(--cd-space-2); }
+    .security-disclosure-title svg { flex-shrink: 0; }
+    .key-security-list {
+      list-style: disc;
+      margin: var(--cd-space-3) 0 0;
+      padding-left: var(--cd-space-5);
+      color: var(--cd-color-muted);
+      font-size: 1rem;
+      line-height: 1.7;
     }
-
-    /* Hardening section */
-    .hardening-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
+    .key-security-list li + li { margin-top: var(--cd-space-3); }
+    .key-security-guidance {
+      max-width: 40rem;
+      margin: var(--cd-space-7) auto 0;
+      color: var(--cd-color-muted);
+      font-size: 1rem;
+      line-height: 1.7;
     }
-    @media (min-width: 640px) {
-      .hardening-grid { grid-template-columns: 1fr 1fr; }
-    }
-    .hardening-card {
-      background: #fff;
-      border: 1px solid #c7d2fe;
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-    }
-    .hardening-card h3 {
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: #3730a3;
-      margin-bottom: 0.375rem;
-    }
-    .hardening-card p {
-      font-size: 0.8125rem;
-      color: #4b5563;
-      line-height: 1.6;
-    }
-
-    #private-key-security { scroll-margin-top: 6rem; }
-    .key-security-list { list-style: disc; margin: .75rem 0 0; padding-left: 1.125rem; color: #4b5563; font-size: .8125rem; line-height: 1.7; }
-    .key-security-list li + li { margin-top: .625rem; }
-    .key-security-guidance { margin-top: 1.25rem; color: #4b5563; font-size: .875rem; line-height: 1.7; }
-    .key-security-guidance p + p { margin-top: .75rem; }
-
-    /* Dividers */
-    .sec-divider {
-      border-top: 1px solid #e5e7eb;
-    }
-    .sec-bg-green { background: #f0fdf4; }
-    .sec-bg-amber { background: #fffbeb; }
-    .sec-bg-red { background: #fef2f2; }
-    .sec-bg-indigo { background: #eef2ff; }
+    .key-security-guidance p + p { margin-top: var(--cd-space-5); }
+    @media (min-width: 768px) { .security-hero h1 { font-size: 2.75rem; } }
   </style>
 
   <!-- ======================== HERO ======================== -->
-  <div class="security-hero">
+  <header class="security-hero">
     <h1>Security & Privacy</h1>
     <p>CryptDrop is designed so that your sensitive data never has to leave your device. Here's exactly what stays local and what reaches the network.</p>
-  </div>
+  </header>
 
   <!-- ======================== SECTION 1: LOCAL ONLY ======================== -->
-  <div class="sec-bg-green sec-divider">
-    <div class="sec-section">
-      <div class="sec-header">
-        <span class="sec-badge sec-badge-green">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          Local Only
-        </span>
-        <h2>What stays on your device</h2>
-        <p>These operations happen entirely in your browser. No data is sent to CryptDrop or any other server. Even if someone intercepted your network traffic, they would see none of this.</p>
-      </div>
-
-      <div class="local-grid">
+  <MarketingSection id="local-processing" heading="What stays on your device" lead="These operations happen entirely in your browser. No data is sent to CryptDrop or any other server. Even if someone intercepted your network traffic, they would see none of this.">
+      <div class="security-grid">
         {localItems.map((item) => (
-          <div class="local-card">
-            <div class="local-card-icon" set:html={item.icon} />
+          <div class="marketing-card local-card">
+            <div class="local-card-icon" aria-hidden="true" set:html={item.icon} />
             <h3>{item.title}</h3>
             <p>{item.detail}</p>
           </div>
         ))}
       </div>
-    </div>
-  </div>
+  </MarketingSection>
 
-  <section class="sec-divider" id="private-key-security" aria-labelledby="private-key-security-title">
-    <div class="sec-section">
-      <div class="sec-header">
-        <span class="sec-badge sec-badge-indigo">Understand the limits</span>
+  <section class="marketing-section marketing-section-plain" id="private-key-security" aria-labelledby="private-key-security-title">
+    <div class="marketing-container">
+      <header class="marketing-section-header">
         <h2 id="private-key-security-title">Private keys: protections and limits</h2>
-        <p>Local processing reduces what you share with servers. It does not make a browser a hardware vault. These safeguards describe the current implementation, not a security certification or a guarantee against compromise.</p>
-      </div>
-      <div class="hardening-grid">
-        <div class="hardening-card">
-          <h3>Safeguards in place</h3>
+        <p class="marketing-lead">Local processing reduces what you share with servers. It does not make a browser a hardware vault. These safeguards describe the current implementation, not a security certification or a guarantee against compromise.</p>
+      </header>
+      <div class="security-grid">
+        <div class="marketing-card security-safeguards">
+          <h3 class="security-disclosure-title"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Safeguards in place</h3>
           <ul class="key-security-list">{keySecuritySafeguards.map((item) => <li>{item}</li>)}</ul>
         </div>
-        <div class="hardening-card">
-          <h3>Browser limitations</h3>
+        <div class="marketing-card security-limitations">
+          <h3 class="security-disclosure-title"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="m12 3 10 18H2L12 3zM12 9v5m0 3v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Browser limitations</h3>
           <ul class="key-security-list">{keySecurityLimitations.map((item) => <li>{item}</li>)}</ul>
         </div>
       </div>
@@ -360,21 +233,17 @@ const neverSent = [
   </section>
 
   <!-- ======================== SECTION 2: WHAT REACHES THE CLOUD ======================== -->
-  <div class="sec-bg-amber sec-divider">
-    <div class="sec-section">
-      <div class="sec-header">
-        <span class="sec-badge sec-badge-amber">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Network Requests
-        </span>
-        <h2>What reaches the cloud</h2>
-        <p>CryptDrop makes network requests to two destinations: the <a href="https://keys.openpgp.org" style="color: #92400e; text-decoration: underline;">keys.openpgp.org</a> public keyserver, and the CryptDrop backend API (for key registry, invitations, and email notifications). Files and private keys never leave your browser.</p>
-      </div>
+  <section id="network-requests" class="marketing-section security-network" aria-labelledby="network-requests-heading">
+    <div class="marketing-container">
+      <header class="marketing-section-header">
+        <h2 id="network-requests-heading">What reaches the cloud</h2>
+        <p class="marketing-lead">CryptDrop makes network requests to two destinations: the <a href="https://keys.openpgp.org">keys.openpgp.org</a> public keyserver, and the CryptDrop backend API (for key registry, invitations, and email notifications). Files and private keys never leave your browser.</p>
+      </header>
 
       {cloudItems.map((item) => (
-        <div class="cloud-card">
+        <div class="marketing-card cloud-card">
           <div class="cloud-card-header">
-            <div class="cloud-card-icon" set:html={item.icon} />
+            <div class="cloud-card-icon" aria-hidden="true" set:html={item.icon} />
             <div>
               <h3>{item.title}</h3>
               <p class="cloud-meta">Sent to <strong>{item.where}</strong> &mdash; {item.what}</p>
@@ -384,100 +253,72 @@ const neverSent = [
         </div>
       ))}
     </div>
-  </div>
+  </section>
 
   <!-- ======================== SECTION 3: NEVER SENT ======================== -->
-  <div class="sec-bg-red sec-divider">
-    <div class="sec-section">
-      <div class="sec-header">
-        <span class="sec-badge sec-badge-red">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          Never Sent
-        </span>
-        <h2>What is never transmitted</h2>
-        <p>CryptDrop’s implemented workflows do not upload the following data. This describes normal application behavior, not a guarantee against malicious extensions, compromised code, or an infected device. See the <a href="#private-key-security" style="text-decoration: underline;">private-key protections and limits</a> above.</p>
-      </div>
+  <section id="never-transmitted" class="marketing-section security-never" aria-labelledby="never-transmitted-heading">
+    <div class="marketing-container">
+      <header class="marketing-section-header">
+        <h2 id="never-transmitted-heading">What is never transmitted</h2>
+        <p class="marketing-lead">CryptDrop’s implemented workflows do not upload the following data. This describes normal application behavior, not a guarantee against malicious extensions, compromised code, or an infected device. See the <a href="#private-key-security">private-key protections and limits</a> above.</p>
+      </header>
 
-      <div class="never-list">
+      <ul class="never-list security-grid">
         {neverSent.map((item) => (
-          <div class="never-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <li class="never-item">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             {item}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
-  </div>
+  </section>
 
   <!-- ======================== SECTION 4: SECURITY HARDENING ======================== -->
-  <div class="sec-bg-indigo sec-divider">
-    <div class="sec-section">
-      <div class="sec-header">
-        <span class="sec-badge sec-badge-indigo">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Built-in Protections
-        </span>
-        <h2>How CryptDrop hardens your security</h2>
-        <p>Beyond the encryption itself, multiple layers of protection are built into the app to minimize attack surface and protect your data.</p>
-      </div>
-
-      <div class="hardening-grid">
-        <div class="hardening-card">
+  <MarketingSection id="security-measures" heading="How CryptDrop hardens your security" lead="Beyond the encryption itself, multiple layers of protection are built into the app to minimize attack surface and protect your data." tone="gradient">
+      <div class="security-grid">
+        <div class="marketing-card hardening-card">
           <h3>Content Security Policy</h3>
           <p>The configured CSP restricts scripts to this origin and explicitly hashed inline scripts, and restricts fetch connections to this origin and keys.openpgp.org. It reduces some injection and data-exfiltration risks; it does not protect secrets from all compromised same-origin code or privileged extensions.</p>
         </div>
-        <div class="hardening-card">
+        <div class="marketing-card hardening-card">
           <h3>Modern cryptography</h3>
           <p>New keys use Curve25519 via OpenPGP.js 6.x, which implements OpenPGP encryption and signatures. Cryptographic algorithms are only one part of security; passphrases, key handling, application code, and device integrity also matter.</p>
         </div>
-        <div class="hardening-card">
+        <div class="marketing-card hardening-card">
           <h3>Passphrase protection</h3>
           <p>New key generation requires a passphrase of at least 12 characters and a minimum strength score. Imported keys retain their existing protection. Remember on this device rejects unprotected or partially protected keys. Passphrases are not persisted by the app; clearing a form does not guarantee secure memory erasure.</p>
         </div>
-        <div class="hardening-card">
+        <div class="marketing-card hardening-card">
           <h3>Decrypted file auto-clear</h3>
           <p>A five-minute timer removes the decrypted result from app state. Browser scheduling can delay timers, and dropping a reference does not guarantee secure memory erasure. Downloaded copies remain on disk, and this timer does not unload your private key.</p>
         </div>
-        <div class="hardening-card">
+        <div class="marketing-card hardening-card">
           <h3>Filename sanitization</h3>
           <p>Filenames embedded in encrypted files are sanitized on decryption to prevent path traversal attacks. Control characters, directory separators, and excessive lengths are stripped.</p>
         </div>
-        <div class="hardening-card">
-          <h3>Keyserver response validation</h3>
-          <p>When looking up a public key by email, CryptDrop verifies that the returned key actually contains a matching email in its user ID. This prevents the keyserver from returning a wrong or malicious key.</p>
+        <div class="marketing-card hardening-card">
+          <h3>Public-key lookup warnings</h3>
+          <p>Public-key lookup compares the first user ID with the searched email and can show an email-mismatch warning. A missing user ID may not trigger a warning. This check does not reject a mismatched key, prove its owner’s identity, or rule out a malicious key. Verify the fingerprint through a trusted channel.</p>
         </div>
-        <div class="hardening-card">
+        <div class="marketing-card hardening-card">
           <h3>Security headers</h3>
           <p>The deployment configuration includes HSTS, framing restrictions, Cross-Origin-Opener-Policy, and Referrer-Policy: no-referrer. When served correctly, these reduce transport, framing, opener, and referrer risks. They do not isolate one CryptDrop tab’s IndexedDB storage from another.</p>
         </div>
-        <div class="hardening-card">
+        <div class="marketing-card hardening-card">
           <h3>No tracking or analytics</h3>
           <p>The app does not include analytics scripts or tracking pixels. Network workflows include the CryptDrop API and keys.openpgp.org, as described above; generating keys also attempts to register your public key and identity with the API.</p>
         </div>
       </div>
-    </div>
-  </div>
+  </MarketingSection>
 
   <!-- ======================== SECTION 5: OPEN SOURCE ======================== -->
-  <div class="sec-divider">
-    <div class="sec-section" style="text-align: center;">
-      <h2 style="font-size: 1.5rem; font-weight: 800; color: #1f2937; letter-spacing: -0.02em; margin-bottom: 0.75rem;">Don't take our word for it</h2>
-      <p style="font-size: 0.9375rem; color: #6b7280; line-height: 1.7; max-width: 34rem; margin: 0 auto 1.5rem;">
-        CryptDrop is built on OpenPGP.js, a widely audited open-source encryption library. The source code is publicly available for review — you can read every line, inspect the network requests in your browser's DevTools, and verify every claim on this page yourself.
-      </p>
-      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-        <a href="/app" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #4f46e5; color: white; font-size: 0.9375rem; font-weight: 600; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; transition: all 0.15s ease; box-shadow: 0 1px 3px rgb(79 70 229 / 0.3);">
-          Open CryptDrop &rarr;
-        </a>
-        <a href="https://github.com/nilushan/CryptDrop" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #111827; color: white; font-size: 0.9375rem; font-weight: 600; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; transition: all 0.15s ease;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          View Source
-        </a>
-        <a href="/how-it-works" style="display: inline-flex; align-items: center; gap: 0.5rem; background: white; color: #374151; font-size: 0.9375rem; font-weight: 600; padding: 0.75rem 1.75rem; border-radius: 0.5rem; border: 1px solid #d1d5db; text-decoration: none; transition: all 0.15s ease;">
-          See How It Works
-        </a>
-      </div>
+  <MarketingSection id="review-source" heading="Don't take our word for it" lead="CryptDrop is built on OpenPGP.js, a widely audited open-source encryption library. The source code is publicly available for review — you can read every line, inspect the network requests in your browser's DevTools, and verify every claim on this page yourself.">
+    <div class="marketing-cta-group">
+      <MarketingCTA href="/app">Open CryptDrop &rarr;</MarketingCTA>
+      <MarketingCTA href="https://github.com/nilushan/CryptDrop" variant="secondary">View CryptDrop source on GitHub</MarketingCTA>
+      <MarketingCTA href="/how-it-works" variant="secondary">See How It Works</MarketingCTA>
     </div>
-  </div>
+  </MarketingSection>
 
 </Layout>
