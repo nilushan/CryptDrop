@@ -10,11 +10,13 @@ const root = fileURLToPath(new NodeURL('../', import.meta.url));
 const output = mkdtempSync(join(tmpdir(), 'cryptdrop-marketing-test-'));
 const read = (route: string) => new DOMParser().parseFromString(readFileSync(join(output, route, 'index.html'), 'utf8'), 'text/html');
 let home: Document;
+let guide: Document;
 
 beforeAll(() => {
   // Test real Astro output, not a hand-maintained HTML fixture or regex over source.
   execFileSync(process.execPath, ['node_modules/astro/astro.js', 'build', '--outDir', output], { cwd: root, stdio: 'pipe' });
   home = read('');
+  guide = read('how-it-works');
 }, 30000);
 afterAll(() => rmSync(output, { recursive: true, force: true }));
 
@@ -112,6 +114,79 @@ describe('issue-5 marketing review evidence', () => {
       expect(png.readUInt32BE(16)).toBe(capture.image.width);
       expect(png.readUInt32BE(20)).toBe(capture.image.height);
       expect(createHash('sha256').update(png).digest('hex')).toBe(capture.sha256);
+    }
+  });
+});
+
+describe('how-it-works marketing guide', () => {
+  it('keeps metadata, native CTA, route state and shared reading landmarks without hydration', () => {
+    expect(guide.title).toBe('Sending Secrets Safely — CryptDrop');
+    expect(guide.querySelector('meta[name="description"]')?.getAttribute('content')).toBe('A visual guide to understanding how encrypted file sharing works, from the real-world problem to the elegant solution.');
+    expect(guide.querySelectorAll('h1')).toHaveLength(1);
+    expect([...guide.querySelectorAll('section')].map(el => el.id)).toEqual(['problem','old-world','padlock-solution','openpgp','start-encrypting']);
+    for (const section of guide.querySelectorAll('section')) expect(guide.getElementById(section.getAttribute('aria-labelledby')!)?.tagName).toBe('H2');
+    expect(guide.querySelectorAll('h2')).toHaveLength(5);
+    expect(guide.querySelector('.marketing-cta')?.getAttribute('href')).toBe('/app');
+    expect(guide.querySelector('main a[href="/security"]')?.textContent).toContain('network services and protection limits');
+    expect(guide.querySelector('[aria-current="page"]')?.getAttribute('href')).toBe('/how-it-works');
+    expect(guide.querySelector('.marketing-skip-link')?.getAttribute('href')).toBe('#main-content');
+    expect(guide.querySelectorAll('astro-island')).toHaveLength(0);
+  });
+
+  it('preserves all nine ordered story steps and original artwork with meaningful alternatives and dimensions', () => {
+    const steps = [...guide.querySelectorAll('ol.story-steps > li')];
+    expect(steps).toHaveLength(9);
+    expect(steps.map(el=>el.querySelector('h3')?.textContent)).toEqual([
+      'Everyone Makes a Padlock and a Key','Padlocks Go on a Public Board',"Bob Grabs Alice's Padlock",'Bob Stamps His Wax Seal',"Bob Locks the Box with Alice's Padlock",'The Locked Box Travels Across Town','A Thief Tries and Fails','Alice Opens the Box',"Alice Checks Bob's Seal",
+    ]);
+    const originals = ['01-public-keys','02-public-padlock-directory','03-bob-finds-alice-padlock','04-bob-signs-document','05-bob-locks-box','06-box-in-transit','07-malicious-attempt-fails','08-alice-opens-box','09-alice-verifies-seal'];
+    steps.forEach((el,i) => {
+      expect(el.querySelector('img')?.getAttribute('src')).toBe(`/images/story/${originals[i]}.png`);
+      expect(el.querySelector('.step-label')?.textContent).toContain(`Step ${i+1}`);
+      expect(el.querySelector('.step-number')?.getAttribute('aria-hidden')).toBe('true');
+      expect(el.querySelector('.guide-prose > p:last-child')?.textContent?.length).toBeGreaterThan(100);
+    });
+    expect(guide.querySelectorAll('main img')).toHaveLength(12);
+    for(const img of guide.querySelectorAll('main img')) {
+      expect(img.getAttribute('alt')?.length).toBeGreaterThan(30);
+      expect(img.hasAttribute('width') && img.hasAttribute('height')).toBe(true);
+    }
+    expect(guide.querySelectorAll('.threat-cards [aria-hidden="true"]')).toHaveLength(7);
+  });
+
+  it('provides a named keyboard-scrollable analogy table with caption and header associations', () => {
+    const region = guide.querySelector('.marketing-table-region')!;
+    expect(region.getAttribute('role')).toBe('region');
+    expect(region.getAttribute('tabindex')).toBe('0');
+    expect(region.getAttribute('aria-label')).toBe('Padlock analogy and OpenPGP');
+    expect(guide.getElementById(region.getAttribute('aria-describedby')!)?.textContent).toContain('arrow keys');
+    expect(region.querySelector('caption')?.textContent).toBe('How the padlock story maps to CryptDrop');
+    expect(region.querySelectorAll('th[scope="col"]')).toHaveLength(3);
+    expect(region.querySelectorAll('th[scope="row"]')).toHaveLength(6);
+    expect(region.querySelectorAll('td')).toHaveLength(12);
+  });
+
+  it('retains approved threat, optional signing, identity trust and network qualifications', () => {
+    const text = guide.querySelector('main')!.textContent!;
+    expect(text).not.toMatch(/No servers|without anything ever leaving|Normal email and file sharing offer no protection|precisely how modern encryption works|definitely came from Bob|know for certain/);
+    for(const qualification of ['Transport encryption can protect files while they travel','simplified analogy','optionally signing with his private key','Unsigned files have no signature to check','a signature check can fail','independently check its fingerprint through a trusted channel','attempts to register your public key and identity','Public-key lookup and invitations also use network services','not an entirely offline workflow','CryptDrop registry, with keys.openpgp.org as a fallback','File encryption and decryption run locally']) expect(text).toContain(qualification);
+  });
+});
+
+describe('issue-6 guide review evidence', () => {
+  it('retains reviewable before/after viewport sets and edge captures with intact PNG hashes', () => {
+    const dir = join(root,'docs/design-system-evidence/issue-6');
+    const { captures } = JSON.parse(readFileSync(join(dir,'manifest.json'),'utf8')) as { captures: Capture[] };
+    expect(captures).toHaveLength(10);
+    for(const phase of ['before','after']) for(const width of [375,768,1280]) expect(captures.filter(c=>c.phase===phase && c.viewport.width===width && ['mobile','tablet','desktop'].includes(c.state))).toHaveLength(1);
+    for(const state of ['reflow','text-200','focus','table-scrolled']) expect(captures.some(c=>c.phase==='after' && c.state===state)).toBe(true);
+    for(const c of captures) {
+      expect(c.route).toBe('/how-it-works');
+      const png=readFileSync(join(dir,c.file));
+      expect(png.subarray(0,8).toString('hex')).toBe('89504e470d0a1a0a');
+      expect(png.readUInt32BE(16)).toBe(c.image.width);
+      expect(png.readUInt32BE(20)).toBe(c.image.height);
+      expect(createHash('sha256').update(png).digest('hex')).toBe(c.sha256);
     }
   });
 });

@@ -1,0 +1,155 @@
+{
+  "baseHead": "8fdcad0d47590eb52a0edf7f67d768050f60b3d6",
+  "captures": [
+    {
+      "file": "before-guide-mobile.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 443,
+        "height": 9503
+      },
+      "sha256": "fc145807fbd4752fc9d86b38453076f39a98344488c1a9f8b321ecd91478d944"
+    },
+    {
+      "file": "before-guide-tablet.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 5669
+      },
+      "sha256": "8001adb849cffc59790a53af32b56303de4efabe88b88a9b8c25ecc35f1d6e16"
+    },
+    {
+      "file": "before-guide-desktop.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 5832
+      },
+      "sha256": "ed5ae04a5841ef34271d56ab2da47e2432698b84ec297a9d24acb047b4163b7f"
+    },
+    {
+      "file": "after-guide-mobile.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 10183
+      },
+      "sha256": "faa8af9e8a79505544052769b7e28b14ad055057e050ff3c2a6867a88774c8f7"
+    },
+    {
+      "file": "after-guide-tablet.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 7167
+      },
+      "sha256": "e59caf64a36766e7b12c428394b91356c9a8fe36afdad82c52489f699f44d367"
+    },
+    {
+      "file": "after-guide-desktop.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6681
+      },
+      "sha256": "05b1b88cf102bbf20ec3a88e9c99a73c8979fe20a3d7b8a5c38268eaff33b47a"
+    },
+    {
+      "file": "after-guide-reflow.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "image": {
+        "width": 320,
+        "height": 10510
+      },
+      "sha256": "7c98fda856accd80442667bcf6bf07caf851f9fd9fe8038852909fb66b2969cc"
+    },
+    {
+      "file": "after-guide-text-200.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "text-200",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 22131
+      },
+      "sha256": "70ff48d856832100697703c518a1e7df2fff64a4667c638df30911d7cf56b5fd"
+    },
+    {
+      "file": "after-guide-table-scrolled.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "table-scrolled",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "9ebdff784298c8e412498996754ee928b2dd6742e11f3d92f7e52895aeec562a"
+    },
+    {
+      "file": "after-guide-focus.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "focus",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "f3ff5b6d874a7e6fa4de79b0a3f1b4bd2f02c610511d1fc26512270cad61cc32"
+    }
+  ]
+}
