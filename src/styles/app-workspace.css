@@ -6,6 +6,8 @@
   --app-line: var(--cd-color-line);
   --app-accent: var(--cd-color-action);
   --app-soft: #eef0ff;
+  --app-panel-shadow: 0 2px 4px rgb(24 36 59 / .025), 0 8px 24px rgb(24 36 59 / .05);
+  --app-control-shadow: 0 3px 8px rgb(24 36 59 / .08);
   background: var(--app-bg);
   color: var(--app-ink);
 }
@@ -103,7 +105,9 @@
 .workspace-guide > a { display: block; border-top: 1px solid var(--app-line); padding-top: 1rem; font-size: .75rem; color: var(--app-accent); line-height: 1.7; }
 .workspace-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; border-top: 1px solid var(--app-line); padding-top: 1.25rem; font-size: .875rem; color: var(--app-muted); }
 .workspace-footer a { display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: underline; text-underline-offset: .2em; }
-.app-layout .card, .app-layout .encrypt-panel { border: 1px solid var(--app-line); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 3px 12px rgb(24 36 59 / .025); }
+.app-layout .card, .app-layout .encrypt-panel { border: 1px solid #d5dce7; border-radius: 1rem; padding: 1.5rem; }
+/* Form panels have resting depth but never lift on hover or while typing. */
+.app-layout :is(.card, .encrypt-panel, .private-key-card, .public-key-card, .key-security-disclosure) { box-shadow: var(--app-panel-shadow); }
 .app-layout .card-title { color: var(--app-ink); font-size: .9375rem; letter-spacing: -.02em; }
 .app-layout .btn-primary { min-height: 44px; padding: .75rem 1.25rem; border-radius: .625rem; }
 .app-layout .btn-secondary { min-height: 42px; background: white; }
@@ -157,6 +161,26 @@
 .app-layout .result-download { max-width: 100%; }
 .app-layout .result-download span { min-width: 0; overflow-wrap: anywhere; text-align: left; }
 .app-layout .result-download svg { flex-shrink: 0; }
+
+/* Feedback belongs to the actual controls, not their containing forms. */
+.app-layout :is(.btn-primary, .btn-secondary, .btn-sm, .btn-vault-action, .btn-vault-secondary, .btn-vault-generate, .btn-public-action, .btn-public-publish, .card-btn, .keys-choice-card) {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+}
+.app-layout :is(.btn-primary, .btn-secondary, .btn-sm, .btn-vault-action, .btn-vault-secondary, .btn-vault-generate, .btn-public-action, .btn-public-publish, .card-btn, .keys-choice-card):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):focus-visible { box-shadow: var(--app-control-shadow); }
+.app-layout .drop-zone { transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease; }
+.app-layout .drop-zone:is(:focus-within, .dragover) { box-shadow: inset 0 0 0 1px var(--app-accent), 0 3px 12px rgb(79 70 229 / .08); }
+.app-layout .private-key-card .drop-zone:is(:focus-within, .dragover) { box-shadow: inset 0 0 0 1px var(--vault-accent), 0 3px 12px rgb(15 97 115 / .08); }
+@media (hover: hover) and (pointer: fine) {
+  .app-layout :is(.btn-primary, .btn-secondary, .btn-sm, .btn-vault-action, .btn-vault-secondary, .btn-vault-generate, .btn-public-action, .btn-public-publish, .card-btn, .keys-choice-card):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { box-shadow: var(--app-control-shadow); }
+  .app-layout .drop-zone:hover { box-shadow: 0 3px 12px rgb(24 36 59 / .07); }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app-layout :is(.card-btn, .keys-choice-card) { transition: transform 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease; }
+  .app-layout :is(.card-btn, .keys-choice-card):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { transform: translateY(-2px); }
+  .app-layout :is(.card-btn, .keys-choice-card):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active { transform: translateY(0); }
+  .app-layout .drop-icon { transition: transform 200ms ease; }
+  .app-layout .drop-zone:is(:hover, .dragover) .drop-icon { transform: translateY(-2px); }
+}
 @media (max-width: 1150px) {
   .app-shell { grid-template-columns: 220px minmax(0, 1fr); }
   .workspace-columns { grid-template-columns: minmax(0, 1fr); max-width: 720px; }

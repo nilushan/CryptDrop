@@ -37,6 +37,19 @@ describe('homepage static marketing patterns', () => {
     expect(home.querySelectorAll('astro-island')).toHaveLength(0);
   });
 
+  it('separates homepage sections without making informational cards interactive', () => {
+    for (const [id, tone] of [['problem', 'muted'], ['solution', 'plain'], ['three-steps', 'muted'], ['comparison', 'plain']]) {
+      expect(home.getElementById(id)?.classList.contains(`marketing-section-${tone}`)).toBe(true);
+    }
+    const cards = [...home.querySelectorAll('.marketing-card')];
+    expect(cards).toHaveLength(9);
+    for (const card of cards) {
+      expect(card.tagName).toBe('DIV');
+      expect(card.hasAttribute('tabindex')).toBe(false);
+      expect(card.hasAttribute('role')).toBe(false);
+    }
+  });
+
   it('preserves CTA destinations, title and bypass navigation', () => {
     expect(home.title).toBe('CryptDrop — Encrypt Files for Anyone, Right in Your Browser');
     expect([...home.querySelectorAll('.marketing-cta-primary')].map(a => a.getAttribute('href'))).toEqual(['/app','/app']);

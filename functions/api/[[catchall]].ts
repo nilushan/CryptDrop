@@ -1,3 +1,5 @@
+import type { Fetcher, PagesFunction } from '@cloudflare/workers-types';
+
 interface Env {
   CRYPTDROP_API: Fetcher;
 }

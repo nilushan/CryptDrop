@@ -31,13 +31,13 @@ import MarketingCTA from '../components/marketing/MarketingCTA.astro';
 
   <!-- ======================== HERO IMAGE ======================== -->
   <div class="hero-image-wrap">
-    <Image src={heroImage} alt="Left: credit card details exposed and readable by everyone — hackers, servers, email providers. Right: the same data encrypted into unreadable gibberish, only decrypted by the intended recipient with their private key."
+    <Image src={heroImage} alt="Unencrypted sample card details are readable to anyone with access. With CryptDrop, services and other observers see encrypted data; the matching private key lets the recipient decrypt it."
       width={848} widths={[400, 800, 1200, 1696]} sizes="(min-width: 56rem) 53rem, calc(100vw - 3rem)"
       format="webp" quality={80} loading="eager" fetchpriority="high" decoding="async" />
   </div>
 
   <!-- ======================== THE PROBLEM ======================== -->
-  <MarketingSection id="problem" heading="The problem with sending files today" tone="plain" lead="Every file you share online passes through routers, servers, and services you don't control. Any one of them could read, copy, or leak your data.">
+  <MarketingSection id="problem" heading="The problem with sending files today" tone="muted" lead="Every file you share online passes through routers, servers, and services you don't control. Any one of them could read, copy, or leak your data.">
 
     <div class="feature-grid">
       <div class="marketing-card">
@@ -122,7 +122,7 @@ import MarketingCTA from '../components/marketing/MarketingCTA.astro';
   </MarketingSection>
 
   <!-- ======================== COMPARISON ======================== -->
-  <MarketingSection id="comparison" heading="How CryptDrop compares" tone="muted">
+  <MarketingSection id="comparison" heading="How CryptDrop compares" tone="plain">
       <p id="comparison-hint" class="marketing-table-hint">Scroll horizontally to compare all columns on smaller screens. Keyboard: focus the table region, then use the arrow keys.</p>
       <div class="marketing-table-region" role="region" aria-label="File sharing comparison" aria-describedby="comparison-hint comparison-note" tabindex="0">
       <table class="marketing-table">
