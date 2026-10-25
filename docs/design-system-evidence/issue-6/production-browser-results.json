@@ -1,0 +1,287 @@
+{
+  "checks": [
+    {
+      "name": "semantics, loaded images and document reflow 320",
+      "details": "one h1, five h2, nine ordered steps, six row headers, twelve loaded meaningful images; no document overflow"
+    },
+    {
+      "name": "header keyboard order/focus 320",
+      "details": "skip, logo, guide, security, app reached; nav links have 44px targets and 3px focus"
+    },
+    {
+      "name": "bypass and guide/footer keyboard traversal 320",
+      "details": [
+        "Read about network services and protection limits",
+        "How the padlock story maps to CryptDrop In the storyIn CryptDropWhat it does  Pa",
+        "Open CryptDrop →",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security and network-service details"
+      ]
+    },
+    {
+      "name": "local table keyboard scroll 320",
+      "details": {
+        "width": 270,
+        "scrollWidth": 672
+      }
+    },
+    {
+      "name": "story responsive order 320",
+      "details": "all steps retain image then narrative DOM; desktop alternating layout, mobile single column"
+    },
+    {
+      "name": "semantics, loaded images and document reflow 375",
+      "details": "one h1, five h2, nine ordered steps, six row headers, twelve loaded meaningful images; no document overflow"
+    },
+    {
+      "name": "header keyboard order/focus 375",
+      "details": "skip, logo, guide, security, app reached; nav links have 44px targets and 3px focus"
+    },
+    {
+      "name": "bypass and guide/footer keyboard traversal 375",
+      "details": [
+        "Read about network services and protection limits",
+        "How the padlock story maps to CryptDrop In the storyIn CryptDropWhat it does  Pa",
+        "Open CryptDrop →",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security and network-service details"
+      ]
+    },
+    {
+      "name": "local table keyboard scroll 375",
+      "details": {
+        "width": 325,
+        "scrollWidth": 672
+      }
+    },
+    {
+      "name": "story responsive order 375",
+      "details": "all steps retain image then narrative DOM; desktop alternating layout, mobile single column"
+    },
+    {
+      "name": "semantics, loaded images and document reflow 768",
+      "details": "one h1, five h2, nine ordered steps, six row headers, twelve loaded meaningful images; no document overflow"
+    },
+    {
+      "name": "header keyboard order/focus 768",
+      "details": "skip, logo, guide, security, app reached; nav links have 44px targets and 3px focus"
+    },
+    {
+      "name": "bypass and guide/footer keyboard traversal 768",
+      "details": [
+        "Read about network services and protection limits",
+        "How the padlock story maps to CryptDrop In the storyIn CryptDropWhat it does  Pa",
+        "Open CryptDrop →",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security and network-service details"
+      ]
+    },
+    {
+      "name": "local table keyboard scroll 768",
+      "details": {
+        "width": 718,
+        "scrollWidth": 718
+      }
+    },
+    {
+      "name": "story responsive order 768",
+      "details": "all steps retain image then narrative DOM; desktop alternating layout, mobile single column"
+    },
+    {
+      "name": "200% root text at 768",
+      "details": "no document overflow; not native browser zoom"
+    },
+    {
+      "name": "WCAG text spacing override at 768",
+      "details": "no document overflow"
+    },
+    {
+      "name": "semantics, loaded images and document reflow 1280",
+      "details": "one h1, five h2, nine ordered steps, six row headers, twelve loaded meaningful images; no document overflow"
+    },
+    {
+      "name": "header keyboard order/focus 1280",
+      "details": "skip, logo, guide, security, app reached; nav links have 44px targets and 3px focus"
+    },
+    {
+      "name": "bypass and guide/footer keyboard traversal 1280",
+      "details": [
+        "Read about network services and protection limits",
+        "How the padlock story maps to CryptDrop In the storyIn CryptDropWhat it does  Pa",
+        "Open CryptDrop →",
+        "OpenPGP.js",
+        "keys.openpgp.org",
+        "Security and network-service details"
+      ]
+    },
+    {
+      "name": "local table keyboard scroll 1280",
+      "details": {
+        "width": 846,
+        "scrollWidth": 846
+      }
+    },
+    {
+      "name": "story responsive order 1280",
+      "details": "all steps retain image then narrative DOM; desktop alternating layout, mobile single column"
+    },
+    {
+      "name": "contrast",
+      "details": "20 rendered text pairs meet AA normal/large text thresholds; conservative gradient endpoints"
+    },
+    {
+      "name": "reduced motion",
+      "details": "CTA transition off; no image hover scaling or automatic story animation"
+    },
+    {
+      "name": "navigation clicks",
+      "details": "guide CTA opens app; disclosure opens security; logo opens homepage"
+    }
+  ],
+  "contrast": [
+    {
+      "selector": ".guide-hero h1",
+      "color": "rgb(31, 41, 55)",
+      "background": "#fef2f2",
+      "ratio": 13.41893669124869,
+      "min": 3
+    },
+    {
+      "selector": ".guide-hero p",
+      "color": "rgb(75, 85, 99)",
+      "background": "#fef2f2",
+      "ratio": 6.90858778941366,
+      "min": 4.5
+    },
+    {
+      "selector": "#problem .guide-prose p:not(.chapter-label)",
+      "color": "rgb(75, 85, 99)",
+      "background": "#fef2f2",
+      "ratio": 6.90858778941366,
+      "min": 4.5
+    },
+    {
+      "selector": ".chapter-label",
+      "color": "rgb(55, 48, 163)",
+      "background": "#fef2f2",
+      "ratio": 9.080567400725823,
+      "min": 4.5
+    },
+    {
+      "selector": ".threat-cards li",
+      "color": "rgb(75, 85, 99)",
+      "background": "#ffffff",
+      "ratio": 7.557378129674007,
+      "min": 4.5
+    },
+    {
+      "selector": "#old-world .marketing-lead",
+      "color": "rgb(75, 85, 99)",
+      "background": "#eef2ff",
+      "ratio": 6.758556369012658,
+      "min": 4.5
+    },
+    {
+      "selector": "#padlock-solution .marketing-lead",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f9fafb",
+      "ratio": 7.231762080351423,
+      "min": 4.5
+    },
+    {
+      "selector": ".story-text h3",
+      "color": "rgb(31, 41, 55)",
+      "background": "#f9fafb",
+      "ratio": 14.046656202460271,
+      "min": 4.5
+    },
+    {
+      "selector": ".story-text > p:last-child",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f9fafb",
+      "ratio": 7.231762080351423,
+      "min": 4.5
+    },
+    {
+      "selector": ".step-label",
+      "color": "rgb(55, 48, 163)",
+      "background": "#f9fafb",
+      "ratio": 9.505343928215126,
+      "min": 4.5
+    },
+    {
+      "selector": ".step-number",
+      "color": "rgb(255, 255, 255)",
+      "background": "#4f46e5",
+      "ratio": 6.287528596095884,
+      "min": 4.5
+    },
+    {
+      "selector": "#openpgp .marketing-lead",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f0fdf4",
+      "ratio": 7.219633718359746,
+      "min": 4.5
+    },
+    {
+      "selector": "#openpgp .guide-prose p:not(.chapter-label)",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f0fdf4",
+      "ratio": 7.219633718359746,
+      "min": 4.5
+    },
+    {
+      "selector": "#openpgp a",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f0fdf4",
+      "ratio": 7.219633718359746,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-table-hint",
+      "color": "rgb(75, 85, 99)",
+      "background": "#f0fdf4",
+      "ratio": 7.219633718359746,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-table th",
+      "color": "rgb(31, 41, 55)",
+      "background": "#ffffff",
+      "ratio": 14.67911847763172,
+      "min": 4.5
+    },
+    {
+      "selector": ".col-tech",
+      "color": "rgb(55, 48, 163)",
+      "background": "#ffffff",
+      "ratio": 9.933329874512658,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-table td:last-child",
+      "color": "rgb(31, 41, 55)",
+      "background": "#ffffff",
+      "ratio": 14.67911847763172,
+      "min": 4.5
+    },
+    {
+      "selector": "#start-encrypting .marketing-lead",
+      "color": "rgb(75, 85, 99)",
+      "background": "#eef2ff",
+      "ratio": 6.758556369012658,
+      "min": 4.5
+    },
+    {
+      "selector": ".marketing-cta",
+      "color": "rgb(255, 255, 255)",
+      "background": "#4f46e5",
+      "ratio": 6.287528596095884,
+      "min": 4.5
+    }
+  ],
+  "pageErrors": []
+}

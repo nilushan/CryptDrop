@@ -1,0 +1,590 @@
+{
+  "baseHead": "a04d0f9bb01557faf4c6c2b88dedb1897126e994",
+  "captures": [
+    {
+      "file": "before-security-mobile.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 11297
+      },
+      "sha256": "37bda4f70c599260ae8c45db41114487b98bcd63037041e106a78065d0d27b57"
+    },
+    {
+      "file": "before-security-tablet.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 7006
+      },
+      "sha256": "670331d6adcf63053498bfeef76da589271ca30d223cfd4b523fc242adf8d001"
+    },
+    {
+      "file": "before-security-desktop.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6588
+      },
+      "sha256": "249123365e512423c25b00884f4192a9ef05fe73ac5ed83b7271d2008203679f"
+    },
+    {
+      "file": "before-home-mobile.png",
+      "phase": "before",
+      "route": "/",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 6556
+      },
+      "sha256": "55f67872b2e7d1fc7b5a370fca09cde2622cdd4f77e1ca648b9fc540456fa1f8"
+    },
+    {
+      "file": "before-home-tablet.png",
+      "phase": "before",
+      "route": "/",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 4674
+      },
+      "sha256": "9c5bcf2c71e787589c94face2bc2f1a9eb1671d20e05a9887ef85de19246d98a"
+    },
+    {
+      "file": "before-home-desktop.png",
+      "phase": "before",
+      "route": "/",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 4311
+      },
+      "sha256": "8c3c94adcb2dbf1c6493c3e73c3de1f96af6605f54cbab0e0013d94739722a15"
+    },
+    {
+      "file": "before-guide-mobile.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 10183
+      },
+      "sha256": "faa8af9e8a79505544052769b7e28b14ad055057e050ff3c2a6867a88774c8f7"
+    },
+    {
+      "file": "before-guide-tablet.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 7167
+      },
+      "sha256": "e59caf64a36766e7b12c428394b91356c9a8fe36afdad82c52489f699f44d367"
+    },
+    {
+      "file": "before-guide-desktop.png",
+      "phase": "before",
+      "route": "/how-it-works",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6681
+      },
+      "sha256": "05b1b88cf102bbf20ec3a88e9c99a73c8979fe20a3d7b8a5c38268eaff33b47a"
+    },
+    {
+      "file": "before-invite-mobile.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "f08dbf904742bc41ba6f3556bf7a300901c33dfc1fcbcec79cd819a062f19279"
+    },
+    {
+      "file": "before-invite-tablet.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "bbfe13928efec0fd25b672346b9d959577c426e194b1343a91920e42d2176da2"
+    },
+    {
+      "file": "before-invite-desktop.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "1a7e900539845e14773a5afeb5c0af41fcf2e912f9eb9c1881ff9d3ad91976bd"
+    },
+    {
+      "file": "before-app-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1815
+      },
+      "sha256": "3758bc3fc80678df0bcca8f5f94a9179966ff9c950ee53ecdf6b0314cb1671a0"
+    },
+    {
+      "file": "before-app-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1556
+      },
+      "sha256": "0e6264a34eeaeaa2070155aa986099c92a4aee3890c8161983ebcf865d34dff0"
+    },
+    {
+      "file": "before-app-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1057
+      },
+      "sha256": "429d2e2525faa1fc9869b075a1a79a4e8b605acdfe068ee456e4180aca6d34f3"
+    },
+    {
+      "file": "before-generate-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "generation-notice-mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1884
+      },
+      "sha256": "e72e307d19c497aafcca226bfa562a1db609d9ea5419556abf01001bda3d0f33"
+    },
+    {
+      "file": "before-generate-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "generation-notice-tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1643
+      },
+      "sha256": "566a0ac001bacd47282ed2627308e7ea895d539733ab4cc9b40434ed8a8674db"
+    },
+    {
+      "file": "before-generate-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "generation-notice-desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1020
+      },
+      "sha256": "6a8d1777da36498f07aa21091305ee98c31dceced4b26a12bf1c4b2fa48f9719"
+    },
+    {
+      "file": "after-security-mobile.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 14214
+      },
+      "sha256": "c2a2cf797de26013e2023d78805405d83cbaee761c5bc7c265f11117f73e27bc"
+    },
+    {
+      "file": "after-security-tablet.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 8579
+      },
+      "sha256": "e8d3bea024003fd5c812b573ce27b2b992cf695ee787fa8832211ba9b53fac5d"
+    },
+    {
+      "file": "after-security-desktop.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 8110
+      },
+      "sha256": "55f2456a03c2f0a6ca4f38eccd886a09cfd17e4a4b95eab0fa3eb783f49091b1"
+    },
+    {
+      "file": "after-security-reflow.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "image": {
+        "width": 320,
+        "height": 16898
+      },
+      "sha256": "608185c71744f70470d842b53790b12ee7255ed9b8aa977f5ff7b1b54cfbc61f"
+    },
+    {
+      "file": "after-security-text-200.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "text-200",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 26991
+      },
+      "sha256": "a169931e8684f6f0c7e4485a9656ceff5e0b3bb9ed6f3169821c61130a1b1095"
+    },
+    {
+      "file": "after-security-focus.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "focus",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "85e2306b8df7860ec75d037eefc7d81ece507fe364767b2346dd4f6c74e81444"
+    },
+    {
+      "file": "after-home-mobile.png",
+      "phase": "after",
+      "route": "/",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 6556
+      },
+      "sha256": "7e6f73a5c9883f3edd358d52fbea35e52c09445c31d889be4c6b5fd4f8c00faf"
+    },
+    {
+      "file": "after-home-tablet.png",
+      "phase": "after",
+      "route": "/",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 4698
+      },
+      "sha256": "db8f953427a713f48e2f9eb72f02dae6b135ed11b029ec37b980a678f708818b"
+    },
+    {
+      "file": "after-home-desktop.png",
+      "phase": "after",
+      "route": "/",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 4311
+      },
+      "sha256": "3cc18c2dd7b073fbd587edcab94d953b9d32e67b60637ce1e9362043cb8cac38"
+    },
+    {
+      "file": "after-guide-mobile.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 10183
+      },
+      "sha256": "44555656826f7b9f232d22b088d3204ec31a6c9ea965e1428a0f45afb1bf002e"
+    },
+    {
+      "file": "after-guide-tablet.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 7190
+      },
+      "sha256": "5ece334e9494174fb38797b6f785218fc0d24318193668438e940d50a512cb09"
+    },
+    {
+      "file": "after-guide-desktop.png",
+      "phase": "after",
+      "route": "/how-it-works",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6681
+      },
+      "sha256": "adfa605a6654741d64ab6e80515724fa7a9d45367c27254d0099e3bf4d0044e8"
+    },
+    {
+      "file": "after-invite-mobile.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "4619abcd0117efa74b0b0fba1bfe557ffee41773fb7ba1ce1215dd983ad102fc"
+    },
+    {
+      "file": "after-invite-tablet.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "0664d2210c7256d69b1eb230749ba9cedc85420d24e44877830538d6bc19936b"
+    },
+    {
+      "file": "after-invite-desktop.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "47323e55a8486cb61ace671b3dd9ccf8baef08b02bbd7b5b6fa347197efee5a3"
+    },
+    {
+      "file": "after-app-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1893
+      },
+      "sha256": "8ef45befd6c74bab060c60cc79bde0f95b5bb27ea9295f4535b6f7de8d1252b0"
+    },
+    {
+      "file": "after-app-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1582
+      },
+      "sha256": "5da302eae894da882e66407b1c7a2f53ed1e4dd1054aea63833606a0faf556de"
+    },
+    {
+      "file": "after-app-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1083
+      },
+      "sha256": "afb210f51eff0526c16f9cc316d888172a9045b46b5070a71e165a5c498a8da6"
+    },
+    {
+      "file": "after-generate-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "generation-notice-mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 2068
+      },
+      "sha256": "de4f3aa8a9a0151969a8cd4ed2d3dc148d21094fd7f137b2a4572150a34b6cb0"
+    },
+    {
+      "file": "after-generate-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "generation-notice-tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1746
+      },
+      "sha256": "ee9e6e010ec66978bb6697a5798a0e27034076196b9f3c7bfb42a15d5c312e92"
+    },
+    {
+      "file": "after-generate-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "generation-notice-desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1100
+      },
+      "sha256": "4157784fcfdcc1e672e019357764ca6de46326d19dae23488e079a76c13693a3"
+    }
+  ]
+}

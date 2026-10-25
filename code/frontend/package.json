@@ -1,0 +1,37 @@
+{
+  "name": "@cryptdrop/frontend",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "dev:pages": "wrangler pages dev --port 4321 --persist-to ../.wrangler/state",
+    "build": "astro build",
+    "deploy": "npm run build && wrangler pages deploy",
+    "check:pages": "wrangler pages functions build --outdir .wrangler/functions-check",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.2",
+    "@nanostores/react": "^1.1.0",
+    "astro": "^5.0.0",
+    "nanostores": "^1.2.0",
+    "openpgp": "6.3.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@cloudflare/workers-types": "4.20260331.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^29.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}

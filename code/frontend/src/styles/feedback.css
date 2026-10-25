@@ -1,0 +1,12 @@
+/* Shared feedback visuals, scoped to app consumers (including the invitation bridge). */
+:where(.app-layout, .invite-page-container) .notice-box {
+  border: 1px solid currentColor; border-radius: var(--cd-radius-control);
+  padding: var(--cd-space-3) var(--cd-space-4); font-size: .875rem; line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+:where(.app-layout, .invite-page-container) .notice-info { background: var(--cd-color-info-bg); color: var(--cd-color-info-ink); }
+:where(.app-layout, .invite-page-container) .notice-warn { background: var(--cd-color-warning-bg); color: var(--cd-color-warning-ink); }
+:where(.app-layout, .invite-page-container) .notice-success { background: var(--cd-color-success-bg); color: var(--cd-color-success-ink); }
+:where(.app-layout, .invite-page-container) .notice-error { background: var(--cd-color-error-bg); color: var(--cd-color-error-ink); }
+:where(.app-layout, .invite-page-container) .notice-box p { margin-top: 0; }
+:where(.app-layout, .invite-page-container) .notice-box p:last-child { margin-bottom: 0; }

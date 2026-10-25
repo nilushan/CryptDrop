@@ -1,0 +1,18 @@
+---
+interface Props {
+  id: string;
+  heading: string;
+  lead?: string;
+  tone?: 'plain' | 'muted' | 'gradient';
+}
+const { id, heading, lead, tone = 'plain' } = Astro.props;
+---
+<section id={id} class:list={['marketing-section', `marketing-section-${tone}`]} aria-labelledby={`${id}-heading`}>
+  <div class="marketing-container">
+    <header class="marketing-section-header">
+      <h2 id={`${id}-heading`}>{heading}</h2>
+      {lead && <p class="marketing-lead">{lead}</p>}
+    </header>
+    <slot />
+  </div>
+</section>

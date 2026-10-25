@@ -1,0 +1,170 @@
+{
+  "baseHead": "4ee6e1a99d0e92563e035d851bcc06b87701cb43",
+  "captures": [
+    {
+      "file": "before-security-mobile.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 10434
+      },
+      "sha256": "e26155e8d2b1be01c33b8163edbe3d6996e93c429201417aed06daf588819c17"
+    },
+    {
+      "file": "before-security-tablet.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 6576
+      },
+      "sha256": "8bf52454b5fbf5d2a9a929cdd6c81b139992697d543d2333d0bd19ae167aa617"
+    },
+    {
+      "file": "before-security-desktop.png",
+      "phase": "before",
+      "route": "/security",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6299
+      },
+      "sha256": "9b80e831d4cfacdba77d04a0a5fb30b4f679b8a9ad40c8710b46caf9f5403c54"
+    },
+    {
+      "file": "after-security-mobile.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 11297
+      },
+      "sha256": "37bda4f70c599260ae8c45db41114487b98bcd63037041e106a78065d0d27b57"
+    },
+    {
+      "file": "after-security-tablet.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "tablet",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 7006
+      },
+      "sha256": "670331d6adcf63053498bfeef76da589271ca30d223cfd4b523fc242adf8d001"
+    },
+    {
+      "file": "after-security-desktop.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 6588
+      },
+      "sha256": "249123365e512423c25b00884f4192a9ef05fe73ac5ed83b7271d2008203679f"
+    },
+    {
+      "file": "after-security-reflow.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "reflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "image": {
+        "width": 320,
+        "height": 13232
+      },
+      "sha256": "6688ba051aa45c672174bb3324310480030355e1fc25f68cfee7cf15a27beea8"
+    },
+    {
+      "file": "after-security-text-200.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "text-200",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 21609
+      },
+      "sha256": "702b2005d5ac4f9e8c95ad2b45b5ef6bf41a640f17084373a2315d2ec2b51912"
+    },
+    {
+      "file": "after-security-focus.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "focus",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "65e5c3cd8f27f8f2152548d4a931821f60807662cdfaf2c3633cde41c889520f"
+    },
+    {
+      "file": "after-security-disclosure-mobile.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "disclosure-mobile",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 2680
+      },
+      "sha256": "c1a185af8b5225ea98e6d3369802598dbe5e542e262a5634cd0677bb82353710"
+    },
+    {
+      "file": "after-security-disclosure-desktop.png",
+      "phase": "after",
+      "route": "/security",
+      "state": "disclosure-desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1530
+      },
+      "sha256": "db71076c41105c08613c61604b4ed21dba42f47f722c54bc3a18024defd62fb8"
+    }
+  ]
+}

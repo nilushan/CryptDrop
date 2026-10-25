@@ -1,0 +1,211 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import realWorldImage from '../assets/images/story/00b-real-world.png';
+import problemImage from '../assets/images/story/00-the-problem.png';
+import publicKeysImage from '../assets/images/story/01-public-keys.png';
+import directoryImage from '../assets/images/story/02-public-padlock-directory.png';
+import findPadlockImage from '../assets/images/story/03-bob-finds-alice-padlock.png';
+import signImage from '../assets/images/story/04-bob-signs-document.png';
+import lockImage from '../assets/images/story/05-bob-locks-box.png';
+import transitImage from '../assets/images/story/06-box-in-transit.png';
+import attackImage from '../assets/images/story/07-malicious-attempt-fails.png';
+import openImage from '../assets/images/story/08-alice-opens-box.png';
+import verifyImage from '../assets/images/story/09-alice-verifies-seal.png';
+import solutionImage from '../assets/images/story/10-cryptdrop-solution.png';
+import MarketingSection from '../components/marketing/MarketingSection.astro';
+import MarketingCTA from '../components/marketing/MarketingCTA.astro';
+
+// Match the 56rem container, 1.5rem side padding and 2rem two-column gap.
+const imageSizes = '(min-width: 56rem) 25.5rem, (min-width: 48rem) calc((100vw - 5rem) / 2), calc(100vw - 3rem)';
+const imageWidths = [400, 640, 820, 1280];
+
+const solutionSteps = [
+  {
+    image: publicKeysImage,
+    alt: 'Alice at her workbench with a golden key and matching padlocks',
+    title: 'Everyone Makes a Padlock and a Key',
+    description: 'Alice creates a golden key that she keeps secret, and many identical padlocks she can share with anyone. In this story, her golden key opens her padlocks. Think of the padlock as her public key and the golden key as her private key.',
+  },
+  {
+    image: directoryImage,
+    alt: 'A town board displaying padlocks for different people',
+    title: 'Padlocks Go on a Public Board',
+    description: 'Alice hangs her padlocks on a public board in the town square. Bob, Carol, and others do the same. Anyone who wants to send someone a secret can grab their padlock from the board. This represents a directory of public keys, not private keys.',
+  },
+  {
+    image: findPadlockImage,
+    alt: 'Bob selecting a padlock from the public directory',
+    title: "Bob Grabs Alice's Padlock",
+    description: "Bob wants to send Alice a secret document. He visits the board and picks up one of Alice's padlocks. He checks its unique marking with Alice through a trusted channel. In CryptDrop, compare the public key's fingerprint independently; finding a key by email alone does not establish its owner's identity.",
+  },
+  {
+    image: signImage,
+    alt: 'Bob pressing a wax seal onto his document',
+    title: 'Bob Stamps His Wax Seal',
+    description: "Before sealing the document, Bob chooses to add his own wax seal. This represents optionally signing with his private key. A signature lets Alice check whether it matches the chosen sender public key and whether the signed content has changed; it does not establish Bob's identity on its own.",
+  },
+  {
+    image: lockImage,
+    alt: "Bob closing a document box with Alice's padlock",
+    title: "Bob Locks the Box with Alice's Padlock",
+    description: "Bob places the document into a sturdy metal box and snaps Alice's padlock shut. In the story, he cannot reopen that box without her key. In CryptDrop, he encrypts for Alice's public key so that the matching private key can decrypt the result. Bob may still have his original file.",
+  },
+  {
+    image: transitImage,
+    alt: 'A courier carrying the locked box through town',
+    title: 'The Locked Box Travels Across Town',
+    description: 'A courier carries the locked box through busy streets, crowded markets, and past nosy neighbours. The lock protects the contents along the way. Likewise, Bob can send the encrypted file using his preferred channel, rather than relying only on that channel to protect the readable contents.',
+  },
+  {
+    image: attackImage,
+    alt: 'An interceptor unable to open the box with a collection of other keys',
+    title: 'A Thief Tries and Fails',
+    description: "A shadowy figure intercepts the box and tries every key they own. None fits Alice's padlock. The lesson is to keep the private key secret: encryption cannot protect a file from someone who gains access to the required key or to a readable copy on a compromised device.",
+  },
+  {
+    image: openImage,
+    alt: 'Alice using her golden key to open the delivered box',
+    title: 'Alice Opens the Box',
+    description: 'The box arrives at Alice\'s workshop. She takes out her golden key and opens the lock. In CryptDrop, Alice uses her matching private key to decrypt the encrypted file in her browser. Opening the file is separate from checking a signature.',
+  },
+  {
+    image: verifyImage,
+    alt: "Alice inspecting the seal on Bob's document",
+    title: "Alice Checks Bob's Seal",
+    description: "If Bob signed the file, Alice can check its signature using his public key. A successful check means the signed content matches that key and has not changed since signing. To connect that key to Bob, she must independently check its fingerprint through a trusted channel. Unsigned files have no signature to check, and a signature check can fail.",
+  },
+];
+
+const analogyMap = [
+  { analogy: 'Padlock', real: 'Public key', desc: 'Shared so others can encrypt for you; check the fingerprint before trusting its identity' },
+  { analogy: 'Golden key', real: 'Private key', desc: 'Kept secret; the matching private key decrypts files encrypted for you' },
+  { analogy: 'Wax seal', real: 'Digital signature', desc: 'Optional; checked with the sender public key for signed-content integrity, not identity by itself' },
+  { analogy: 'Locked box', real: 'Encrypted file (.pgp)', desc: 'The encrypted output you download and share through your chosen channel' },
+  { analogy: 'Public board', real: 'Public-key directory', desc: 'CryptDrop registry, with keys.openpgp.org as a fallback for discovery' },
+  { analogy: 'Town courier', real: 'The internet', desc: 'The path used to send the encrypted file to the recipient' },
+];
+---
+
+<Layout title="Sending Secrets Safely — CryptDrop" description="A visual guide to understanding how encrypted file sharing works, from the real-world problem to the elegant solution.">
+  <article class="guide-page">
+    <header class="guide-hero">
+      <div class="marketing-container">
+        <h1>How Do You Send a Secret Nobody Else Can Read?</h1>
+        <p>Files can pass through many systems before they reach the other person. Here's why protecting the contents matters — and how public and private keys help.</p>
+      </div>
+    </header>
+
+    <MarketingSection id="problem" heading="Your files pass through strangers">
+      <div class="problem-scene">
+        <Image src={realWorldImage} alt="Two people at computers, with network services and possible interceptors between them"
+          width={408} widths={imageWidths} sizes={imageSizes} format="webp" quality={80} loading="eager" decoding="async" />
+        <div class="guide-prose">
+          <p class="chapter-label">Part 1 — The problem</p>
+          <p>When you send a file over the internet, it may pass through Wi-Fi routers, internet service providers, cloud servers, and email relays. Transport encryption can protect files while they travel, but a provider handling readable copies or a compromised endpoint may still expose them. File encryption adds protection for the contents before you share them.</p>
+          <ul class="threat-cards" aria-label="Examples of exposure risks">
+            <li class="marketing-card"><span aria-hidden="true">📡</span>Insecure networks</li>
+            <li class="marketing-card"><span aria-hidden="true">🖥️</span>Server breaches</li>
+            <li class="marketing-card"><span aria-hidden="true">👁️</span>Surveillance</li>
+            <li class="marketing-card"><span aria-hidden="true">🧑‍💻</span>Compromised devices</li>
+          </ul>
+        </div>
+      </div>
+    </MarketingSection>
+
+    <MarketingSection id="old-world" heading="Now Imagine the Same Problem, Centuries Ago" lead="To understand the solution, let's tell the story a different way — with padlocks, sealed letters, and a town full of curious couriers." tone="gradient">
+      <div class="problem-scene reverse-scene">
+        <Image src={problemImage} alt="An unsealed scroll passing through several couriers across a medieval landscape"
+          width={408} widths={imageWidths} sizes={imageSizes} format="webp" quality={80} loading="lazy" decoding="async" />
+        <div class="guide-prose">
+          <p class="chapter-label">The old world version</p>
+          <h3>A secret that passes through five hands</h3>
+          <p>Alice needs to send a confidential scroll to Bob. But the journey is long — it passes through a village messenger, a horseback courier, a river barge operator, a postal clerk, and a delivery boy. In this story, every person unfolds it and reads every word. By the time it reaches Bob, the secret is no longer a secret.</p>
+          <ul class="threat-cards" aria-label="Risks to the unsealed scroll">
+            <li class="marketing-card"><span aria-hidden="true">👀</span>Peeking</li>
+            <li class="marketing-card"><span aria-hidden="true">📋</span>Copying</li>
+            <li class="marketing-card"><span aria-hidden="true">✏️</span>Tampering</li>
+          </ul>
+        </div>
+      </div>
+    </MarketingSection>
+
+    <MarketingSection id="padlock-solution" heading="The Padlock Solution" lead="What if each recipient could share a lock, but keep the key secret? This is a simplified analogy for public-key encryption and optional signatures, not the exact mechanics of OpenPGP." tone="muted">
+      <ol class="story-steps" role="list">
+        {solutionSteps.map((step, i) => (
+          <li class:list={['story-step', { reverse: i % 2 === 1 }]}>
+            <Image class="story-image" src={step.image} alt={step.alt} width={408}
+              widths={imageWidths.map((width) => Math.min(width, step.image.width))}
+              sizes={imageSizes} format="webp" quality={80} loading="lazy" decoding="async" />
+            <div class="story-text guide-prose">
+              <p class="step-label"><span class="step-number" aria-hidden="true">{i + 1}</span>Step {i + 1}</p>
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </MarketingSection>
+
+    <MarketingSection id="openpgp" heading="From Padlocks to OpenPGP" lead="The story explains the roles of keys and signatures. OpenPGP is a standard for encryption and digital signatures; CryptDrop uses the OpenPGP.js library to work with it in your browser.">
+      <div class="problem-scene technology-scene">
+        <Image src={solutionImage} alt="Illustrated overview: public and private keys, file encryption and signing, then decryption and signature checking"
+          width={408} widths={imageWidths} sizes={imageSizes} format="webp" quality={80} loading="lazy" decoding="async" />
+        <div class="guide-prose">
+          <p class="chapter-label">The real technology</p>
+          <h3>Same idea. Digital keys.</h3>
+          <p>Generate or import keys, find a recipient's public key, encrypt a file, and optionally sign it with your private key. The recipient decrypts with their private key and can check a signature with the sender's public key. Independently check key fingerprints through a trusted channel before relying on an identity.</p>
+          <p>File encryption and decryption run locally. Generating keys asks for your name and email and attempts to register your public key and identity. Public-key lookup and invitations also use network services; this is not an entirely offline workflow. <a href="/security">Read about network services and protection limits</a>.</p>
+        </div>
+      </div>
+      <p id="analogy-hint" class="marketing-table-hint">Compare the story with the technology below. On narrow screens, scroll the table horizontally; keyboard users can focus it and use the arrow keys.</p>
+      <div class="marketing-table-region" role="region" aria-label="Padlock analogy and OpenPGP" aria-describedby="analogy-hint" tabindex="0">
+        <table class="marketing-table analogy-table">
+          <caption>How the padlock story maps to CryptDrop</caption>
+          <thead><tr><th scope="col">In the story</th><th scope="col">In CryptDrop</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            {analogyMap.map((row) => (
+              <tr><th scope="row">{row.analogy}</th><td class="col-tech">{row.real}</td><td>{row.desc}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </MarketingSection>
+
+    <MarketingSection id="start-encrypting" heading="Ready to Send Your First Secret?" lead="Encrypt files in your browser, then share the encrypted result using your preferred channel." tone="gradient">
+      <div class="marketing-cta-group"><MarketingCTA href="/app">Open CryptDrop &rarr;</MarketingCTA></div>
+    </MarketingSection>
+  </article>
+</Layout>
+
+<style>
+  /* Chapter artwork and alternating story layout stay guide-specific; reading/actions use the shared catalog. */
+  .guide-hero { padding-block: var(--cd-space-9); background: linear-gradient(135deg, #fef2f2, #fff7ed 40%, #fefce8); text-align: center; }
+  .guide-hero h1 { max-width: 36rem; margin: 0 auto var(--cd-space-4); font-size: 2.25rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.2; color: var(--cd-color-ink); }
+  .guide-hero p { max-width: 34rem; margin: auto; font-size: 1.125rem; line-height: 1.7; color: var(--cd-color-muted); }
+  :global(.guide-page #problem) { background: linear-gradient(135deg, #fef2f2, #fff7ed 50%, #fefce8); }
+  :global(.guide-page #old-world) { background: linear-gradient(to bottom, #fefce8, var(--cd-color-info-bg)); }
+  :global(.guide-page #openpgp) { background: linear-gradient(135deg, var(--cd-color-success-bg), #f0fdfa); }
+  .problem-scene, .story-step { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--cd-space-7); align-items: center; }
+  .problem-scene img, .story-image { width: 100%; height: auto; border-radius: var(--cd-radius-panel); box-shadow: 0 4px 24px rgb(0 0 0 / .08); }
+  .guide-prose { min-width: 0; }
+  .guide-prose h3 { margin: 0 0 var(--cd-space-3); font-size: 1.25rem; line-height: 1.35; font-weight: 700; letter-spacing: -.02em; }
+  .guide-prose p { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--cd-color-muted); }
+  .guide-prose p + p { margin-top: var(--cd-space-4); }
+  .guide-prose .chapter-label { margin-bottom: var(--cd-space-3); color: var(--cd-color-info-ink); font-size: .875rem; font-weight: 700; }
+  .threat-cards { list-style: none; margin: var(--cd-space-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--cd-space-3); }
+  .threat-cards li { padding: var(--cd-space-3); font-size: .875rem; line-height: 1.5; text-align: center; color: var(--cd-color-muted); overflow-wrap: anywhere; }
+  .threat-cards span { display: block; font-size: 1.25rem; margin-bottom: var(--cd-space-1); }
+  .story-steps { list-style: none; margin: 0; padding: 0; }
+  .story-step + .story-step { margin-top: var(--cd-space-8); padding-top: var(--cd-space-8); border-top: 1px solid var(--cd-color-line); }
+  .guide-prose .step-label { display: flex; align-items: center; gap: var(--cd-space-3); margin-bottom: var(--cd-space-3); font-size: .875rem; font-weight: 600; color: var(--cd-color-info-ink); }
+  .step-number { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--cd-color-action); color: var(--cd-color-on-action); }
+  .technology-scene { margin-bottom: var(--cd-space-7); }
+  .col-tech { color: var(--cd-color-info-ink); font-weight: 600; }
+  @media (min-width: 768px) {
+    .guide-hero h1 { font-size: 2.75rem; }
+    .problem-scene, .story-step { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .reverse-scene > img, .story-step.reverse .story-image { order: 2; }
+  }
+  @media (max-width: 640px) { .guide-hero { padding-block: var(--cd-space-8); } }
+</style>

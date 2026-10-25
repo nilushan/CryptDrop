@@ -1,7 +1,0 @@
-name = "cryptdrop-site"
-pages_build_output_dir = "dist"
-
-[[services]]
-binding = "CRYPTDROP_API"
-service = "cryptdrop-server"
-

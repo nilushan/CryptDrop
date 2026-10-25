@@ -1,0 +1,996 @@
+{
+  "baseHead": "3f08386d7e7c8de49067e94088a06fa95e50dfcc",
+  "captureSource": "Local Astro dev server on http://127.0.0.1:4321; synthetic identity and local API fixtures only",
+  "captures": [
+    {
+      "file": "before-encrypt-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1696
+      },
+      "sha256": "6484dd7ea151c65c6ef767922e16dcd11f2001de1395b7c3a60884aa3afc25e8"
+    },
+    {
+      "file": "before-decrypt-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1813
+      },
+      "sha256": "e34ec1e5be5e1668e57898a83e2b5d51b990ebf3c1f660ec7f87c56675233033"
+    },
+    {
+      "file": "before-keyring-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "keyring",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1727
+      },
+      "sha256": "33f5a6b7a72c16f7dc30a8440c7e09077a5c3906c143c11e9cc434d3d17d4634"
+    },
+    {
+      "file": "before-contacts-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=addressbook",
+      "state": "contacts",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1550
+      },
+      "sha256": "71e57ed895eef279d3a179a67b3f4fa79fd53d75a8bd1c74a247ff1a0f6852ea"
+    },
+    {
+      "file": "before-wizard-mobile.png",
+      "phase": "before",
+      "route": "/app?tab=wizard",
+      "state": "wizard",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1439
+      },
+      "sha256": "92d3cb34243468df3e5a6f7055875e0735358a4915f5758c0acf2e256a40e777"
+    },
+    {
+      "file": "before-invite-mobile.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "8f230ce15511336d012cd27b30284b8d03d13aa089ccefc3c133874e8f3cd59b"
+    },
+    {
+      "file": "before-encrypt-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1477
+      },
+      "sha256": "95a2356e1ec009c2988502c58b08ac6511a7d64f1b677637e2dca62f6f10334d"
+    },
+    {
+      "file": "before-decrypt-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1554
+      },
+      "sha256": "ee4d44b42034852c36001966dba243d24494d80c87ffd5fa670084b27ff189e8"
+    },
+    {
+      "file": "before-keyring-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "keyring",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1323
+      },
+      "sha256": "b2753e933facbf911732e151273507718a1284bc43aabcccc9cf9e7a4b623c44"
+    },
+    {
+      "file": "before-contacts-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=addressbook",
+      "state": "contacts",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1296
+      },
+      "sha256": "7f1f1362019b91947758bdcc7696631727e87f4b82d12d7e5683e5d35fd86396"
+    },
+    {
+      "file": "before-wizard-tablet.png",
+      "phase": "before",
+      "route": "/app?tab=wizard",
+      "state": "wizard",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1086
+      },
+      "sha256": "2aded06262ad998d5f8fe720bc405e49f044e659deb3caea7b5dbc61bfe08df6"
+    },
+    {
+      "file": "before-invite-tablet.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "7d4108f6e84ce77b14802474cc51e11f31f7bb95b35abd06523eca6d19c207f2"
+    },
+    {
+      "file": "before-encrypt-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1006
+      },
+      "sha256": "bfa92826aa807c16e390eb0586c575df91ffdc280f8a0d9273a8707c5037a1b3"
+    },
+    {
+      "file": "before-decrypt-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1107
+      },
+      "sha256": "5366bc4ea7f01130cfab491526a3881ca5a8ed7f2dd83e8617dea5d9c188cdac"
+    },
+    {
+      "file": "before-keyring-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=keyring",
+      "state": "keyring",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 897
+      },
+      "sha256": "63a38e7593ff7251603616b65d93595e53b87ffef2f55ce2563fc864880a9338"
+    },
+    {
+      "file": "before-contacts-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=addressbook",
+      "state": "contacts",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 897
+      },
+      "sha256": "57ecead5d00be5fe868618510a7d81479437facca9acd75b35cc62b191c2f0df"
+    },
+    {
+      "file": "before-wizard-desktop.png",
+      "phase": "before",
+      "route": "/app?tab=wizard",
+      "state": "wizard",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 897
+      },
+      "sha256": "b2bf3c75350f1dabf33483ce82a0f3a94f606bc5890a4938cae5cec1468d47f2"
+    },
+    {
+      "file": "before-invite-desktop.png",
+      "phase": "before",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "e122e388128fd556526cb335e04c66c72de8218b672d0f6847d4be3e4a2be59e"
+    },
+    {
+      "file": "after-encrypt-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1815
+      },
+      "sha256": "3758bc3fc80678df0bcca8f5f94a9179966ff9c950ee53ecdf6b0314cb1671a0"
+    },
+    {
+      "file": "after-decrypt-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1874
+      },
+      "sha256": "eb187b049da07ab7af7b9230b34f8b977751e7fcc1b64702dc33b1d49b3a9e25"
+    },
+    {
+      "file": "after-keyring-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1741
+      },
+      "sha256": "86ead1d8973c3a216d92694620f5eb0255254ac9050ed3743408cc48d7c5344b"
+    },
+    {
+      "file": "after-contacts-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contacts",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1690
+      },
+      "sha256": "24175df0e3c0d63f88f3f06d338960f7b6c6a2835ba8fc55e808fd8675931d6a"
+    },
+    {
+      "file": "after-wizard-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=wizard",
+      "state": "wizard",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1453
+      },
+      "sha256": "969b99f5d7677447711d63617df69982510377ecb00eb6d241d7e10bca38c394"
+    },
+    {
+      "file": "after-invite-mobile.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "56bb8479441dbc546c043326dbcb6e22fc58681b0b171ec118c2b267224836dd"
+    },
+    {
+      "file": "after-encrypt-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1556
+      },
+      "sha256": "0e6264a34eeaeaa2070155aa986099c92a4aee3890c8161983ebcf865d34dff0"
+    },
+    {
+      "file": "after-decrypt-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1650
+      },
+      "sha256": "d55e02cb22d00c42d21c1a643b6e1986c9ebc673ccb6a1f2b4b612c09528bc0c"
+    },
+    {
+      "file": "after-keyring-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1371
+      },
+      "sha256": "0e215002f698adc6ebbbad1e5f376fcc784d57cbcb5e454c4211feb7e77bce2a"
+    },
+    {
+      "file": "after-contacts-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contacts",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1423
+      },
+      "sha256": "ddd02d62016b15fc721734f27c42f56aa8318fd709120abcb9681491308170f9"
+    },
+    {
+      "file": "after-wizard-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=wizard",
+      "state": "wizard",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1134
+      },
+      "sha256": "6668fa8844fb47b25ebda2ecd88c1950a020bfbe8ad2d14f50ac5f015f9e06ad"
+    },
+    {
+      "file": "after-invite-tablet.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "4e9a4aadb98f398b3e24c71690d8fe25a6e375638411ddcd00411f3d950aeaed"
+    },
+    {
+      "file": "after-encrypt-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1057
+      },
+      "sha256": "429d2e2525faa1fc9869b075a1a79a4e8b605acdfe068ee456e4180aca6d34f3"
+    },
+    {
+      "file": "after-decrypt-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1157
+      },
+      "sha256": "c0084c14d0bb1883a4fc40721fbfbcd5285c38f959b1d250cb4675c98ea704b9"
+    },
+    {
+      "file": "after-keyring-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 906
+      },
+      "sha256": "47975b61db78d7f47be74636796f6bb67d0ff38f705ec349ae2fcf8a1417a021"
+    },
+    {
+      "file": "after-contacts-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contacts",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 910
+      },
+      "sha256": "57d32c2640a2ef36a8b3966f093817e13dbc2143cf90011fd43e648ddf6ef35f"
+    },
+    {
+      "file": "after-wizard-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=wizard",
+      "state": "wizard",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 906
+      },
+      "sha256": "8605c9218a4804ef977e768c2c4902a9edfe8244d6e2cd36aa3ce467e662830c"
+    },
+    {
+      "file": "after-invite-desktop.png",
+      "phase": "after",
+      "route": "/invite",
+      "state": "invite",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "5410cea7d292d8a34761f638f2793463cdfe2ebc220a68f2b05b39584bc14bb3"
+    },
+    {
+      "file": "after-generation-filled-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "generation-filled",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1933
+      },
+      "sha256": "a906f8623257879e9ebbdf0befe6a5575db02bd59ed89f127771534a8c4ea945"
+    },
+    {
+      "file": "after-backup-error-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "backup-error",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1605
+      },
+      "sha256": "ca788635e343f19e7a26c32ffedb18c84dd4cb2d00974651614bfd7f6429998e"
+    },
+    {
+      "file": "after-backup-verified-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "backup-verified",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 2699
+      },
+      "sha256": "abf1a6fcff5a76a8874ce1093148157b1467555b7527fcf64c0848d5fd14f9fc"
+    },
+    {
+      "file": "after-backup-verified-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "backup-verified",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 2326
+      },
+      "sha256": "706a5d8891683f8fb363abce38988ef623d7a98527254a795dcc5c882c4cbea3"
+    },
+    {
+      "file": "after-backup-verified-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "backup-verified",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1605
+      },
+      "sha256": "53a16611ccaeae1e2c243789ee742e7a77556a829365409b561cd44b72c7bcd0"
+    },
+    {
+      "file": "after-keyring-loaded-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring-loaded",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1961
+      },
+      "sha256": "fda5aa43cd9b574eccbfc8a3eacf07de0e9e86296c240a23b273e5b9002d8cbd"
+    },
+    {
+      "file": "after-keyring-loaded-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring-loaded",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1609
+      },
+      "sha256": "62f8832f09698bcdd7119019a824778cf3aaa27efae47ad2fbf6c6896f88964b"
+    },
+    {
+      "file": "after-keyring-loaded-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring-loaded",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 967
+      },
+      "sha256": "b8b9e98dc17b9c0b60c53af296e6608e50ead9ced35c65a1d82a61dcaa3a89d6"
+    },
+    {
+      "file": "after-import-error-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "import-error",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1754
+      },
+      "sha256": "84b65288bb57d6c4af6be3c1fc9284a7790914ef85ce03dd2894af6368a3c966"
+    },
+    {
+      "file": "after-import-error-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "import-error",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1526
+      },
+      "sha256": "77a0b1a7cff5397fbc7fa0ef665c3eecf068f18906f5bcf822d131bca6c1aa96"
+    },
+    {
+      "file": "after-import-error-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "import-error",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 988
+      },
+      "sha256": "60b0fe925e29f598c003b30e0f467c4241c48d6c03836086b074f17bc7a2ad4e"
+    },
+    {
+      "file": "after-contacts-populated-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contacts-populated",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1876
+      },
+      "sha256": "e613336ba5c59b7cc55908a38b7e613df6bca0ea2b33e742c109b82e7a576205"
+    },
+    {
+      "file": "after-contacts-populated-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contacts-populated",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1601
+      },
+      "sha256": "32051ec62574bffb2113646c931e4731b1f358f34e0596a78810126faa8d3f7e"
+    },
+    {
+      "file": "after-contacts-populated-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contacts-populated",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1044
+      },
+      "sha256": "ef6f122a91f8bf544705098bb709945f8a20e0764b23a47a0e7d03ebe676e84b"
+    },
+    {
+      "file": "after-contact-invitation-sent-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=addressbook",
+      "state": "contact-invitation-sent",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1166
+      },
+      "sha256": "f1cb0cc5a58136ce5e0ec13937bdec50caaf272556a79374a32eca613953f7ba"
+    },
+    {
+      "file": "after-encrypt-result-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt-result",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 2327
+      },
+      "sha256": "d0cd0f4016bbb63495c017102400f85c0b59209c583929e7067a81730a8bc2a0"
+    },
+    {
+      "file": "after-encrypt-result-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt-result",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1842
+      },
+      "sha256": "75290263a02dc54cb763d96905b760ec58145341e0b5c92bd7154f44a455fcfc"
+    },
+    {
+      "file": "after-encrypt-result-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=encrypt",
+      "state": "encrypt-result",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1344
+      },
+      "sha256": "492ef77223ad2bc2c28ff5eb8f72295dd5ebc96f9f65bf21a4edf58a0db494da"
+    },
+    {
+      "file": "after-wizard-encrypt-result-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=wizard",
+      "state": "wizard-encrypt-result",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1090
+      },
+      "sha256": "f815e87d83c97f472e011ef02fca260c6dc3bc8454117ce594d49b689005eec9"
+    },
+    {
+      "file": "after-decrypt-verified-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt-verified",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 2378
+      },
+      "sha256": "93a3d5c2ae1dfe31126bff3a58855ad19794acd0787e67a29639f3c5e2022355"
+    },
+    {
+      "file": "after-decrypt-verified-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt-verified",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 2033
+      },
+      "sha256": "14009857b577295834b826dec02f4b600fc52135d3a721e1a96340d376f843be"
+    },
+    {
+      "file": "after-decrypt-verified-desktop.png",
+      "phase": "after",
+      "route": "/app?tab=decrypt",
+      "state": "decrypt-verified",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 1502
+      },
+      "sha256": "2daf601af10bbbd90caa4059fa7ad1a768ba611fafed5b1763bc3cbb48b179d2"
+    },
+    {
+      "file": "after-wizard-decrypt-mobile.png",
+      "phase": "after",
+      "route": "/app?tab=wizard",
+      "state": "wizard-decrypt",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 1679
+      },
+      "sha256": "80347d249578d899d21577e38f6904e0f9ecad9272600c11d6ec526b271bed23"
+    },
+    {
+      "file": "after-keyring-text-200-tablet.png",
+      "phase": "after",
+      "route": "/app?tab=keyring",
+      "state": "keyring-text-200",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 4343
+      },
+      "sha256": "3330b0244e5f3faedda9c3f73f3ea94083f6c374591f4fd5a02cd72c2e75dd3b"
+    },
+    {
+      "file": "after-invite-valid-mobile.png",
+      "phase": "after",
+      "route": "/invite?token=synthetic",
+      "state": "invite-valid",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "image": {
+        "width": 375,
+        "height": 812
+      },
+      "sha256": "977149c1e0afde1fdf94389756bfe973de616e8a0665d345d994433890b26e93"
+    },
+    {
+      "file": "after-invite-valid-tablet.png",
+      "phase": "after",
+      "route": "/invite?token=synthetic",
+      "state": "invite-valid",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "image": {
+        "width": 768,
+        "height": 1024
+      },
+      "sha256": "c1a9a15914f7feb99e42e22d2e2147cf63dc94c4a3a705ca500ec64a757af908"
+    },
+    {
+      "file": "after-invite-valid-desktop.png",
+      "phase": "after",
+      "route": "/invite?token=synthetic",
+      "state": "invite-valid",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "c9c940e5dfa84a2df3f580cbe2938dd7f8a03b05d022f462c2ec3144106a341a"
+    },
+    {
+      "file": "after-invite-expired-desktop.png",
+      "phase": "after",
+      "route": "/invite?token=expired",
+      "state": "invite-expired",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "17c6280959fd5c8e60279e628e4a4808b15c5d9acc5402ef9e11e022098efb1b"
+    },
+    {
+      "file": "after-invite-accepted-desktop.png",
+      "phase": "after",
+      "route": "/invite?token=accepted",
+      "state": "invite-accepted",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "f75835cd53eaff340321e120e7866348f13a03a457f3cb9c38fd1f347a533420"
+    },
+    {
+      "file": "after-invite-failure-desktop.png",
+      "phase": "after",
+      "route": "/invite?token=failure",
+      "state": "invite-failure",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "sha256": "9b2db6e7260bacd47836d371aa29f77f2b6d34dc19e93ab9b9f8066067a336ae"
+    }
+  ]
+}

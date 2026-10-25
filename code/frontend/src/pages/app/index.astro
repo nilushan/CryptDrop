@@ -1,0 +1,114 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import KeyRingTab from '../../components/keys/KeyRingTab';
+import AddressBookTab from '../../components/keys/AddressBookTab';
+import EncryptTab from '../../components/encrypt/EncryptTab';
+import DecryptTab from '../../components/decrypt/DecryptTab';
+import WizardTab from '../../components/wizard/WizardTab';
+import Toast from '../../components/shared/Toast';
+import KeyStatusPill from '../../components/shared/KeyStatusPill';
+import { getKeyCapability, keyCapabilityIconPaths } from '../../lib/key-capabilities';
+import '../../styles/app-components.css';
+import '../../styles/app-workspace.css';
+
+const tabs = [
+  { id: 'encrypt', label: 'Encrypt file', mobileLabel: 'Encrypt', hint: 'Protect before sharing', path: 'M7 11V7a5 5 0 0110 0v4 M5 11h14v10H5z' },
+  { id: 'decrypt', label: 'Decrypt file', mobileLabel: 'Decrypt', hint: 'Open a file sent to you', path: 'M7 11V7a5 5 0 019.9-1 M5 11h14v10H5z' },
+  { id: 'addressbook', label: 'Address book', mobileLabel: 'Contacts', hint: 'People you share with', path: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2 M13 7a4 4 0 11-8 0 4 4 0 018 0 M18 8h4 M18 12h4 M20 16h2' },
+  { id: 'wizard', label: 'Guided setup', mobileLabel: 'Setup', hint: 'A little help getting started', path: 'M9 5H5v16h14V5h-4 M9 3h6v4H9z M8 12h8 M8 16h5' },
+].map((tab) => ({ ...tab, capability: tab.id === 'encrypt' || tab.id === 'decrypt' ? getKeyCapability(tab.id, false) : null }));
+---
+
+<Layout title="CryptDrop — Your private file workspace" appMode>
+  <div class="app-shell">
+
+  <aside class="app-sidebar" aria-label="Workspace sidebar">
+    <div class="sidebar-keys">
+      <p class="sidebar-label">My keys</p>
+      <KeyStatusPill client:load />
+      <p class="session-note">Your private key is needed to decrypt or sign, not to encrypt for others.</p>
+    </div>
+    <p class="sidebar-label">Workspace</p>
+    <div class="workspace-tabs" role="tablist" aria-label="File tools" aria-orientation="vertical">
+      {tabs.map((tab, index) => (
+        <button type="button" class:list={['app-tab', { active: index === 0 }]} data-tab={tab.id}
+          id={`nav-${tab.id}`} role="tab" aria-controls={`tab-${tab.id}`} data-capability={tab.capability?.state}
+          data-label={tab.label} aria-label={`${tab.label}. ${tab.capability?.navHint ?? tab.hint}`}
+          aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={tab.path} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <span class="nav-copy">
+            <span class="nav-label"><span class="nav-label-desktop">{tab.label}</span><span class="nav-label-mobile">{tab.mobileLabel}</span></span>
+            <span class="nav-hint" hidden={!!tab.capability && tab.capability.state !== 'available'}>{tab.hint}</span>
+            {tab.capability && (
+              <span class="nav-status-badge" aria-hidden="true" hidden={tab.capability.state === 'available'}>
+                <svg class="nav-status-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d={keyCapabilityIconPaths[tab.capability.state]} stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span class="nav-status-label">{tab.capability.mobileHint}</span>
+              </span>
+            )}
+          </span>
+        </button>
+      ))}
+    </div>
+    <a class="sidebar-help" href="/how-it-works">A quick guide to encryption <span aria-hidden="true">↗</span></a>
+  </aside>
+
+  <div class="workspace-body" id="app-workspace" tabindex="-1">
+    <div class="workspace-topline"><span>FILE WORKSPACE</span><span class="workspace-local"><span aria-hidden="true"></span> Files processed on your device</span></div>
+    <div class="workspace-columns">
+    <div class="app-content-pad">
+      <noscript><p class="notice-box notice-warn">JavaScript is required to encrypt and decrypt files locally in your browser.</p></noscript>
+
+    <!-- ======================== ENCRYPT TAB (React Island) ======================== -->
+    <div id="tab-encrypt" class="tab-panel fade-in" role="tabpanel" aria-labelledby="nav-encrypt" tabindex="0">
+      <EncryptTab client:load />
+    </div>
+
+    <!-- ======================== DECRYPT TAB (React Island) ======================== -->
+    <div id="tab-decrypt" class="tab-panel fade-in hidden" role="tabpanel" aria-labelledby="nav-decrypt" tabindex="0" hidden>
+      <DecryptTab client:load />
+    </div>
+
+    <!-- ======================== KEY RING TAB (React Island) ======================== -->
+    <div id="tab-keyring" class="tab-panel fade-in hidden" role="region" aria-labelledby="nav-keyring" tabindex="0" hidden>
+      <KeyRingTab client:load />
+    </div>
+
+    <!-- ======================== ADDRESS BOOK TAB (React Island) ======================== -->
+    <div id="tab-addressbook" class="tab-panel fade-in hidden" role="tabpanel" aria-labelledby="nav-addressbook" tabindex="0" hidden>
+      <AddressBookTab client:load />
+    </div>
+
+    <!-- ======================== WIZARD TAB (React Island) ======================== -->
+    <div id="tab-wizard" class="tab-panel fade-in hidden" role="tabpanel" aria-labelledby="nav-wizard" tabindex="0" hidden>
+      <WizardTab client:load />
+    </div>
+
+    </div>
+    <aside class="workspace-guide" aria-label="Encryption essentials">
+      <div class="guide-symbol" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.4"/><path d="m8 12 3 3 5-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="guide-eyebrow">PRIVATE BY DESIGN</p>
+      <h2>Your files. <br />Only the right eyes.</h2>
+      <p>Encrypt on your device, then share the protected file however you like.</p>
+      <dl class="guide-facts">
+        <div><dt>Public key</dt><dd>Share it so others can encrypt files for you.</dd></div>
+        <div><dt>Private key</dt><dd>Keep it secret. It unlocks files encrypted for you.</dd></div>
+        <div><dt>No file uploads</dt><dd>File contents and private keys are processed locally. Key searches and emails use online services.</dd></div>
+      </dl>
+      <a href="/security">Understand the security model <span aria-hidden="true">↗</span></a>
+    </aside>
+    </div>
+    <footer class="workspace-footer"><span>Built on OpenPGP.js</span><a href="/security">Security &amp; privacy <span aria-hidden="true">↗</span></a><a href="/security#network-requests">Network services &amp; data <span aria-hidden="true">↗</span></a></footer>
+  </div>
+  </div>
+
+  <!-- Toast (React Island) -->
+  <Toast client:load />
+
+  <!-- Tab navigation via Nano Stores -->
+  <script>
+    import { initAppNavigation } from '../../lib/app-navigation';
+    initAppNavigation();
+  </script>
+</Layout>

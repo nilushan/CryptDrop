@@ -1,0 +1,21 @@
+# API-only Worker. The frontend is deployed independently to Pages.
+name = "cryptdrop-server"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cryptdrop-db"
+database_id = "c0a47e3e-6cc4-477a-8df4-03c553f21db6"
+migrations_dir = "migrations"
+
+[vars]
+# Public Pages/custom-domain origin used for email links and CORS.
+SITE_URL = "https://cryptdrop-site.pages.dev"
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[observability.traces]
+enabled = true

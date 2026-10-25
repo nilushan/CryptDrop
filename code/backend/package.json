@@ -1,0 +1,28 @@
+{
+  "name": "@cryptdrop/backend",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --local --persist-to ../.wrangler/state",
+    "deploy": "wrangler deploy",
+    "deploy:dry-run": "wrangler deploy --dry-run",
+    "db:migration:create": "wrangler d1 migrations create cryptdrop-db",
+    "db:status:local": "wrangler d1 migrations list cryptdrop-db --local --persist-to ../.wrangler/state",
+    "db:status:remote": "wrangler d1 migrations list cryptdrop-db --remote",
+    "logs": "wrangler tail",
+    "db:migrate:local": "wrangler d1 migrations apply cryptdrop-db --local --persist-to ../.wrangler/state",
+    "db:migrate:remote": "wrangler d1 migrations apply cryptdrop-db --remote",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.7.0",
+    "resend": "^4.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "4.20260331.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
