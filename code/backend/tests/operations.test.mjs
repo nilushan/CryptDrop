@@ -17,6 +17,12 @@ async function fixture() {
 }
 
 describe('operational command safety', () => {
+  it('starts both dev services with sibling cleanup and retains standalone commands', async () => {
+    const { scripts } = JSON.parse(await readFile(new URL('../../package.json', import.meta.url), 'utf8'));
+    expect(scripts.dev).toBe('concurrently --kill-others --names api,web "npm run dev:backend" "npm run dev:frontend"');
+    expect(scripts['dev:backend']).toBe('npm run dev -w backend --');
+    expect(scripts['dev:frontend']).toBe('npm run dev -w frontend --');
+  });
   it.each(['setup:local', 'db:seed:local', 'db:backup:remote'])('accepts the explicit operation %s', (operation) => {
     expect(parseArguments([operation])).toEqual({ operation });
   });

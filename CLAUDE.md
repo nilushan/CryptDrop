@@ -10,7 +10,8 @@ The repository root contains documentation; `code/` contains all application wor
 npm ci                              # Install both workspaces from the lockfile
 npm run setup:local                 # Preserve local env; apply local-only pending migrations
 npm run db:seed:local               # Optional local demo rows; no private keys or mail
-npm run dev                         # Astro HMR at localhost:4321; proxies /api to :8787
+npm run dev                         # Start backend + Astro HMR together; Ctrl+C stops both
+npm run dev:frontend                # Astro HMR alone at :4321; proxies /api to :8787
 npm run dev:backend                 # API-only local Worker at localhost:8787
 npm run dev:pages                   # Build frontend, run Pages proxy at :4321; needs backend
 npm run build                       # Static Astro build → frontend/dist/

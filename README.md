@@ -86,15 +86,12 @@ npm run setup:local
 # Optional: add local-only demo keys/invitation states
 # npm run db:seed:local
 
-# Start the API Worker (localhost:8787)
-npm run dev:backend
-
-# In a second terminal, from code/, start Astro HMR (localhost:4321).
-# /api requests are proxied to the local Worker.
+# Start both: API Worker (localhost:8787) + Astro HMR (localhost:4321)
 npm run dev
+# Ctrl+C stops both; if either process exits, the other is stopped too.
 
-# Alternatively, stop Astro and use the real Pages Function/service binding:
-# npm run dev:pages
+# For separate terminals: npm run dev:backend and npm run dev:frontend.
+# To test real Pages forwarding instead, use dev:backend + dev:pages.
 
 # Run all validation (tests, typechecks, bundles and isolated local smoke tests)
 npm run check

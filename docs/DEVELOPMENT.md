@@ -12,14 +12,10 @@ npm ci
 npm run setup:local
 # Optional demo directory and invitation states:
 npm run db:seed:local
-npm run dev:backend
-```
-
-In another terminal, from `code/`:
-
-```bash
 npm run dev
 ```
+
+`npm run dev` starts **both** the API Worker and Astro HMR in one terminal, with labeled logs. Ctrl+C stops both; either process exiting shuts down its sibling. For separate terminals or service-specific flags, use `npm run dev:backend` and `npm run dev:frontend` instead.
 
 Open `http://localhost:4321`. The Astro development server forwards same-origin `/api/*` requests to the local API Worker at `http://localhost:8787`. No Cloudflare login, deployed Worker, remote database, or email key is needed for this local setup.
 
@@ -34,8 +30,7 @@ cd code
 npm ci
 npm run db:status:local
 npm run db:migrate:local  # apply pending local migrations, if any
-npm run dev:backend
-# Second terminal, from code/: npm run dev
+npm run dev
 ```
 
 Do not recreate or clear local D1 just because you pulled a code update. `setup:local` is also available as a repeat-safe convenience; it preserves your existing environment file. Reseeding is optional, not a prerequisite for running the app.
@@ -44,9 +39,12 @@ Local database state lives in **`code/.wrangler/state`** for backend dev, migrat
 
 ## Test real Pages forwarding locally
 
-Stop Astro on port 4321, keep `dev:backend` running, and use:
+Stop `npm run dev` first (it owns both processes). Start the backend separately, then Pages in another terminal, both from `code/`:
 
 ```bash
+# Terminal 1
+npm run dev:backend
+# Terminal 2
 npm run dev:pages
 ```
 
@@ -94,8 +92,9 @@ Do not edit or rename migrations that have already been applied to production. A
 | Command | Purpose |
 | --- | --- |
 | `npm run setup:local` | Create local environment if missing; migrate local D1 |
-| `npm run dev:backend` | Local API Worker on port 8787 |
-| `npm run dev` | Astro HMR on port 4321; needs local backend for API calls |
+| `npm run dev` | API Worker + Astro HMR together; Ctrl+C stops both |
+| `npm run dev:backend` | API Worker alone on port 8787 |
+| `npm run dev:frontend` | Astro HMR alone on port 4321; needs backend for API calls |
 | `npm run dev:pages` | Build and serve real Pages proxy on port 4321; needs backend |
 | `npm run build` | Build frontend only into `frontend/dist/` |
 
