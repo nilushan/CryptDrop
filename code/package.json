@@ -6,17 +6,20 @@
   "workspaces": ["frontend", "backend"],
   "scripts": {
     "dev": "npm run dev -w frontend --",
-    "dev:worker": "npm run build && wrangler dev",
+    "dev:backend": "npm run dev -w backend --",
+    "dev:pages": "npm run build && npm run dev:pages -w frontend --",
     "build": "npm run build -w frontend --",
-    "preview": "npm run dev:worker --",
-    "deploy": "npm run build && wrangler deploy",
-    "deploy:dry-run": "npm run build && wrangler deploy --dry-run",
+    "preview": "npm run dev:pages --",
+    "deploy:frontend": "npm run deploy -w frontend --",
+    "deploy:backend": "npm run deploy -w backend --",
+    "deploy:backend:dry-run": "npm run deploy:dry-run -w backend --",
+    "check:pages": "npm run check:pages -w frontend",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:deployment": "npm run build && node backend/scripts/smoke-test.mjs",
+    "test:deployment": "npm run build && node scripts/smoke-test.mjs",
     "typecheck": "npm run typecheck --workspaces",
-    "db:migrate:local": "wrangler d1 migrations apply cryptdrop-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply cryptdrop-db --remote"
+    "db:migrate:local": "npm run db:migrate:local -w backend",
+    "db:migrate:remote": "npm run db:migrate:remote -w backend"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

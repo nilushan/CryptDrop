@@ -1,94 +1,131 @@
-# Worker + static assets deployment
+# Separate Pages and Worker deployments
 
-[Project README](../README.md) · [Cloudflare static assets documentation](https://developers.cloudflare.com/workers/static-assets/)
+[Project README](../README.md) · [Pages custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/) · [Pages service bindings](https://developers.cloudflare.com/pages/functions/bindings/#service-bindings)
 
 ## Layout and request flow
 
-`code/frontend/` is a static Astro/React browser application. `code/backend/` is a Hono API Worker. They are separate npm workspaces but share a single deployment, configured only by `code/wrangler.toml`. Package/lockfiles, Vitest and pnpm workspace configuration also live in `code/`; paths inside these configs are relative to that directory:
+The two workspaces share dependency lockfiles under `code/`, but deploy independently:
 
 ```text
-Browser → Cloudflare Worker deployment
-          ├── /api and /api/* → code/backend/src/index.ts → Hono → D1 / Resend / keyserver
-          └── other paths    → code/frontend/dist static assets
+Browser → Cloudflare Pages (code/frontend/)
+          ├── static HTML, JS, CSS, images
+          └── /api and /api/* → Pages Function → CRYPTDROP_API service binding
+                                               → cryptdrop-server Worker (code/backend/)
+                                                 → D1 / Resend / public keyserver
 ```
 
-Cloudflare serves matching static assets without invoking application code. Worker code explicitly delegates non-API misses to `ASSETS`, preserving asset redirects and 404s. Unknown API paths return JSON 404s, never the frontend HTML. This is a pre-rendered multipage site, **not** a single-page application or Astro SSR deployment.
+| Deployment | Config | Contents |
+| --- | --- | --- |
+| Frontend Pages project `cryptdrop-site` | `code/frontend/wrangler.toml` | Astro `dist/`, Pages API proxy, service binding |
+| Backend Worker `cryptdrop-server` | `code/backend/wrangler.toml` | Hono API, existing D1 binding and runtime variables |
 
-`code/frontend/public/_headers` ships with the assets and retains the static site's CSP and security headers. `_headers` does not apply to Worker-generated API responses. The old Pages forwarding Function, service binding, `_routes.json`, and backend-only Wrangler config are no longer used.
+There is no shared `code/wrangler.toml` and no combined deploy command. The Worker has **no static-asset binding** and does not build or serve the frontend. The frontend cannot access D1 or the Resend secret.
+
+`code/frontend/functions/api/[[catchall]].ts` forwards requests unchanged to the Worker. `public/_routes.json` limits Function invocations to `/api` and `/api/*`; other requests use Pages static hosting. The browser uses same-origin `/api/*` URLs, so no public API hostname, `PUBLIC_API_URL`, or CSP exception is needed. Unknown API paths remain JSON 404s. Astro builds an explicit `404.html` to prevent Pages' implicit SPA fallback on unknown static paths.
 
 ## Local development
 
-Run application commands from `code/`:
+From the repository root:
 
 ```bash
 cd code
-npm install
-cp -n .dev.vars.example .dev.vars
+npm ci
+cp -n backend/.dev.vars.example backend/.dev.vars
 npm run db:migrate:local
-npm run dev:worker
+npm run dev:backend
 ```
 
-Visit `http://localhost:8787`: this serves the actual built frontend and local API together. It uses local D1, not the remote production database. Leave `RESEND_API_KEY` empty in local `.dev.vars` to avoid real email delivery. Set local `SITE_URL` to `http://localhost:8787` (or `http://localhost:4321` when using Astro HMR).
+The API Worker runs at `http://localhost:8787`. In another terminal, from `code/`:
 
-For frontend HMR, keep that Worker running and start `npm run dev` in another terminal. Visit `http://localhost:4321`; Astro proxies `/api` to the local Worker on port 8787, so the browser uses same-origin URLs in both development and production. API source changes reload in Wrangler; frontend changes use Astro HMR. Restart `npm run dev:worker` to rebuild the production-like static assets.
+```bash
+npm run dev
+```
 
-Local Worker state now lives in `code/.wrangler/state`. If migrating an existing checkout with local data previously in `packages/server/.wrangler/state` (or root `.wrangler/state`), stop Wrangler, back up that directory, and move it to `code/.wrangler/state` only if the destination does not already exist. Do not overwrite either copy; local databases are not production backups. Move local `.dev.vars`/`.env` from the old backend directory (or repository root) to `code/`, without committing them.
+Visit `http://localhost:4321`. Astro HMR proxies `/api` to the local Worker. To exercise the real Pages Function/service binding instead of Astro's dev proxy, stop Astro, keep the backend running, and run `npm run dev:pages` (also available as `npm run preview`). This builds the frontend and starts Pages on port 4321. `npm run preview -w frontend` is an alternative static-only Astro preview; it does not include API forwarding.
 
-The repository also supports pnpm workspaces (`pnpm install --frozen-lockfile`). Keep both committed lockfiles synchronized when changing dependencies.
+Local secrets belong in ignored `code/backend/.dev.vars`; never copy them into the frontend. Leave the local email key empty to avoid real email delivery. Set local `SITE_URL` to `http://localhost:4321`. Existing secrets previously in `code/.dev.vars` or `code/.env` should be moved to `code/backend/`, without overwriting an existing file or committing them.
+
+The provided backend dev/migration and frontend Pages dev scripts share local persistence at `code/.wrangler/state`, retaining data from the earlier unified configuration. If migrating from `packages/server/.wrangler/state` or root `.wrangler/state`, stop local servers, back up the old state and move it only if the destination does not already exist. Never overwrite a local database; local state is not a production backup.
+
+The repository also supports `pnpm install --frozen-lockfile` from `code/`. Keep both committed lockfiles synchronized when changing dependencies.
 
 ## Validation (no deployment)
+
+Run from `code/`:
 
 ```bash
 npm test
 npm run typecheck
-npm run deploy:dry-run
+npm run deploy:backend:dry-run
+npm run check:pages
 npm run test:deployment
 ```
 
-`test:deployment` builds and starts a real local Worker with temporary D1 state, applies local migrations, and checks static assets/headers, clean URLs, API routing, CORS and registry operations. It overrides the email key with a dummy value and exercises no email or keyserver calls; temporary state is removed afterwards.
+The dry run bundles **only** the backend, without uploading or deploying it. `check:pages` compiles the proxy Function without deploying. The deployment smoke test builds Astro and runs two real local Wrangler processes with an isolated service registry and temporary D1 state. It checks Pages assets/security headers/404s, proxy forwarding, API-only Worker behavior, CORS, and D1 registration/lookup. It overrides the email key with a dummy value, calls no keyserver/email endpoints, and removes temporary state afterwards. These checks do not validate live Cloudflare account, domain, secret or email-delivery configuration.
 
-The dry run builds `code/frontend/dist` and bundles the API Worker without uploading or deploying it. It does not prove live domain, D1 or email configuration. Full local serving is available through `npm run preview` (alias of `dev:worker`); `npm run preview -w frontend` serves static output only and does not include the API.
+## Link the repository to Cloudflare later
 
-## Production deployment
+Create or reconnect **two projects to the same repository**. Each project uses its own subdirectory as its build root. The explicit parent-directory `npm ci` uses the shared lockfile in `code/`; there is intentionally no separate lockfile in either workspace.
 
-The configuration intentionally retains the existing **`cryptdrop-server`** Worker and the existing **`cryptdrop-db`** database ID. No database recreation or data-copy migration is needed for this folder/deployment refactor. Existing production secrets on that same Worker are retained.
+### 1. Backend: Workers Builds
 
-Before the first unified deployment:
+| Setting | Value |
+| --- | --- |
+| Worker | `cryptdrop-server` (reuse the existing Worker) |
+| Root directory | `code/backend` |
+| Build command | `npm --prefix .. ci && npm run typecheck` |
+| Deploy command | `npm run deploy` |
+| Production branch | The reviewed branch you intend to ship |
 
-1. Confirm the Cloudflare account, existing Worker name, and D1 database ID in `code/wrangler.toml`.
-2. Set `SITE_URL` to the public origin users will actually visit. It is currently the existing Pages origin to avoid silently changing email destinations before cutover. Do not leave that value pointing at a retired Pages project.
-3. Ensure `RESEND_API_KEY` exists on the target Worker. If needed, set it explicitly from `code/` with `npx wrangler secret put RESEND_API_KEY`. Never put it in frontend configuration or a `PUBLIC_*` variable.
-4. Check D1 migration status. This refactor adds no migrations. Apply outstanding production migrations only with approval: `npm run db:migrate:remote`.
-5. Run the validation commands above.
+From that root, `npm run deploy` runs `wrangler deploy` using the backend-only config. Do not point this project at the old unified `code/` config. The existing Worker name, D1 database name/id, and compatibility date are retained. No database recreation or data-copy migration is needed.
 
-Then, with deployment approval:
+Before deploying, confirm the account/database ID and set backend `SITE_URL` to the real frontend origin users visit. The checked-in value remains the existing `https://cryptdrop-site.pages.dev`; update it if your existing Pages custom domain is the intended public origin. Ensure `RESEND_API_KEY` exists as a secret on **this Worker**, not on Pages. Existing secrets on the same Worker are retained; local `.dev.vars` values are never uploaded automatically.
+
+To set the secret manually, with approval:
 
 ```bash
-npm run deploy
+cd code/backend
+npx wrangler secret put RESEND_API_KEY
 ```
 
-This builds the frontend and deploys Worker code plus its assets as one version. D1 migration application is deliberately **not** part of the deploy command.
+### 2. Frontend: Pages Git integration
 
-For Cloudflare Git integration, use **Workers Builds**, set the project/build root directory to **`code`**, and use `npm ci` for installation. Either use `npm run deploy` as the deploy command with no separate build command, or use `npm run build` followed by `npx wrangler deploy`. Do not leave an old Pages-only `astro build` command configured for this new layout.
+| Setting | Value |
+| --- | --- |
+| Pages project | `cryptdrop-site` (reuse the existing project/domain where possible) |
+| Root directory | `code/frontend` |
+| Framework preset | Astro (or None with the explicit command below) |
+| Build command | `npm --prefix .. ci && npm run build` |
+| Build output directory | `dist` |
+| Production branch | The reviewed branch you intend to ship |
 
-## Cut over from Pages
+Pages discovers the frontend `wrangler.toml` and `functions/` directory from this root. Its `CRYPTDROP_API` service binding targets `cryptdrop-server`; the Worker must exist in the **same Cloudflare account**. Deploy/verify the backend first, then Pages. The API-only Worker needs no custom domain: Pages reaches it through the service binding.
 
-Do not delete the existing Pages project or change DNS automatically.
+For both projects, optionally restrict build watch paths to the relevant workspace plus shared package/lockfiles. Disable preview/non-production branch deployments initially (see below). Do not create Git integrations, push changes or deploy automatically as part of this refactor.
 
-1. Deploy and test the combined app at the Worker's configured hostname. Configure a Workers hostname/custom domain explicitly if the existing API Worker has none.
-2. Verify `/`, `/app`, `/how-it-works`, `/security`, and `/invite?token=...`; inspect CSS/JS, headers, clean URLs and real 404s.
-3. Verify `/api/health`, API JSON 404s and approved public-key/invitation flows. Tests should use designated test identities; email tests can send real messages if a real key is configured.
-4. Configure the intended public custom domain on the Worker. If the domain is attached to Pages, coordinate removing that association and attaching it to the Worker. Confirm TLS/DNS and `SITE_URL` agree.
-5. Disable automatic Pages deployments and remove the obsolete Pages service binding after cutover. Keep the previous deployment available until verification is complete; remove it later with approval.
+## Manual deployment alternative
 
-An existing `*.pages.dev` hostname belongs to Pages and cannot simply be assigned to a Worker. Users of the old demo URL need an intentional redirect strategy or the old Pages deployment retained. Existing Pages APIs can still forward to the same Worker during transition because the `/api/*` contract remains unchanged.
+With approval, from `code/`:
 
-**Browser storage is origin-scoped.** Keep the public origin unchanged where possible. Moving from a Pages hostname to a Workers/custom hostname does not transfer remembered private keys, contacts or history. Warn users to verify an encrypted private-key backup before changing origins; never try to migrate private keys through the backend. The old origin's browser storage is not automatically deleted by this refactor.
+```bash
+npm run deploy:backend
+npm run deploy:frontend
+```
 
-## Previews and rollback
+These are **separate commands and releases**. Backend deployment does not build the frontend; frontend deployment builds Astro and uploads only Pages assets and the forwarding Function. There is no generic `npm run deploy` at the workspace root, to avoid unintentionally publishing both.
 
-Do not enable PR/branch deployments that bind untrusted preview code to production D1 or the production email key. Configure a separate Worker/environment and test database/secrets first, with a matching `SITE_URL`. Wrangler environment bindings/variables need explicit environment configuration; changing the Worker name alone does not isolate D1.
+D1 migrations remain a separate explicit operation: `npm run db:migrate:remote` from `code/`. This refactor adds no migrations; check outstanding migration status before applying anything remotely. A deployment does not apply migrations automatically.
 
-Code and static assets deploy together and can be rolled back together through Worker versions/deployments. **D1 data and schema migrations are not rolled back with code**, nor are DNS/domain changes or external email delivery. Keep schema changes backward-compatible and plan any database recovery separately.
+## Domains, previews and rollback
 
-Historical design evidence under `docs/design-system-evidence/` records the old layout and commands. Current equivalents: root `src/`, `public/`, `tests/` → `code/frontend/`; `packages/server/` → `code/backend/`; root `dist/` → `code/frontend/dist/`. Package/lockfiles and shared build/deployment configs have moved from the repository root to `code/`.
+Keep the existing public Pages origin where possible. For externally hosted DNS, Pages supports a custom **subdomain** via a CNAME after adding it to the Pages project. Its standard apex-domain setup still requires Cloudflare nameservers. The API Worker requires neither an externally managed domain nor a public API URL.
+
+Browser storage is origin-scoped: changing the public origin does not transfer remembered private keys, contacts or history. Warn users to verify an encrypted private-key backup before any origin change. Do not move private keys through the backend.
+
+**Disable Pages preview/branch builds and Worker non-production branch deployments until isolated resources are configured.** The checked-in Pages service binding names the production Worker and may be inherited by previews. A preview must instead target a separate test Worker with a separate D1 database, email credentials/disablement, and matching `SITE_URL`. A different preview URL or Worker name alone does not isolate the database. Missing bindings fail the request; there is no public-API fallback.
+
+Frontend and backend releases/rollbacks are independent again. Keep API contracts compatible with the currently deployed frontend. Neither code rollback reverses D1 data/schema changes or email delivery. Coordinate schema migrations and recovery separately.
+
+After deployment, verify the public Pages `/`, `/app`, `/security`, `/invite`, `/api/health`, static security headers and JSON API 404s; test designated public-key/invitation flows only with approval. Nothing in these instructions requires changing DNS, deleting the old Pages project, or creating a new database.
+
+Historical design evidence under `docs/design-system-evidence/` retains old command outputs. Current paths are `code/frontend/` and `code/backend/`, with shared package/lockfiles and test orchestration in `code/`.

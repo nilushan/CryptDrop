@@ -33,7 +33,7 @@ See [PHASE-1-PLAN.md](./PHASE-1-PLAN.md) for detailed specification.
 
 ## Phase 2+3: Backend Server, User Registry & Invitations ✅
 
-**Status**: Implemented — `code/backend/` (Hono.js + D1 + Resend), deployed with `code/frontend/` assets via `code/wrangler.toml`. See [deployment instructions](DEPLOYMENT.md).
+**Status**: Implemented — `code/backend/` (Hono.js + D1 + Resend) deploys to a Worker separately from the `code/frontend/` Pages project. Pages forwards API calls through a service binding. See [deployment instructions](DEPLOYMENT.md).
 
 **Infrastructure**:
 - Cloudflare Worker (Hono.js) in `code/backend/`

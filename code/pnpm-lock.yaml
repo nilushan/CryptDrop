@@ -70,6 +70,9 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.8
         version: 0.9.8(prettier@3.8.1)(typescript@5.9.3)
+      '@cloudflare/workers-types':
+        specifier: 4.20260331.1
+        version: 4.20260331.1
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1

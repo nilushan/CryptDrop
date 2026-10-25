@@ -83,17 +83,20 @@ cd code
 npm install
 
 # Copy the local Worker environment template (do not overwrite existing secrets)
-cp -n .dev.vars.example .dev.vars
+cp -n backend/.dev.vars.example backend/.dev.vars
 
 # Apply migrations to local D1 only
 npm run db:migrate:local
 
-# Start the full app on the local Worker (localhost:8787)
-npm run dev:worker
+# Start the API Worker (localhost:8787)
+npm run dev:backend
 
-# Optional: in a second terminal, use Astro HMR (localhost:4321).
-# /api requests are proxied to the local Worker above.
+# In a second terminal, from code/, start Astro HMR (localhost:4321).
+# /api requests are proxied to the local Worker.
 npm run dev
+
+# Alternatively, stop Astro and use the real Pages Function/service binding:
+# npm run dev:pages
 
 # Run tests
 npm test
@@ -106,9 +109,11 @@ npm run typecheck
 
 ## Deployment
 
-From `code/`, `npm run deploy` builds the frontend and deploys the API and static assets together to **one Cloudflare Worker**. `code/wrangler.toml` is the only deployment configuration. `npm run deploy:dry-run` validates the bundle without deploying.
+The frontend deploys to **Cloudflare Pages** using `code/frontend/wrangler.toml`. The API deploys independently to **Cloudflare Workers** using `code/backend/wrangler.toml`. A Pages Function forwards same-origin `/api/*` calls through a service binding; the API Worker needs no custom domain.
 
-See [deployment and Pages migration instructions](docs/DEPLOYMENT.md) for secrets, D1, domain cutover, previews and rollback precautions. Nothing is deployed automatically by installing or building this project.
+From `code/`, use `npm run deploy:backend` and `npm run deploy:frontend` separately. `npm run deploy:backend:dry-run` validates the backend bundle, and `npm run check:pages` compiles the Pages Function without deploying.
+
+See [deployment and Git integration instructions](docs/DEPLOYMENT.md) for the exact Pages/Worker repository root directories, build commands, secrets, D1, previews and rollback precautions. Nothing is deployed automatically by installing or building this project.
 
 ## Design system
 
@@ -120,21 +125,24 @@ See the [shared design-system baseline](docs/design-system.md) for the UI invent
 code/                  # Application/workspace root — run npm commands here
   frontend/            # @cryptdrop/frontend: static Astro + React application
     src/               # Components, layouts, pages, browser helpers, stores, styles
-    public/            # Static files and security headers
+    public/            # Static files, security headers and Function route rules
+    functions/         # /api/* forwarding to the Worker through a service binding
+    wrangler.toml      # Pages project and CRYPTDROP_API binding
     tests/             # UI, crypto and design-evidence tests
     dist/              # Generated static assets (ignored)
   backend/             # @cryptdrop/backend: Cloudflare Worker API
-    src/index.ts       # /api → Hono; other paths → static assets
+    src/index.ts       # API-only Worker entry point
     src/app.ts         # Hono API and middleware
     src/routes/        # API route handlers
     src/services/      # Email + token services
     migrations/        # D1 SQL migrations
+    wrangler.toml      # Worker, D1 and runtime variables (no static assets)
     tests/             # Worker/API routing tests
   package.json         # Workspace scripts and deployment tooling
   package-lock.json    # npm lockfile
   pnpm-lock.yaml       # pnpm lockfile
   pnpm-workspace.yaml  # pnpm workspace configuration
-  wrangler.toml        # Unified Worker + assets deployment
+  scripts/             # Local Pages + Worker deployment smoke test
   vitest.config.ts     # Runs both workspaces' tests
 docs/                  # Deployment guide, design system and retained evidence
 CLAUDE.md              # Repository instructions
