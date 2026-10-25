@@ -50,6 +50,15 @@ async function waitForHealth(child, base) {
 try {
   const migrations = spawnSync(process.execPath, [cli, 'd1', 'migrations', 'apply', 'cryptdrop-db', '--local', '--config', 'backend/wrangler.toml', '--persist-to', join(state, 'd1')], { cwd: root, env, encoding: 'utf8' });
   assert.equal(migrations.status, 0, migrations.stderr || migrations.stdout);
+  const seed = () => spawnSync(process.execPath, [join(root, 'scripts/operations.mjs'), 'db:seed:local', '--persist-to', join(state, 'd1')], { cwd: root, env, encoding: 'utf8' });
+  const firstSeed = seed();
+  assert.equal(firstSeed.status, 0, firstSeed.stderr || firstSeed.stdout);
+  const edit = spawnSync(process.execPath, [cli, 'd1', 'execute', 'cryptdrop-db', '--local', '--config', 'backend/wrangler.toml', '--persist-to', join(state, 'd1'), '--command', "UPDATE users SET name = 'Preserved local edit' WHERE email = 'local-demo@cryptdrop.invalid'"], { cwd: root, env, encoding: 'utf8' });
+  assert.equal(edit.status, 0, edit.stderr || edit.stdout);
+  const secondSeed = seed();
+  assert.equal(secondSeed.status, 0, secondSeed.stderr || secondSeed.stdout);
+  const repeatMigrations = spawnSync(process.execPath, [cli, 'd1', 'migrations', 'apply', 'cryptdrop-db', '--local', '--config', 'backend/wrangler.toml', '--persist-to', join(state, 'd1')], { cwd: root, env, encoding: 'utf8' });
+  assert.equal(repeatMigrations.status, 0, repeatMigrations.stderr || repeatMigrations.stdout);
   const workerBase = `http://127.0.0.1:${await freePort()}`;
   const pagesBase = `http://127.0.0.1:${await freePort()}`;
   const worker = start(['dev', '--local', '--ip', '127.0.0.1', '--port', new URL(workerBase).port, '--inspector-port', '0', '--persist-to', join(state, 'd1'), '--var', `SITE_URL:${pagesBase}`, '--var', 'RESEND_API_KEY:local-disabled'], join(root, 'backend'));
@@ -84,6 +93,16 @@ try {
     assert.equal(response.status, 404, path);
     assert.deepEqual(await response.json(), { error: 'API route not found' }, path);
   }
+  const demo = await request(pagesBase, '/api/lookup/local-demo%40cryptdrop.invalid');
+  assert.equal(demo.status, 200);
+  const demoKey = await demo.json();
+  assert.equal(demoKey.name, 'Preserved local edit', 'Reseeding and reapplying migrations must preserve existing rows');
+  assert.match(demoKey.publicKey, /BEGIN PGP PUBLIC KEY BLOCK/);
+  assert.equal((await (await request(pagesBase, '/api/invite/local-demo-pending')).json()).valid, true);
+  const accepted = await (await request(pagesBase, '/api/invite/local-demo-accepted')).json();
+  assert.equal(accepted.valid, false);
+  assert.equal(accepted.status, 'accepted');
+  assert.equal((await request(pagesBase, '/api/invite/local-demo-expired')).status, 410);
   const json = (body) => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   // A fresh local database has no pending invitations, so registration sends no email.
   const registration = await request(pagesBase, '/api/register', json({
@@ -105,7 +124,7 @@ try {
   const preflight = await request(pagesBase, '/api/register', { method: 'OPTIONS', headers: { Origin: pagesBase, 'Access-Control-Request-Method': 'POST' } });
   assert.equal(preflight.status, 204);
   assert.equal(preflight.headers.get('access-control-allow-origin'), pagesBase);
-  console.log('PASS: separate Pages + API Worker, service-binding proxy, static assets/headers, 404s, CORS and isolated local D1 registration/lookup.');
+  console.log('PASS: separate Pages + API Worker, proxy/assets/headers/404s/CORS, fresh migrations, repeat-safe local seeds and D1 registration/lookup.');
 } finally {
   for (const child of children.reverse()) {
     if (child.pid && child.exitCode === null) {

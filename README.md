@@ -79,14 +79,12 @@ These measures protect stored copies, not secrets in an unlocked browser session
 # All application commands run from code/
 cd code
 
-# Install dependencies
-npm install
+# Install locked dependencies; prepare local environment and database
+npm ci
+npm run setup:local
 
-# Copy the local Worker environment template (do not overwrite existing secrets)
-cp -n backend/.dev.vars.example backend/.dev.vars
-
-# Apply migrations to local D1 only
-npm run db:migrate:local
+# Optional: add local-only demo keys/invitation states
+# npm run db:seed:local
 
 # Start the API Worker (localhost:8787)
 npm run dev:backend
@@ -98,12 +96,11 @@ npm run dev
 # Alternatively, stop Astro and use the real Pages Function/service binding:
 # npm run dev:pages
 
-# Run tests
-npm test
-
-# Type-check
-npm run typecheck
+# Run all validation (tests, typechecks, bundles and isolated local smoke tests)
+npm run check
 ```
+
+See [local development and script reference](docs/DEVELOPMENT.md) for repeat runs, optional seed data, adding migrations and the full command list. Local setup does not require Cloudflare login and never changes production.
 
 ---
 
@@ -113,7 +110,9 @@ The frontend deploys to **Cloudflare Pages** using `code/frontend/wrangler.toml`
 
 From `code/`, use `npm run deploy:backend` and `npm run deploy:frontend` separately. `npm run deploy:backend:dry-run` validates the backend bundle, and `npm run check:pages` compiles the Pages Function without deploying.
 
-See [deployment and Git integration instructions](docs/DEPLOYMENT.md) for the exact Pages/Worker repository root directories, build commands, secrets, D1, previews and rollback precautions. Nothing is deployed automatically by installing or building this project.
+See [deployment and operations](docs/DEPLOYMENT.md) for separate guides to **updating the existing live system**, **provisioning a fresh Cloudflare account**, and **linking Git integrations**. Useful live operations include `db:status:remote`, `db:backup:remote`, `db:migrate:remote`, and `logs:backend`. Confirm the account/resource targets before running them. There is no production seed, automatic migration during deployment, or destructive reset script.
+
+Nothing is deployed automatically by installing, building, checking or setting up locally.
 
 ## Design system
 
@@ -135,14 +134,15 @@ code/                  # Application/workspace root — run npm commands here
     src/app.ts         # Hono API and middleware
     src/routes/        # API route handlers
     src/services/      # Email + token services
-    migrations/        # D1 SQL migrations
+    migrations/        # Versioned D1 SQL migrations
+    seeds/             # Optional local-only demo fixtures (no private keys)
     wrangler.toml      # Worker, D1 and runtime variables (no static assets)
     tests/             # Worker/API routing tests
   package.json         # Workspace scripts and deployment tooling
   package-lock.json    # npm lockfile
   pnpm-lock.yaml       # pnpm lockfile
   pnpm-workspace.yaml  # pnpm workspace configuration
-  scripts/             # Local Pages + Worker deployment smoke test
+  scripts/             # Safe local setup/seed, remote SQL export and isolated smoke test
   vitest.config.ts     # Runs both workspaces' tests
 docs/                  # Deployment guide, design system and retained evidence
 CLAUDE.md              # Repository instructions

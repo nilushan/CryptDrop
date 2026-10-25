@@ -29,7 +29,7 @@ describe('design-system documentation', () => {
     const evidenceReadmes = readdirSync(resolve(root, 'docs/design-system-evidence'))
       .map((issue) => `docs/design-system-evidence/${issue}/README.md`)
       .filter((path) => existsSync(resolve(root, path)));
-    for (const path of ['README.md', 'docs/DEPLOYMENT.md', 'docs/design-system.md', ...evidenceReadmes]) {
+    for (const path of ['README.md', 'docs/DEVELOPMENT.md', 'docs/DEPLOYMENT.md', 'docs/design-system.md', ...evidenceReadmes]) {
       const markdown = read(path).replace(/```[\s\S]*?```/g, '');
       const targets = [...markdown.matchAll(/\]\(([^\s)]+)\)/g)].map((match) => match[1]);
       expect(targets.length).toBeGreaterThan(0);
