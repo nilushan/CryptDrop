@@ -1,15 +1,13 @@
 {
-  "name": "cryptdrop-site",
+  "name": "@cryptdrop/frontend",
   "private": true,
   "type": "module",
   "version": "1.0.0",
-  "workspaces": ["packages/server"],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
-    "test:watch": "vitest",
     "typecheck": "astro check"
   },
   "dependencies": {
@@ -24,13 +22,12 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
-    "@cloudflare/workers-types": "4.20260331.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "jsdom": "^29.0.1",
+    "typescript": "^5.9.3",
     "vitest": "^4.1.0"
   }
 }

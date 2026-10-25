@@ -3,4 +3,11 @@ import react from '@astrojs/react';
 
 export default defineConfig({
   integrations: [react()],
+  vite: {
+    server: {
+      proxy: {
+        '/api': 'http://localhost:8787',
+      },
+    },
+  },
 });

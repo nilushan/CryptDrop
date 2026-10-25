@@ -1,7 +1,5 @@
-const API_URL = import.meta.env.DEV ? 'http://localhost:8787' : '';
-
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(path, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
     signal: init?.signal ?? AbortSignal.timeout(10_000),

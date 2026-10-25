@@ -21,7 +21,7 @@ The full page has six named content sections and a hero header. Removed duplicat
 
 ## Approved security accuracy correction
 
-Original measure said matching-email validation “prevents the keyserver from returning a wrong or malicious key.” Audit found [validateKey](../../../src/lib/openpgp-helpers.ts#L178) checks the first user ID only, returns warnings and does not reject the key; missing email may not warn. [KeyLookupCard](../../../src/components/shared/KeyLookupCard.tsx#L74) displays warnings and still calls `onKeyFound`.
+Original measure said matching-email validation “prevents the keyserver from returning a wrong or malicious key.” Audit found [validateKey](../../../code/frontend/src/lib/openpgp-helpers.ts#L178) checks the first user ID only, returns warnings and does not reject the key; missing email may not warn. [KeyLookupCard](../../../code/frontend/src/components/shared/KeyLookupCard.tsx#L74) displays warnings and still calls `onKeyFound`.
 
 Supervisor approved renaming the measure **Public-key lookup warnings** and this exact bounded copy:
 

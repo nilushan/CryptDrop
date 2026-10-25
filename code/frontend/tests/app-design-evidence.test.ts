@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 const root = fileURLToPath(new URL('../', import.meta.url));
-const dir = resolve(root, 'docs/design-system-evidence/issue-4');
+const dir = resolve(root, '../../docs/design-system-evidence/issue-4');
 interface Capture { file: string; phase: string; state: string; route: string; viewport: { width: number; height: number }; image: { width: number; height: number }; sha256: string; }
 const manifest = () => JSON.parse(readFileSync(resolve(dir, 'manifest.json'), 'utf8')) as { captures: Capture[] };
 

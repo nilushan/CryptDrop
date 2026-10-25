@@ -1,0 +1,4 @@
+# Copy to .dev.vars in code/ (the application root). Never commit real secrets.
+SITE_URL="http://localhost:8787"
+# Leave empty to avoid sending real email during local development.
+RESEND_API_KEY=""

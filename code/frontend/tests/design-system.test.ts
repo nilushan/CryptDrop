@@ -1,11 +1,11 @@
 // @vitest-environment node
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-const root = fileURLToPath(new URL('../', import.meta.url));
+const root = fileURLToPath(new URL('../../../', import.meta.url));
 const evidenceDir = resolve(root, 'docs/design-system-evidence/issue-2');
 const read = (path: string) => readFileSync(resolve(root, path), 'utf8');
 
@@ -26,7 +26,10 @@ const manifest = () => JSON.parse(readFileSync(resolve(evidenceDir, 'manifest.js
 describe('design-system documentation', () => {
   it('is discoverable from README and has valid local source/evidence links', () => {
     expect(read('README.md')).toContain('](docs/design-system.md)');
-    for (const path of ['docs/design-system.md', 'docs/design-system-evidence/issue-2/README.md']) {
+    const evidenceReadmes = readdirSync(resolve(root, 'docs/design-system-evidence'))
+      .map((issue) => `docs/design-system-evidence/${issue}/README.md`)
+      .filter((path) => existsSync(resolve(root, path)));
+    for (const path of ['README.md', 'docs/DEPLOYMENT.md', 'docs/design-system.md', ...evidenceReadmes]) {
       const markdown = read(path).replace(/```[\s\S]*?```/g, '');
       const targets = [...markdown.matchAll(/\]\(([^\s)]+)\)/g)].map((match) => match[1]);
       expect(targets.length).toBeGreaterThan(0);

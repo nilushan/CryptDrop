@@ -1,0 +1,27 @@
+{
+  "name": "cryptdrop-site",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev": "npm run dev -w frontend --",
+    "dev:worker": "npm run build && wrangler dev",
+    "build": "npm run build -w frontend --",
+    "preview": "npm run dev:worker --",
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:dry-run": "npm run build && wrangler deploy --dry-run",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:deployment": "npm run build && node backend/scripts/smoke-test.mjs",
+    "typecheck": "npm run typecheck --workspaces",
+    "db:migrate:local": "wrangler d1 migrations apply cryptdrop-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply cryptdrop-db --remote"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
+    "wrangler": "4.79.0"
+  }
+}

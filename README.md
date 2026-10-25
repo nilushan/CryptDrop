@@ -1,6 +1,6 @@
 # CryptDrop
 
-**End-to-end PGP encryption in your browser. No accounts, no servers, no tracking.**
+**End-to-end PGP encryption in your browser. No accounts, no file uploads.**
 
 CryptDrop lets you encrypt and decrypt files using PGP — entirely in your browser tab. Your private key and file contents never leave your device.
 
@@ -76,14 +76,24 @@ These measures protect stored copies, not secrets in an unlocked browser session
 ## Running locally
 
 ```bash
+# All application commands run from code/
+cd code
+
 # Install dependencies
 npm install
 
-# Start the frontend dev server (localhost:4321)
-npm run dev
+# Copy the local Worker environment template (do not overwrite existing secrets)
+cp -n .dev.vars.example .dev.vars
 
-# Start the backend Worker locally (localhost:8787)
-npm run dev -w packages/server
+# Apply migrations to local D1 only
+npm run db:migrate:local
+
+# Start the full app on the local Worker (localhost:8787)
+npm run dev:worker
+
+# Optional: in a second terminal, use Astro HMR (localhost:4321).
+# /api requests are proxied to the local Worker above.
+npm run dev
 
 # Run tests
 npm test
@@ -94,6 +104,12 @@ npm run typecheck
 
 ---
 
+## Deployment
+
+From `code/`, `npm run deploy` builds the frontend and deploys the API and static assets together to **one Cloudflare Worker**. `code/wrangler.toml` is the only deployment configuration. `npm run deploy:dry-run` validates the bundle without deploying.
+
+See [deployment and Pages migration instructions](docs/DEPLOYMENT.md) for secrets, D1, domain cutover, previews and rollback precautions. Nothing is deployed automatically by installing or building this project.
+
 ## Design system
 
 See the [shared design-system baseline](docs/design-system.md) for the UI inventory, app and marketing pattern catalogs, accessibility targets, ownership, and migration checklist. [Responsive visual references and validation](docs/design-system-evidence/issue-2/README.md) document the audited baseline; implementation follows independent review.
@@ -101,18 +117,27 @@ See the [shared design-system baseline](docs/design-system.md) for the UI invent
 ## Project structure
 
 ```
-src/
-  components/        # React islands (encrypt, decrypt, keys, wizard tabs)
-  layouts/           # Astro layout
-  lib/               # Shared helpers (openpgp-helpers.ts, api.ts, file-helpers.ts)
-  pages/             # Astro pages (app, security, how-it-works, etc.)
-  stores/            # Nano Stores (keys, contacts, toast, activeTab)
-packages/
-  server/            # Cloudflare Worker backend
-    src/routes/      # API route handlers
-    src/services/    # Email + token services
-    migrations/      # D1 SQL migrations
-tests/               # Vitest unit tests
+code/                  # Application/workspace root — run npm commands here
+  frontend/            # @cryptdrop/frontend: static Astro + React application
+    src/               # Components, layouts, pages, browser helpers, stores, styles
+    public/            # Static files and security headers
+    tests/             # UI, crypto and design-evidence tests
+    dist/              # Generated static assets (ignored)
+  backend/             # @cryptdrop/backend: Cloudflare Worker API
+    src/index.ts       # /api → Hono; other paths → static assets
+    src/app.ts         # Hono API and middleware
+    src/routes/        # API route handlers
+    src/services/      # Email + token services
+    migrations/        # D1 SQL migrations
+    tests/             # Worker/API routing tests
+  package.json         # Workspace scripts and deployment tooling
+  package-lock.json    # npm lockfile
+  pnpm-lock.yaml       # pnpm lockfile
+  pnpm-workspace.yaml  # pnpm workspace configuration
+  wrangler.toml        # Unified Worker + assets deployment
+  vitest.config.ts     # Runs both workspaces' tests
+docs/                  # Deployment guide, design system and retained evidence
+CLAUDE.md              # Repository instructions
 ```
 
 ---

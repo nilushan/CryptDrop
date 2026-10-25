@@ -3,7 +3,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import sharp from 'sharp';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import { fileURLToPath, URL as NodeURL } from 'node:url';
 import { keySecuritySafeguards, keySecurityLimitations } from '../src/lib/key-security';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -17,7 +18,8 @@ let security: Document;
 
 beforeAll(() => {
   // Test real Astro output, not a hand-maintained HTML fixture or regex over source.
-  execFileSync(process.execPath, ['node_modules/astro/astro.js', 'build', '--outDir', output], { cwd: root, stdio: 'pipe' });
+  const cli = join(dirname(createRequire(import.meta.url).resolve('astro/package.json')), 'astro.js');
+  execFileSync(process.execPath, [cli, 'build', '--outDir', output], { cwd: root, stdio: 'pipe' });
   home = read('');
   guide = read('how-it-works');
   security = read('security');
@@ -151,7 +153,7 @@ interface Capture {
   image: { width: number; height: number };
   sha256: string;
 }
-const evidence = join(root, 'docs/design-system-evidence/issue-5');
+const evidence = join(root, '../../docs/design-system-evidence/issue-5');
 const manifest = () => JSON.parse(readFileSync(join(evidence, 'manifest.json'), 'utf8')) as { captures: Capture[] };
 describe('issue-5 marketing review evidence', () => {
   it('indexes matching before/after views for the homepage and every shared-layout consumer', () => {
@@ -232,7 +234,7 @@ describe('how-it-works marketing guide', () => {
 
 describe('issue-6 guide review evidence', () => {
   it('retains reviewable before/after viewport sets and edge captures with intact PNG hashes', () => {
-    const dir = join(root,'docs/design-system-evidence/issue-6');
+    const dir = join(root,'../../docs/design-system-evidence/issue-6');
     const { captures } = JSON.parse(readFileSync(join(dir,'manifest.json'),'utf8')) as { captures: Capture[] };
     expect(captures).toHaveLength(10);
     for(const phase of ['before','after']) for(const width of [375,768,1280]) expect(captures.filter(c=>c.phase===phase && c.viewport.width===width && ['mobile','tablet','desktop'].includes(c.state))).toHaveLength(1);
@@ -312,7 +314,7 @@ describe('security content marketing patterns', () => {
 
 describe('issue-7 security review evidence', () => {
   it('retains before/after responsive views and disclosure/focus/reflow evidence with intact hashes', () => {
-    const dir=join(root,'docs/design-system-evidence/issue-7');
+    const dir=join(root,'../../docs/design-system-evidence/issue-7');
     const { captures }=JSON.parse(readFileSync(join(dir,'manifest.json'),'utf8')) as { captures: Capture[] };
     expect(captures).toHaveLength(11);
     for(const phase of ['before','after']) for(const width of [375,768,1280]) expect(captures.filter(c=>c.phase===phase && c.viewport.width===width && ['mobile','tablet','desktop'].includes(c.state))).toHaveLength(1);
@@ -385,7 +387,7 @@ describe('privacy content and entry points', () => {
 
 describe('issue-8 privacy review evidence', () => {
   it('indexes all shared-shell responsive before/after states and privacy edge views with intact image hashes', () => {
-    const dir=join(root,'docs/design-system-evidence/issue-8');
+    const dir=join(root,'../../docs/design-system-evidence/issue-8');
     const { captures }=JSON.parse(readFileSync(join(dir,'manifest.json'),'utf8')) as { captures: Capture[] };
     expect(captures).toHaveLength(39);
     expect(new Set(captures.map(c=>c.file)).size).toBe(captures.length);

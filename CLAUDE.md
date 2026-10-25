@@ -1,104 +1,84 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for coding agents working in this repository.
 
-## Commands
+## Commands (from `code/`)
+
+The repository root contains documentation; `code/` contains all application workspaces, package/lockfiles and build/deployment configuration. Run `cd code` before these commands (or `npm --prefix code run <script>` from the repository root).
 
 ```bash
-npm run dev                          # Astro dev server (localhost:4321)
-npm run build                        # Production build → dist/
-npm test                             # Run all tests (vitest, one-shot)
-npm run test:watch                   # Vitest in watch mode
-npm run typecheck                    # Type-check via astro check
-npm run dev -w packages/server       # Worker dev server (localhost:8787)
-npm run deploy -w packages/server    # Deploy Worker to Cloudflare
-npm run db:migrate:local -w packages/server   # Apply D1 migrations locally
-npm run db:migrate:remote -w packages/server  # Apply D1 migrations remotely
+npm install                         # Install both workspaces
+npm run dev                         # Astro HMR at localhost:4321; proxies /api to :8787
+npm run dev:worker                  # Build frontend, run full app locally at localhost:8787
+npm run build                       # Static Astro build → frontend/dist/
+npm run preview                     # Same full-stack local workflow as dev:worker
+npm test                            # Both Vitest projects, one-shot
+npm run test:watch                  # Both Vitest projects in watch mode
+npm run test:deployment             # Real local Worker/assets/D1 smoke test (isolated state)
+npm run typecheck                   # Astro check (frontend) + tsc (backend)
+npm run deploy:dry-run              # Build and bundle Worker/assets; no deployment
+npm run deploy                      # Build and deploy one Worker with assets
+npm run db:migrate:local             # Apply D1 migrations locally
+npm run db:migrate:remote            # Apply D1 migrations remotely (explicit approval)
 ```
 
-Run a single test file:
-```bash
-npx vitest run tests/utility-functions.test.ts
-```
+Run one suite: `npx vitest run frontend/tests/utility-functions.test.ts`.
+Select a workspace: `npx vitest run --project backend`.
+Match test names: `npx vitest run -t "should format bytes"`.
 
-Run tests matching a name pattern:
-```bash
-npx vitest run --reporter=verbose -t "should format bytes"
-```
+Never deploy, apply remote migrations, or change production domains without approval.
 
-## Architecture
+## Architecture and boundaries
 
-CryptDrop is a **fully client-side PGP encryption tool** deployed as a static Astro 5.x site with React islands. All encryption, decryption, key generation, and file handling happens in the browser — the server never sees private keys or unencrypted files.
+CryptDrop has two npm workspaces under `code/`, deployed together as one Cloudflare Worker with static assets. All encryption, decryption, key generation and file handling stays in the browser. The backend receives public-key/identity, lookup, invitation and notification data, never private keys or file contents.
 
-### Tech stack
+### Frontend (`code/frontend/`)
 
-- **Astro 5.x** — static site generator with `@astrojs/react` integration
-- **React 19** — UI components rendered as Astro islands (`client:load`)
-- **Nano Stores** (`nanostores` + `@nanostores/react`) — cross-island shared state
-- **OpenPGP.js 6.x** — imported as ES module (not vendored)
-- **TypeScript** — `.tsx` components, `.ts` stores/libs
-- **Vitest + jsdom** — unit tests
+Static Astro 5 with React 19 islands, Nano Stores, OpenPGP.js 6 and TypeScript. No SSR adapter is needed. Astro config, tsconfig, public assets and frontend tests live inside this workspace.
 
-### Island architecture
+- `src/pages/app/index.astro`: mounts Encrypt, Decrypt, KeyRing, AddressBook and Wizard islands plus toast/status UI.
+- `src/components/`: domain compositions and reusable UI primitives.
+- `src/stores/`: key, contacts, history, toast and active-tab state.
+- `src/lib/app-navigation.ts`: tab/Keyring navigation and focus/URL state.
+- `src/lib/openpgp-helpers.ts`: key generation/import, encryption/decryption and lookup.
+- `src/lib/api.ts`: same-origin `/api/*` client; no environment-specific API hostname.
+- `src/lib/file-helpers.ts`: file formatting, downloads and folder handling.
+- `src/lib/key-storage.ts`, `key-backup.ts`, `key-security.ts`: local key persistence, backup verification and safeguards.
+- `src/styles/`: custom CSS, not Tailwind. Layout imports tokens; app imports app catalog and workspace styles; marketing has its own scoped catalog.
+- `public/_headers`: static response security headers, included in the Worker asset build.
 
-Each tab is an independent React island mounted in `src/pages/app/index.astro`:
+Frontend code must not import backend implementation or Worker bindings/secrets. Browser code uses HTTP API calls instead.
 
-| Island | Component | Stores subscribed |
-|--------|-----------|-------------------|
-| Encrypt | `src/components/encrypt/EncryptTab.tsx` | `$contacts`, `$privateKey`, `$activeTab` |
-| Decrypt | `src/components/decrypt/DecryptTab.tsx` | `$privateKey`, `$publicKey`, `$userInfo`, `$contacts` |
-| Keys | `src/components/keys/KeysTab.tsx` | Key stores, `$contacts` |
-| Wizard | `src/components/wizard/WizardTab.tsx` | Key stores, `$contacts`, `$activeTab` |
-| Toast | `src/components/shared/Toast.tsx` | `$toast` |
-| KeyStatusPill | `src/components/shared/KeyStatusPill.tsx` | `$privateKey`, `$userInfo` |
+### Backend (`code/backend/`)
 
-Tab switching is handled by a Nano Store (`$activeTab`) with an Astro inline script that toggles `.hidden` on tab panels.
-
-### Shared state (Nano Stores)
-
-| Store file | Atoms | Purpose |
-|------------|-------|---------|
-| `src/stores/keys.ts` | `$privateKey`, `$publicKey`, `$armoredPublic`, `$armoredPrivate`, `$userInfo` | User's PGP key pair |
-| `src/stores/contacts.ts` | `$contacts` | localStorage-backed contact directory |
-| `src/stores/toast.ts` | `$toast` | Cross-island toast notifications |
-| `src/stores/activeTab.ts` | `$activeTab` | Current visible tab |
-
-### Shared libraries
+Cloudflare Worker using Hono, Cloudflare D1 (SQLite), and Resend.
 
 | File | Purpose |
 |------|---------|
-| `src/lib/openpgp-helpers.ts` | `generateKeyPair()`, `importPrivateKey()`, `encryptFileData()`, `decryptFileData()`, `lookupKeyByEmail()`, `parseUserId()` |
-| `src/lib/file-helpers.ts` | `formatSize()`, `downloadBlob()`, `saveToFolder()`, `sanitizeFolderName()`, `shortName()` |
-
-### CSS
-
-All styles are in `<style is:global>` in `src/pages/app/index.astro`. React components use the same CSS class names. Styles use custom utility classes (not Tailwind).
-
-### Test setup
-
-Tests use vitest + jsdom with `@testing-library/jest-dom` matchers. Test files are in `tests/` and can be `.test.ts` or `.test.tsx`. The setup file is `tests/rtl-setup.ts`.
-
-### Backend (packages/server/)
-
-Cloudflare Worker with Hono.js + Cloudflare D1 (SQLite) + Resend for emails.
-
-| File | Purpose |
-|------|---------|
-| `src/index.ts` | Hono app entry, mounts all routes |
-| `src/routes/register.ts` | `POST /api/register` — store user key, auto-accept invitations |
-| `src/routes/lookup.ts` | `GET /api/lookup/:email` — D1 first, keyserver fallback |
-| `src/routes/invite.ts` | `POST /api/invite` + `GET /api/invite/:token` |
-| `src/routes/notify.ts` | `POST /api/notify` — send decrypt instructions email |
+| `src/index.ts` | Worker entry: `/api` and `/api/*` → Hono; other requests → `ASSETS.fetch()` |
+| `src/app.ts` | Hono app, CORS, route mounting and JSON API 404s |
+| `src/routes/register.ts` | `POST /api/register`: store public key and accept invitations |
+| `src/routes/lookup.ts` | `GET /api/lookup/:email`: D1 first, public keyserver fallback |
+| `src/routes/invite.ts` | `POST /api/invite`, `GET /api/invite/:token` |
+| `src/routes/notify.ts` | `POST /api/notify`: decrypt-instructions email |
 | `src/routes/health.ts` | `GET /api/health` |
-| `src/services/email.ts` | Resend SDK wrapper |
-| `src/services/tokens.ts` | Crypto-random URL-safe token generation |
+| `src/services/` | Resend wrapper and random tokens |
 | `src/db/schema.ts` | Typed D1 query helpers |
-| `src/middleware/cors.ts` | Origin-based CORS |
-| `src/middleware/rate-limit.ts` | D1-backed rate limiting |
-| `migrations/` | D1 SQL migrations (users, invitations, rate_limits) |
+| `src/middleware/` | Origin-based CORS and D1-backed rate limits |
+| `migrations/` | Existing users, invitations and rate-limit migrations |
 
-**Environment**: `RESEND_API_KEY` (wrangler secret), `SITE_URL` (wrangler.toml var), `PUBLIC_API_URL` (Astro env var).
+Backend code must not import frontend source. `ASSETS` is a deployment binding, not an application-source dependency.
 
-### API client (src/lib/api.ts)
+### Deployment and environment
 
-Frontend fetch wrapper for all API calls. `lookupKeyByEmail()` in openpgp-helpers routes through `/api/lookup` first, falling back to direct keyserver if API unreachable.
+`code/wrangler.toml` is the **only** deployment config. Paths inside it are relative to `code/`. It keeps the existing `cryptdrop-server` Worker name and `cryptdrop-db` binding/id; uploads `frontend/dist`; runs Worker code first only for API paths. Non-API assets use Cloudflare's asset service. This is a static multipage Astro site: do not enable SPA index fallback.
+
+Bindings: `ASSETS` and `DB`. Runtime environment: `SITE_URL` (public origin for email links/CORS), `RESEND_API_KEY` (Worker secret). Local values live in ignored `code/.dev.vars`; start with `code/.dev.vars.example`. No `PUBLIC_API_URL` is required. Never put secrets in `frontend/` or `PUBLIC_*` variables.
+
+Read `docs/DEPLOYMENT.md` before changing deployment, previews or domains. Retain the old Pages project until cutover is verified. Code rollbacks do not reverse D1 migrations. Preview deployments need separate non-production bindings and secrets.
+
+### Tests
+
+`code/vitest.config.ts` runs frontend (jsdom/RTL) and backend (Node) projects. Tests live in each workspace's `tests/`; frontend RTL setup is `code/frontend/tests/rtl-setup.ts`. Design-evidence tests reference root `docs/`; the marketing suite builds Astro output in a temporary directory. `npm run typecheck` checks both workspaces separately to keep browser and Worker types isolated.
+
+Documentation and retained design evidence stay in root `docs/`. Historical inline paths/command outputs may describe the pre-workspace layout; current source is in `code/frontend/` and `code/backend/`.

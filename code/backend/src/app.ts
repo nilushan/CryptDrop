@@ -17,4 +17,6 @@ app.route('/api', lookupRoutes);
 app.route('/api', inviteRoutes);
 app.route('/api', notifyRoutes);
 
+app.notFound((c) => c.json({ error: 'API route not found' }, 404));
+
 export default app;

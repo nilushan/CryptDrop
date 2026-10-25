@@ -33,10 +33,10 @@ See [PHASE-1-PLAN.md](./PHASE-1-PLAN.md) for detailed specification.
 
 ## Phase 2+3: Backend Server, User Registry & Invitations ✅
 
-**Status**: Implemented — `packages/server/` (Hono.js + D1 + Resend)
+**Status**: Implemented — `code/backend/` (Hono.js + D1 + Resend), deployed with `code/frontend/` assets via `code/wrangler.toml`. See [deployment instructions](DEPLOYMENT.md).
 
 **Infrastructure**:
-- Cloudflare Worker (Hono.js) in `packages/server/`
+- Cloudflare Worker (Hono.js) in `code/backend/`
 - Cloudflare D1 database with 3 tables (users, invitations, rate_limits)
 - Resend for transactional emails
 - npm workspaces monorepo
